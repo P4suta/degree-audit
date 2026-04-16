@@ -14,12 +14,19 @@
 			<p class="mt-1 font-mono text-xs opacity-70">
 				code: {errorsStore.current.code}
 			</p>
+			{#if errorsStore.count > 1}
+				<p class="mt-1 text-xs">
+					他に {errorsStore.count - 1} 件のエラーがあります
+				</p>
+			{/if}
 		</div>
 		<button
 			type="button"
 			class="rounded p-1 hover:bg-red-100"
-			aria-label="エラーを閉じる"
-			onclick={() => errorsStore.clear()}
+			aria-label={errorsStore.count > 1
+				? "このエラーを閉じて次のエラーを表示"
+				: "エラーを閉じる"}
+			onclick={() => errorsStore.dismiss()}
 		>
 			<X class="h-4 w-4" />
 		</button>
