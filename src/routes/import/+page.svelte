@@ -4,6 +4,8 @@
 	import { onMount } from "svelte";
 	import { importTranscript } from "$lib/application/import-transcript";
 	import { resolveRuleSet } from "$lib/application/resolve-rule-set";
+	import { DomainError } from "$lib/domain/errors/domain-error";
+	import { ErrorCode } from "$lib/domain/errors/error-code";
 	import { isErr } from "$lib/domain/errors/result";
 	import { defaultRegistry } from "$lib/domain/rulesets/index";
 	import TranscriptDropZone from "$lib/presentation/components/TranscriptDropZone.svelte";
@@ -52,6 +54,17 @@
 				skipped: skippedCount,
 			});
 			void goto(`${base}/dashboard`);
+		} catch (cause) {
+			const error = new DomainError({
+				code: ErrorCode.ImportFileReadFailed,
+				message: `Failed to read or import the dropped file '${file.name}'`,
+				userMessage:
+					"ファイルの読み込みまたは取り込みに失敗しました。別の MHTML を試すか、ブラウザを再起動してみてください。",
+				context: { fileName: file.name, fileSize: file.size },
+				cause,
+			});
+			errorsStore.push(error);
+			logger.error("File read failed", error);
 		} finally {
 			importing = false;
 		}
