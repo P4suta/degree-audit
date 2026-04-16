@@ -1,16 +1,25 @@
 <script lang="ts">
 	import { base } from "$app/paths";
 	import { goto } from "$app/navigation";
-	import { profileStore } from "$lib/presentation/stores/profile.svelte";
-	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
 	import { StudentProfile } from "$lib/domain/entities/student-profile";
 	import { isErr } from "$lib/domain/errors/result";
+	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
+	import { profileStore } from "$lib/presentation/stores/profile.svelte";
+
+	const YEAR_HISTORY_LENGTH = 10;
+	const TYPICAL_SENIOR_OFFSET = 3;
+
+	const currentYear = new Date().getFullYear();
+	const yearOptions = Array.from(
+		{ length: YEAR_HISTORY_LENGTH },
+		(_, i) => currentYear - i,
+	);
 
 	const existing = profileStore.current;
 	let facultyId = $state(existing?.facultyId ?? "");
 	let courseId = $state(existing?.courseId ?? "");
 	let matriculationYear = $state(
-		existing?.matriculationYear ?? new Date().getFullYear(),
+		existing?.matriculationYear ?? currentYear - TYPICAL_SENIOR_OFFSET,
 	);
 
 	const handleSubmit = (event: SubmitEvent) => {
@@ -36,38 +45,54 @@
 	卒業要件ルールの解決に使用します。いつでも再設定できます。
 </p>
 
-<form class="space-y-4 rounded-lg border border-slate-200 bg-white p-6" onsubmit={handleSubmit}>
-	<label class="block">
-		<span class="text-sm font-medium text-slate-900">学部</span>
+<form
+	class="space-y-4 rounded-lg border border-slate-200 bg-white p-6"
+	onsubmit={handleSubmit}
+>
+	<div class="block">
+		<label for="profile-faculty-id" class="text-sm font-medium text-slate-900">
+			学部
+		</label>
 		<input
+			id="profile-faculty-id"
 			type="text"
 			class="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
 			placeholder="例: 人文社会科学部"
 			bind:value={facultyId}
 			required
 		/>
-	</label>
-	<label class="block">
-		<span class="text-sm font-medium text-slate-900">コース</span>
+	</div>
+	<div class="block">
+		<label for="profile-course-id" class="text-sm font-medium text-slate-900">
+			コース
+		</label>
 		<input
+			id="profile-course-id"
 			type="text"
 			class="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
 			placeholder="例: 人文科学コース"
 			bind:value={courseId}
 			required
 		/>
-	</label>
-	<label class="block">
-		<span class="text-sm font-medium text-slate-900">入学年度</span>
-		<input
-			type="number"
+	</div>
+	<div class="block">
+		<label
+			for="profile-matriculation-year"
+			class="text-sm font-medium text-slate-900"
+		>
+			入学年度
+		</label>
+		<select
+			id="profile-matriculation-year"
 			class="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
-			min="1900"
-			max="2100"
 			bind:value={matriculationYear}
 			required
-		/>
-	</label>
+		>
+			{#each yearOptions as y (y)}
+				<option value={y}>{y} 年度</option>
+			{/each}
+		</select>
+	</div>
 	<button
 		type="submit"
 		class="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
