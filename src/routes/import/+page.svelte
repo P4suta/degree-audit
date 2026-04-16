@@ -77,7 +77,7 @@
 	ファイルはブラウザ内だけで処理され、外部には送信されません。
 </p>
 
-<TranscriptDropZone onFile={handleFile} />
+<TranscriptDropZone onFile={handleFile} disabled={importing} />
 
 {#if importing}
 	<p class="text-sm text-slate-600">読み込み中…</p>
