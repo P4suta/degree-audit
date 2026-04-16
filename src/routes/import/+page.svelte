@@ -14,6 +14,7 @@
 	import { logger } from "$lib/presentation/stores/logger.svelte";
 	import { profileStore } from "$lib/presentation/stores/profile.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
+	import { warningsStore } from "$lib/presentation/stores/warnings.svelte";
 
 	let importing = $state(false);
 	let skippedCount = $state(0);
@@ -26,6 +27,7 @@
 
 	const handleFile = async (file: File) => {
 		errorsStore.clear();
+		warningsStore.dismiss("import:unknown-categories");
 		const profile = profileStore.current;
 		if (profile === null) return;
 		const resolved = resolveRuleSet(profile, defaultRegistry);
@@ -49,9 +51,17 @@
 			}
 			transcriptStore.set(outcome.value.record);
 			skippedCount = outcome.value.skipped.length;
+			const unknownCount = outcome.value.unknownCategoryCount;
+			if (unknownCount > 0) {
+				warningsStore.set(
+					"import:unknown-categories",
+					`${unknownCount} 件の科目が区分未判定（unknown）のまま取り込まれました。卒業要件の判定からは除外されます。区分ルール（category-map）の拡張が必要かもしれません。`,
+				);
+			}
 			logger.info("Transcript imported", {
 				courses: outcome.value.record.courses.length,
 				skipped: skippedCount,
+				unknownCategories: unknownCount,
 			});
 			void goto(`${base}/dashboard`);
 		} catch (cause) {
