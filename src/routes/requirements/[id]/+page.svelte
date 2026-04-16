@@ -42,6 +42,7 @@
 		<h2 class="text-xl font-bold">{label()}</h2>
 		<section class="space-y-3 rounded-lg border border-slate-200 bg-white p-6">
 			<ProgressBar
+				label={label()}
 				actual={r.actual}
 				required={r.required}
 				satisfied={r.satisfied}

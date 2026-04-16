@@ -27,6 +27,7 @@
 	</div>
 	<div class="mt-3 space-y-2">
 		<ProgressBar
+			{label}
 			actual={result.actual}
 			required={result.required}
 			satisfied={result.satisfied}
