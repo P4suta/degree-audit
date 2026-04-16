@@ -50,12 +50,40 @@ const nextAnonymousId = (): string => {
 	return `anonymous-${anonymousCounter.toString().padStart(6, "0")}`;
 };
 
+/**
+ * Derives a stable but unique Course id from the raw fields.
+ *
+ * - courseCode is the natural key when the MHTML provides it, but the same code
+ *   can legitimately appear multiple times for retakes or multi-semester
+ *   offerings. We suffix it with yearText (when available) to distinguish
+ *   those rows; if that still collides we further disambiguate with a running
+ *   counter so downstream uniqueById operations don't silently merge distinct
+ *   courses.
+ * - Without a courseCode we fall back to a fresh anonymous id per row.
+ */
+const assignStableId = (raw: RawCourse, taken: Set<string>): string => {
+	if (raw.courseCode === undefined) return nextAnonymousId();
+	const baseWithYear =
+		raw.yearText !== undefined && raw.yearText !== ""
+			? `${raw.courseCode}::${raw.yearText}`
+			: raw.courseCode;
+	if (!taken.has(baseWithYear)) return baseWithYear;
+	let suffix = 2;
+	let candidate = `${baseWithYear}::${suffix}`;
+	while (taken.has(candidate)) {
+		suffix += 1;
+		candidate = `${baseWithYear}::${suffix}`;
+	}
+	return candidate;
+};
+
 export const mapRawCoursesToCourses = (
 	raws: readonly RawCourse[],
 	categoryMap: CategoryMap,
 ): MappingOutcome => {
 	const courses: Course[] = [];
 	const skipped: MappingFailure[] = [];
+	const takenIds = new Set<string>();
 	for (const raw of raws) {
 		try {
 			const creditValue = parseCredit(raw.creditText);
@@ -67,7 +95,8 @@ export const mapRawCoursesToCourses = (
 					context: { raw },
 				});
 			}
-			const idSource = raw.courseCode ?? nextAnonymousId();
+			const idSource = assignStableId(raw, takenIds);
+			takenIds.add(idSource);
 			const year =
 				raw.yearText !== undefined ? parseYear(raw.yearText) : undefined;
 			const score =

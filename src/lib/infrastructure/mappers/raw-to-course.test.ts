@@ -110,4 +110,46 @@ describe("mapRawCoursesToCourses", () => {
 		);
 		expect(outcome.courses[0]?.score).toBeUndefined();
 	});
+
+	it("disambiguates duplicate courseCode rows using yearText", () => {
+		const outcome = mapRawCoursesToCourses(
+			[
+				raw({ courseCode: "K81001", yearText: "2022" }),
+				raw({ courseCode: "K81001", yearText: "2023" }),
+			],
+			defaultCategoryMap,
+		);
+		expect(outcome.courses).toHaveLength(2);
+		expect(outcome.courses[0]?.id).not.toBe(outcome.courses[1]?.id);
+	});
+
+	it("disambiguates duplicate courseCode rows that share the same year with a counter suffix", () => {
+		const outcome = mapRawCoursesToCourses(
+			[
+				raw({ courseCode: "K81001", yearText: "2022" }),
+				raw({ courseCode: "K81001", yearText: "2022" }),
+				raw({ courseCode: "K81001", yearText: "2022" }),
+			],
+			defaultCategoryMap,
+		);
+		expect(outcome.courses).toHaveLength(3);
+		const ids = outcome.courses.map((c) => c.id);
+		expect(new Set(ids).size).toBe(3);
+	});
+
+	it("keeps the bare courseCode for the single-row case", () => {
+		const outcome = mapRawCoursesToCourses(
+			[raw({ courseCode: "K81001", yearText: "2022" })],
+			defaultCategoryMap,
+		);
+		expect(outcome.courses[0]?.id).toBe("K81001::2022");
+	});
+
+	it("uses the bare courseCode when yearText is absent", () => {
+		const outcome = mapRawCoursesToCourses(
+			[raw({ courseCode: "K81001" })],
+			defaultCategoryMap,
+		);
+		expect(outcome.courses[0]?.id).toBe("K81001");
+	});
 });
