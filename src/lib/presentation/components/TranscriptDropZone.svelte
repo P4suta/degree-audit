@@ -51,7 +51,6 @@
 	ondrop={handleDrop}
 	role="region"
 	aria-label="成績ファイルのドロップゾーン"
-	aria-disabled={disabled}
 >
 	<FileUp class="mx-auto h-10 w-10 text-slate-400" aria-hidden="true" />
 	<p class="mt-3 text-sm text-slate-700">
