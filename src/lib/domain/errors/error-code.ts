@@ -1,0 +1,19 @@
+export const ErrorCode = {
+	CreditNegative: "DEGREE_AUDIT/CREDIT/NEGATIVE",
+	CreditNonFinite: "DEGREE_AUDIT/CREDIT/NON_FINITE",
+	CourseIdEmpty: "DEGREE_AUDIT/COURSE_ID/EMPTY",
+	GpaInvalidScore: "DEGREE_AUDIT/GPA/INVALID_SCORE",
+	CourseInvalidName: "DEGREE_AUDIT/COURSE/INVALID_NAME",
+	StudentProfileInvalid: "DEGREE_AUDIT/STUDENT_PROFILE/INVALID",
+	RuleSetNotFound: "DEGREE_AUDIT/RULESET/NOT_FOUND",
+	RuleSetAmbiguous: "DEGREE_AUDIT/RULESET/AMBIGUOUS",
+	MhtmlBoundaryMissing: "DEGREE_AUDIT/MHTML/BOUNDARY_MISSING",
+	MhtmlDecodingFailed: "DEGREE_AUDIT/MHTML/DECODING_FAILED",
+	MhtmlTableExtractionFailed: "DEGREE_AUDIT/MHTML/TABLE_EXTRACTION_FAILED",
+	MhtmlSourceTooLarge: "DEGREE_AUDIT/MHTML/SOURCE_TOO_LARGE",
+	MhtmlNoCoursesFound: "DEGREE_AUDIT/MHTML/NO_COURSES_FOUND",
+	RawCourseMappingFailed: "DEGREE_AUDIT/RAW_COURSE/MAPPING_FAILED",
+	ImportAllCategoriesUnknown: "DEGREE_AUDIT/IMPORT/ALL_CATEGORIES_UNKNOWN",
+} as const satisfies Record<string, `DEGREE_AUDIT/${string}`>;
+
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
