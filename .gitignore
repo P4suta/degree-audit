@@ -1,0 +1,36 @@
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+# Playwright
+test-results
+
+# Coverage
+/coverage
+
+# Personal transcript fixtures (contain real grade data — do not commit)
+/tests/fixtures/transcript.mhtml
+/tests/fixtures/transcript-truth.csv
+/tests/fixtures/transcript-basic.csv
