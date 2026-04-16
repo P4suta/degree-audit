@@ -1,0 +1,203 @@
+import type { PipelineStep } from "../../allocation/pipeline.ts";
+import { allOf } from "../../specifications/combinators/all-of.ts";
+import { cappedContribution } from "../../specifications/combinators/capped-contribution.ts";
+import { elective } from "../../specifications/combinators/elective.ts";
+import { minCredits } from "../../specifications/combinators/min-credits.ts";
+import { minCreditsInCategory } from "../../specifications/combinators/min-credits-in-category.ts";
+import { minFieldsCovered } from "../../specifications/combinators/min-fields-covered.ts";
+import { perLanguageMin } from "../../specifications/combinators/per-language-min.ts";
+import { requirementGroup } from "../../specifications/combinators/requirement-group.ts";
+import type { Specification } from "../../specifications/types.ts";
+
+const primary12 = minCreditsInCategory({
+	id: "primary-12",
+	label: "初年次科目 12単位",
+	required: 12,
+	kinds: ["common-education/primary"],
+});
+
+const liberalTotal28 = minCreditsInCategory({
+	id: "liberal-total-28",
+	label: "教養 合計 28単位",
+	required: 28,
+	kinds: [
+		"common-education/liberal/field",
+		"common-education/liberal/foreign-language",
+		"common-education/liberal/career",
+	],
+});
+
+const liberalFields3 = minFieldsCovered({
+	id: "liberal-fields-3",
+	label: "教養 4分野のうち 3分野以上",
+	requiredCreditsPerField: 1,
+	requiredFieldCount: 3,
+});
+
+const liberalPerLanguage = perLanguageMin({
+	id: "liberal-language-4",
+	label: "外国語 1言語につき 4単位以上",
+	requiredPerLanguage: 4,
+	requiredLanguageCount: 1,
+});
+
+const liberalCareerCap = cappedContribution({
+	id: "liberal-career-cap-6",
+	label: "キャリア形成支援（上限 6単位）",
+	cap: 6,
+	predicate: (c) => c.category.kind === "common-education/liberal/career",
+});
+
+const liberal = requirementGroup({
+	id: "liberal",
+	label: "教養科目（合計 28単位 + 分野・外国語・キャリア上限）",
+	primary: liberalTotal28,
+	subSpecs: [liberalFields3, liberalPerLanguage, liberalCareerCap],
+});
+
+const seminar12 = minCreditsInCategory({
+	id: "seminar-12",
+	label: "ゼミナール I・II 4単位",
+	required: 4,
+	kinds: ["seminar/1-2"],
+});
+
+const seminar34 = minCreditsInCategory({
+	id: "seminar-34",
+	label: "ゼミナール III・IV 4単位",
+	required: 4,
+	kinds: ["seminar/3-4"],
+});
+
+const seminar56 = minCreditsInCategory({
+	id: "seminar-56",
+	label: "卒業論文・ゼミナール V・VI 8単位",
+	required: 8,
+	kinds: ["seminar/5-6-thesis"],
+});
+
+const platformTotal = minCreditsInCategory({
+	id: "platform-total-30",
+	label: "PF 科目 合計 30単位",
+	required: 30,
+	kinds: [
+		"platform/basic-a",
+		"platform/basic-b",
+		"platform/foreign-language",
+		"platform/advanced",
+	],
+});
+
+const platformA = minCreditsInCategory({
+	id: "platform-a",
+	label: "PF 基礎科目 A 群 2単位",
+	required: 2,
+	kinds: ["platform/basic-a"],
+});
+
+const platformB = minCreditsInCategory({
+	id: "platform-b",
+	label: "PF 基礎科目 B 群 2単位",
+	required: 2,
+	kinds: ["platform/basic-b"],
+});
+
+const platformBasics = minCreditsInCategory({
+	id: "platform-basics-6",
+	label: "PF 基礎科目合計 6単位",
+	required: 6,
+	kinds: ["platform/basic-a", "platform/basic-b"],
+});
+
+const platformForeign = minCreditsInCategory({
+	id: "platform-foreign-4",
+	label: "PF 外国語 4単位",
+	required: 4,
+	kinds: ["platform/foreign-language"],
+});
+
+const platformAdvanced = minCreditsInCategory({
+	id: "platform-advanced-8",
+	label: "PF 発展 8単位",
+	required: 8,
+	kinds: ["platform/advanced"],
+});
+
+const platform = requirementGroup({
+	id: "platform",
+	label: "プラットフォーム（合計 30単位 + 内訳）",
+	primary: platformTotal,
+	subSpecs: [
+		platformA,
+		platformB,
+		platformBasics,
+		platformForeign,
+		platformAdvanced,
+	],
+});
+
+const electiveSpec = elective({
+	id: "elective-38",
+	label: "選択科目 38単位",
+	required: 38,
+	otherFacultyCap: 8,
+});
+
+export const requirements: readonly PipelineStep[] = [
+	{ spec: primary12, allocation: "consume-required" },
+	{ spec: liberal, allocation: "consume-required" },
+	{ spec: seminar12, allocation: "consume-required" },
+	{ spec: seminar34, allocation: "consume-required" },
+	{ spec: seminar56, allocation: "consume-required" },
+	{ spec: platform, allocation: "consume-required" },
+	{ spec: electiveSpec, allocation: "observe" },
+];
+
+/**
+ * 総修得単位の要件は pipeline の leftover ではなく、全履修済み科目プールに対して
+ * 評価する必要があるため、pipeline から切り出し standalone な Specification として
+ * 保持する。
+ */
+export const totalRequirement: Specification = minCredits({
+	id: "total-124",
+	label: "総修得単位 124単位",
+	required: 124,
+	predicate: () => true,
+});
+
+export const thesisEligibility: Specification = allOf({
+	id: "thesis-eligibility",
+	label: "卒業論文履修資格",
+	specs: [
+		minCreditsInCategory({
+			id: "thesis-primary-12",
+			label: "初年次科目 12単位",
+			required: 12,
+			kinds: ["common-education/primary"],
+		}),
+		perLanguageMin({
+			id: "thesis-language-4",
+			label: "教養外国語 1言語につき 4単位以上",
+			requiredPerLanguage: 4,
+			requiredLanguageCount: 1,
+		}),
+		minCreditsInCategory({
+			id: "thesis-seminar12-4",
+			label: "ゼミナール I・II 4単位",
+			required: 4,
+			kinds: ["seminar/1-2"],
+		}),
+		minCreditsInCategory({
+			id: "thesis-seminar34-4",
+			label: "ゼミナール III・IV 4単位",
+			required: 4,
+			kinds: ["seminar/3-4"],
+		}),
+		minCredits({
+			id: "thesis-total-90",
+			label: "総修得単位 90単位",
+			required: 90,
+			predicate: () => true,
+		}),
+	],
+});
