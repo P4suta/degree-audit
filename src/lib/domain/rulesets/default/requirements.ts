@@ -4,6 +4,7 @@ import { cappedContribution } from "../../specifications/combinators/capped-cont
 import { elective } from "../../specifications/combinators/elective.ts";
 import { minCredits } from "../../specifications/combinators/min-credits.ts";
 import { minCreditsInCategory } from "../../specifications/combinators/min-credits-in-category.ts";
+import { minCreditsWithCaps } from "../../specifications/combinators/min-credits-with-caps.ts";
 import { minFieldsCovered } from "../../specifications/combinators/min-fields-covered.ts";
 import { perLanguageMin } from "../../specifications/combinators/per-language-min.ts";
 import { requirementGroup } from "../../specifications/combinators/requirement-group.ts";
@@ -16,15 +17,18 @@ const primary12 = minCreditsInCategory({
 	kinds: ["common-education/primary"],
 });
 
-const liberalTotal28 = minCreditsInCategory({
+const liberalTotal28 = minCreditsWithCaps({
 	id: "liberal-total-28",
-	label: "教養 合計 28単位",
+	label: "教養 合計 28単位（キャリア形成支援は上限 6 単位まで算入）",
 	required: 28,
 	kinds: [
 		"common-education/liberal/field",
 		"common-education/liberal/foreign-language",
 		"common-education/liberal/career",
 	],
+	caps: {
+		"common-education/liberal/career": 6,
+	},
 });
 
 const liberalFields3 = minFieldsCovered({

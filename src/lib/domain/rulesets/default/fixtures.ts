@@ -117,9 +117,41 @@ const makeThesisBlocked = (): AcademicRecord => {
 	]);
 };
 
+/**
+ * キャリア上限 6 単位を超えて履修しても、教養合計 28 には 6 単位しか算入されない
+ * ことを検証するシナリオ。見かけ上「field 12 + 外国語 8 + career 8 = 28」だが、
+ * 実効は「field 12 + 外国語 8 + career 6 = 26」で不足扱い。
+ */
+const makeCareerOverflow = (): AcademicRecord => {
+	counter = 0;
+	return AcademicRecord.of(defaultProfile, [
+		// 初年次 12
+		...courses(6, 2, SubjectCategory.primary()),
+		// 教養（一見 28 だがキャリア 8 → 実効 6 なので実効 26）
+		...courses(2, 2, SubjectCategory.liberalField(FieldCategory.Humanities)),
+		...courses(2, 2, SubjectCategory.liberalField(FieldCategory.Social)),
+		...courses(2, 2, SubjectCategory.liberalField(FieldCategory.Natural)),
+		...courses(4, 2, SubjectCategory.liberalForeignLanguage("英語")),
+		...courses(4, 2, SubjectCategory.liberalCareer()),
+		// ゼミ
+		...courses(2, 2, SubjectCategory.seminar12()),
+		...courses(2, 2, SubjectCategory.seminar34()),
+		...courses(4, 2, SubjectCategory.seminar56Thesis()),
+		// PF 30
+		...courses(1, 2, SubjectCategory.platformBasicA()),
+		...courses(1, 2, SubjectCategory.platformBasicB()),
+		...courses(1, 2, SubjectCategory.platformBasicA()),
+		...courses(2, 2, SubjectCategory.platformForeignLanguage()),
+		...courses(10, 2, SubjectCategory.platformAdvanced()),
+		// 選択
+		...courses(20, 2, SubjectCategory.electiveOwnCourse()),
+	]);
+};
+
 export const fixtures = {
 	graduatable: makeGraduatable,
 	insufficientCredits: makeInsufficientCredits,
 	missingField: makeMissingField,
 	thesisBlocked: makeThesisBlocked,
+	careerOverflow: makeCareerOverflow,
 } as const;

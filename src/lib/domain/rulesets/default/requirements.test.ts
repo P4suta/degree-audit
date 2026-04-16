@@ -71,6 +71,17 @@ describe("default ruleset — missingField fixture", () => {
 	});
 });
 
+describe("default ruleset — careerOverflow fixture", () => {
+	it("fails liberal requirement when career cap 6 excludes the excess", () => {
+		const record = fixtures.careerOverflow();
+		const outcome = runAll(record);
+		const liberalStep = outcome.pipeline.steps.find((s) => s.id === "liberal");
+		expect(liberalStep?.result.satisfied).toBe(false);
+		// 12 (field) + 8 (english) + 6 (career capped) = 26 < 28
+		expect(liberalStep?.result.actual).toBe(26);
+	});
+});
+
 describe("default ruleset — thesisBlocked fixture", () => {
 	it("main requirements may pass while thesis eligibility fails on language", () => {
 		const record = fixtures.thesisBlocked();
