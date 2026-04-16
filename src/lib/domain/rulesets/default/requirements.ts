@@ -142,9 +142,19 @@ const platform = requirementGroup({
 
 const electiveSpec = elective({
 	id: "elective-38",
-	label: "選択科目 38単位",
+	label:
+		"選択科目 38単位（他コース + 他学部 + PF 超過は 16 単位枠、他学部 8 単位まで）",
 	required: 38,
 	otherFacultyCap: 8,
+	frameKinds: [
+		"elective/other-course",
+		"elective/other-faculty",
+		"platform/basic-a",
+		"platform/basic-b",
+		"platform/foreign-language",
+		"platform/advanced",
+	],
+	frameCap: 16,
 });
 
 export const requirements: readonly PipelineStep[] = [

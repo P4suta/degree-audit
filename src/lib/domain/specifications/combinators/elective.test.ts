@@ -20,48 +20,91 @@ const course = (
 		rawCategoryLabel: "raw",
 	});
 
+const FRAME_KINDS = [
+	"elective/other-course",
+	"elective/other-faculty",
+	"platform/basic-a",
+	"platform/basic-b",
+	"platform/foreign-language",
+	"platform/advanced",
+] as const;
+
 describe("elective", () => {
 	const spec = elective({
 		id: "elective",
 		label: "選択",
 		required: 38,
 		otherFacultyCap: 8,
+		frameKinds: FRAME_KINDS,
+		frameCap: 16,
 	});
 
-	it("counts all non-otherFaculty courses and caps otherFaculty at cap", () => {
+	it("ownCourse is outside the frame and counts unconditionally", () => {
 		const pool = [
 			course("own1", 20, SubjectCategory.electiveOwnCourse()),
-			course("other1", 14, SubjectCategory.electiveOtherCourse()),
-			course("fac1", 4, SubjectCategory.electiveOtherFaculty()),
-			course("fac2", 4, SubjectCategory.electiveOtherFaculty()),
-			course("fac3", 2, SubjectCategory.electiveOtherFaculty()), // exceeds 8 cap
+			course("own2", 20, SubjectCategory.electiveOwnCourse()),
 		];
 		const r = spec.evaluate({ pool });
-		expect(r.actual).toBe(20 + 14 + 8); // fac3 excluded
+		expect(r.actual).toBe(40);
 		expect(r.satisfied).toBe(true);
-		expect(r.contributingCourses).toHaveLength(4);
 	});
 
-	it("is not satisfied when below threshold", () => {
+	it("caps otherFaculty individually at otherFacultyCap and reports excess", () => {
+		const pool = [
+			course("fac1", 6, SubjectCategory.electiveOtherFaculty()),
+			course("fac2", 6, SubjectCategory.electiveOtherFaculty()), // 12 > 8 → excluded
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.actual).toBe(6);
+		expect(r.contributingCourses).toHaveLength(1);
+		expect(r.diagnostics.some((d) => d.includes("他学部上限超過"))).toBe(true);
+	});
+
+	it("caps the frame at frameCap across other-course + other-faculty + PF overflow", () => {
+		const pool = [
+			course("other1", 10, SubjectCategory.electiveOtherCourse()),
+			course("fac1", 4, SubjectCategory.electiveOtherFaculty()),
+			course("pf1", 4, SubjectCategory.platformAdvanced()),
+			// running total within frame: 10 + 4 + 4 = 18 > 16 → pf1 excluded (4)
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.actual).toBe(14);
+		expect(r.diagnostics.some((d) => d.includes("枠超過"))).toBe(true);
+	});
+
+	it("applies otherFacultyCap before the frame cap when both would bite", () => {
+		const pool = [
+			course("fac1", 6, SubjectCategory.electiveOtherFaculty()),
+			course("fac2", 6, SubjectCategory.electiveOtherFaculty()), // otherFaculty cap rejects
+			course("other1", 12, SubjectCategory.electiveOtherCourse()), // frame: 6+12 = 18 > 16 → excluded
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.actual).toBe(6);
+	});
+
+	it("frame leftover does NOT count ownCourse toward the 16-unit cap", () => {
+		const pool = [
+			course("own1", 30, SubjectCategory.electiveOwnCourse()),
+			course("other1", 16, SubjectCategory.electiveOtherCourse()),
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.actual).toBe(46);
+	});
+
+	it("is not satisfied when below required", () => {
 		const pool = [course("own1", 10)];
 		const r = spec.evaluate({ pool });
 		expect(r.actual).toBe(10);
 		expect(r.satisfied).toBe(false);
 	});
 
-	it("reports otherFaculty contribution in diagnostics", () => {
-		const pool = [course("fac1", 4, SubjectCategory.electiveOtherFaculty())];
-		const r = spec.evaluate({ pool });
-		expect(r.diagnostics.some((d) => d.includes("他学部"))).toBe(true);
-	});
-
-	it("does not add an otherFaculty course that would exceed the cap", () => {
+	it("reports otherFaculty and frame usage in diagnostics even without overflow", () => {
 		const pool = [
-			course("fac1", 6, SubjectCategory.electiveOtherFaculty()),
-			course("fac2", 6, SubjectCategory.electiveOtherFaculty()), // would exceed 8
+			course("fac1", 4, SubjectCategory.electiveOtherFaculty()),
+			course("other1", 8, SubjectCategory.electiveOtherCourse()),
 		];
 		const r = spec.evaluate({ pool });
-		expect(r.actual).toBe(6);
-		expect(r.contributingCourses).toHaveLength(1);
+		expect(r.diagnostics.some((d) => d.includes("他学部科目"))).toBe(true);
+		expect(r.diagnostics.some((d) => d.includes("16 単位枠"))).toBe(true);
 	});
 });
