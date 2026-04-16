@@ -3,9 +3,11 @@
 	import { goto } from "$app/navigation";
 	import { GraduationCap, Trash2 } from "lucide-svelte";
 	import ErrorBanner from "$lib/presentation/components/ErrorBanner.svelte";
+	import WarningBanner from "$lib/presentation/components/WarningBanner.svelte";
 	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
 	import { profileStore } from "$lib/presentation/stores/profile.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
+	import { warningsStore } from "$lib/presentation/stores/warnings.svelte";
 	import "./layout.css";
 
 	let { children } = $props();
@@ -21,6 +23,7 @@
 		transcriptStore.clear();
 		profileStore.clear();
 		errorsStore.clear();
+		warningsStore.clear();
 		void goto(`${base}/profile`);
 	};
 </script>
@@ -35,6 +38,7 @@
 	</header>
 	<main class="mx-auto max-w-5xl space-y-6 px-4 py-8">
 		<ErrorBanner />
+		<WarningBanner />
 		{@render children()}
 	</main>
 	<footer
