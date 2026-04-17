@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import { X } from "lucide-svelte";
+	import X from "lucide-svelte/icons/x";
 	import Alert from "../ui/Alert.svelte";
 	import type { Warning } from "../stores/warnings.svelte.ts";
 	import { warningsStore } from "../stores/warnings.svelte.ts";

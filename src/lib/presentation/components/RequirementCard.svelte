@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from "$app/paths";
-	import { CircleCheck, CircleX } from "lucide-svelte";
+	import CircleCheck from "lucide-svelte/icons/circle-check";
+	import CircleX from "lucide-svelte/icons/circle-x";
 	import type { SpecResult } from "$lib/domain/specifications/types";
 	import Badge from "../ui/Badge.svelte";
 	import Progress from "../ui/Progress.svelte";

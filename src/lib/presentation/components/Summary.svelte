@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GraduationCap } from "lucide-svelte";
+	import GraduationCap from "lucide-svelte/icons/graduation-cap";
 	import type { Assessment } from "$lib/application/assess-graduation";
 	import { Credit } from "$lib/domain/value-objects/credit";
 	import Badge from "../ui/Badge.svelte";

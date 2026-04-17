@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FileUp } from "lucide-svelte";
+	import FileUp from "lucide-svelte/icons/file-up";
 	import Button from "../ui/Button.svelte";
 
 	interface Props {
