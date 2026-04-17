@@ -1,3 +1,5 @@
+name: degree-audit
+
 x-app: &app
   build:
     context: .
