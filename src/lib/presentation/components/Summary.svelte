@@ -66,7 +66,7 @@
 			・すべての要件を充足
 		{/if}
 	</p>
-	<div class="flex flex-wrap items-center gap-2 text-sm">
+	<div class="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm">
 		<span class="text-[color:var(--color-fg-muted)]">卒論履修資格</span>
 		<Badge
 			variant={assessment.thesisEligibility.satisfied ? "success" : "warning"}
@@ -74,7 +74,9 @@
 			{assessment.thesisEligibility.satisfied ? "資格あり" : "未達"}
 		</Badge>
 		{#if inProgressCount > 0}
-			<span class="ml-2 text-[color:var(--color-fg-muted)]">履修中</span>
+			<span class="w-full text-[color:var(--color-fg-muted)] sm:ml-2 sm:w-auto">
+				履修中
+			</span>
 			<Badge variant="accent">
 				{inProgressCount} 科目 / {inProgressNumber} 単位
 			</Badge>

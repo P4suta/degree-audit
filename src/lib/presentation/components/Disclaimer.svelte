@@ -4,12 +4,49 @@
 	import Button from "$lib/presentation/ui/Button.svelte";
 	import { onMount } from "svelte";
 
-	// モーダル展開中はバックグラウンドのスクロールを止める。
-	// 復帰時に元の overflow を戻す（別モーダルと競合しないように）
+	let dialogEl: HTMLDivElement;
+
+	// モーダル展開中は以下を制御する:
+	//   - バックグラウンドのスクロール停止
+	//   - Tab キーのフォーカストラップ（モーダル外へ抜けないようループさせる）
+	//
+	// フォーカストラップは bits-ui 等の外部依存を避けて最小構成で実装。
+	// モーダル内の focusable 要素を毎回 querySelectorAll で取り直すことで、
+	// 将来動的にボタンが増減しても追従する。
 	onMount(() => {
 		const prev = document.body.style.overflow;
 		document.body.style.overflow = "hidden";
+
+		const getFocusables = (): HTMLElement[] => {
+			if (dialogEl === undefined) return [];
+			return Array.from(
+				dialogEl.querySelectorAll<HTMLElement>(
+					'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+				),
+			);
+		};
+
+		const handleKey = (e: KeyboardEvent): void => {
+			if (e.key !== "Tab") return;
+			const items = getFocusables();
+			if (items.length === 0) return;
+			const first = items[0];
+			const last = items[items.length - 1];
+			if (first === undefined || last === undefined) return;
+			const active = document.activeElement;
+			if (e.shiftKey && active === first) {
+				e.preventDefault();
+				last.focus();
+			} else if (!e.shiftKey && active === last) {
+				e.preventDefault();
+				first.focus();
+			}
+		};
+
+		dialogEl.addEventListener("keydown", handleKey);
+
 		return () => {
+			dialogEl.removeEventListener("keydown", handleKey);
 			document.body.style.overflow = prev;
 		};
 	});
@@ -20,27 +57,38 @@
   アプリ全体の front で表示し、disclaimerStore.acknowledged が true になるまで
   コンテンツを触れない。tab キー・スクリーンリーダは aria-modal と aria-labelledby
   で誘導する。
+
+  レイアウト構造:
+    外側 wrapper (fixed inset-0)
+      ├─ items-start sm:items-center: モバイルは上端固定（長文でも先頭から読める）
+      └─ ダイアログ本体 (max-w-[560px] max-h-[calc(100dvh-48px)] flex-col)
+           ├─ ヘッダー（固定）
+           ├─ スクロール領域 (flex-1 overflow-y-auto)
+           └─ フッター（固定）: 同意ボタン
+  これによりモバイル横画面や小さな画面でも本文がスクロールでき、同意ボタンが
+  常に見える状態を保つ。100dvh は Safari 16+ の dynamic viewport。未対応は
+  100vh にフォールバックする。
 -->
 <div
-	class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[rgba(0,0,0,0.45)] px-4 py-6 backdrop-blur-md motion-safe:animate-[fadeIn_0.2s_ease-out]"
+	bind:this={dialogEl}
+	class="fixed inset-0 z-50 flex items-start justify-center bg-[rgba(0,0,0,0.45)] px-4 py-6 backdrop-blur-md motion-safe:animate-[fadeIn_0.2s_ease-out] sm:items-center"
 	role="dialog"
 	aria-modal="true"
 	aria-labelledby="disclaimer-title"
 	aria-describedby="disclaimer-body"
 >
 	<div
-		class="w-full max-w-[560px] rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-6 shadow-[var(--shadow-lifted)] sm:p-8"
+		class="disclaimer-modal flex w-full max-w-[560px] flex-col rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] shadow-[var(--shadow-lifted)]"
 	>
-		<h2
-			id="disclaimer-title"
-			class="text-h1 text-[color:var(--color-fg)]"
-		>
-			ご利用にあたって
-		</h2>
+		<div class="flex-shrink-0 p-5 pb-3 sm:p-8 sm:pb-4">
+			<h2 id="disclaimer-title" class="text-h1 text-[color:var(--color-fg)]">
+				ご利用にあたって
+			</h2>
+		</div>
 
 		<div
 			id="disclaimer-body"
-			class="mt-5 space-y-3 text-small leading-[1.7] text-[color:var(--color-fg-muted)]"
+			class="flex-1 space-y-3 overflow-y-auto px-5 text-small leading-[1.7] text-[color:var(--color-fg-muted)] sm:px-8"
 		>
 			<p>
 				本ツールは個人が作成・提供する<strong
@@ -82,31 +130,36 @@
 			</p>
 		</div>
 
-		<div class="mt-6 flex justify-center">
+		<div class="flex-shrink-0 p-5 sm:p-8">
 			<Button
 				variant="primary"
 				size="lg"
-				class="rounded-[var(--radius-pill)] px-8"
+				class="w-full rounded-[var(--radius-pill)]"
 				autofocus
 				onclick={() => disclaimerStore.acknowledge()}
 			>
 				上記を確認のうえ、利用する
 			</Button>
+			<p
+				class="mt-3 text-center text-caption text-[color:var(--color-fg-subtle)]"
+			>
+				完全版は <a
+					href={`${base}/disclaimer`}
+					class="underline hover:text-[color:var(--color-accent-link)]"
+					>免責事項ページ</a
+				> で確認できます
+			</p>
 		</div>
-
-		<p
-			class="mt-3 text-center text-xs text-[color:var(--color-fg-subtle)]"
-		>
-			完全版は <a
-				href={`${base}/disclaimer`}
-				class="underline hover:text-[color:var(--color-accent-link)]"
-				>免責事項ページ</a
-			> で確認できます
-		</p>
 	</div>
 </div>
 
 <style>
+	.disclaimer-modal {
+		/* 古いブラウザ fallback → モダン Safari 16+ では dvh を採用 */
+		max-height: calc(100vh - 48px);
+		max-height: calc(100dvh - 48px);
+	}
+
 	@keyframes fadeIn {
 		from {
 			opacity: 0;
