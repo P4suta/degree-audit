@@ -43,21 +43,38 @@
 		return viewCourseAllocations(assessment, record.courses, passed);
 	});
 
-	// この要件の natural home 科目のうち、他所で算入されたもの（＝読み替え先）
+	// この要件の natural home 科目のうち、他所へ読み替えられたもの。
+	// 移動先で算入された（counted）ものと、枠超過で算入外になった（excluded）
+	// ものを双方向に一つのリストとして見せる
+	interface ReallocatedEntry {
+		readonly course: Course;
+		readonly destination: string;
+		readonly counted: boolean;
+		readonly reason: string | null;
+	}
 	const reallocatedOut = $derived.by(() => {
-		if (allocations === null) return [] as Array<{
-			course: Course;
-			consumedBy: string;
-		}>;
-		const out: Array<{ course: Course; consumedBy: string }> = [];
+		if (allocations === null) return [] as ReallocatedEntry[];
+		const out: ReallocatedEntry[] = [];
 		for (const [, alloc] of allocations) {
-			if (alloc.status.kind !== "counted") continue;
 			if (alloc.status.naturalHome !== requirementId) continue;
-			if (alloc.status.requirementId === requirementId) continue;
-			out.push({
-				course: alloc.course,
-				consumedBy: alloc.status.requirementId,
-			});
+			if (alloc.status.kind === "counted") {
+				if (alloc.status.requirementId === requirementId) continue;
+				out.push({
+					course: alloc.course,
+					destination: alloc.status.requirementId,
+					counted: true,
+					reason: null,
+				});
+			} else if (alloc.status.kind === "excluded") {
+				// elective が 16 単位枠 / 他学部 cap で落としたものも、
+				// 元所属から見ると「選択へ読み替えたが算入外」になる
+				out.push({
+					course: alloc.course,
+					destination: "elective-38",
+					counted: false,
+					reason: alloc.status.reason,
+				});
+			}
 		}
 		return out;
 	});
@@ -74,25 +91,46 @@
 		return out;
 	});
 
-	// 貢献科目のうち「natural home が違う = 読み替えて来た」ものと、元から当該要件の科目
+	// この要件に「実際に算入されている」科目だけを抜き出す。
+	// spec.contributingCourses は kind にマッチした pool 全部を返すので、
+	// consume-required で超過した分（＝本来ここが natural home だが下流へ流れた
+	// 分）も含まれてしまう。allocation 情報で「この要件が消費した / elective
+	// 観察で算入した」ものだけにフィルタする。
+	// ただし total-124 / thesis-eligibility は pipeline step ではなく
+	// 全 passed courses を評価するもの（読み替え概念は無い）なので、フィルタせず
+	// r.contributingCourses をそのまま表示する
 	interface ContribEntry {
 		readonly course: Course;
 		readonly naturalHome: string | null;
 		readonly reallocated: boolean;
 	}
+	const isPipelineStep = $derived(step !== undefined);
 	const contributingAnnotated = $derived.by(() => {
 		const r = result();
 		if (r === null) return [] as ContribEntry[];
 		const entries: ContribEntry[] = [];
 		for (const c of r.contributingCourses) {
 			const alloc = allocations?.get(c.id as string);
-			const naturalHome =
-				alloc?.status.kind === "counted"
-					? alloc.status.naturalHome
-					: (alloc?.status.naturalHome ?? null);
-			const reallocated =
-				alloc?.status.kind === "counted" ? alloc.status.reallocated : false;
-			entries.push({ course: c, naturalHome, reallocated });
+			if (isPipelineStep) {
+				// 本要件で "counted" 扱いになっているものだけを残す
+				if (alloc?.status.kind !== "counted") continue;
+				if (alloc.status.requirementId !== requirementId) continue;
+				entries.push({
+					course: c,
+					naturalHome: alloc.status.naturalHome,
+					reallocated: alloc.status.reallocated,
+				});
+			} else {
+				// total-124 / thesis-eligibility：そのまま表示
+				entries.push({
+					course: c,
+					naturalHome:
+						alloc?.status.kind === "counted"
+							? alloc.status.naturalHome
+							: (alloc?.status.naturalHome ?? null),
+					reallocated: false,
+				});
+			}
 		}
 		return entries;
 	});
@@ -217,21 +255,36 @@
 		</section>
 
 		{#if reallocatedOut.length > 0}
+			{@const countedCount = reallocatedOut.filter((e) => e.counted).length}
+			{@const excludedCount = reallocatedOut.length - countedCount}
 			<section class="space-y-2">
 				<h3 class="font-semibold text-[color:var(--color-fg)]">
-					ここから読み替え（他要件で算入）
+					ここから読み替え（超過分の行き先）
 				</h3>
 				<p class="text-sm text-[color:var(--color-fg-muted)]">
-					この要件の必要単位を超えた分は、以下の科目として他の要件で算入されています。
+					この要件の必要単位を超えた分は選択科目へ読み替え候補になります。
+					うち <strong>{countedCount} 件</strong> が実際に算入され、
+					{#if excludedCount > 0}
+						<strong>{excludedCount} 件</strong> は上限超過で算入外でした。
+					{:else}
+						算入外はありません。
+					{/if}
 				</p>
 				<CourseList
 					courses={reallocatedOut.map((e) => e.course)}
 					annotations={reallocatedOut.map((e) => ({
 						course: e.course,
-						badge: {
-							variant: "accent" as const,
-							label: `→ ${requirementDisplayName(e.consumedBy)}`,
-						},
+						badge: e.counted
+							? {
+									variant: "accent" as const,
+									label: `→ ${requirementDisplayName(e.destination)} で算入`,
+								}
+							: {
+									variant: "warning" as const,
+									label: `→ ${requirementDisplayName(e.destination)}（${
+										e.reason ?? "上限超過"
+									}）`,
+								},
 					}))}
 				/>
 			</section>
