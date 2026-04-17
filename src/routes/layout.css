@@ -143,3 +143,160 @@ kbd {
 		transition-duration: 0.01ms !important;
 	}
 }
+
+/*
+ * ─── Typography Utilities ─────────────────────────────────────────
+ * DESIGN.md §1 のタイポグラフィスケールを @utility として一元化。
+ * ページ側の hardcoded text-[XXpx] 指定を廃止し、セマンティックな
+ * 名前（text-display / text-h1 / text-h2 …）で呼び出せるようにする。
+ *
+ * モバイル基準で一段階小さくし、sm(640) 以上で DESIGN.md の既定値に戻す。
+ * Body は 15px 固定（DESIGN.md 準拠）。フォーム要素の iOS auto-zoom 対策は
+ * Input / Select コンポーネント側で個別に 16px 強制する。
+ */
+@utility text-display {
+	font-size: 32px;
+	line-height: 1.1;
+	letter-spacing: -0.02em;
+	font-weight: 600;
+	@media (min-width: 640px) {
+		font-size: 40px;
+		line-height: 1.08;
+	}
+	@media (min-width: 1024px) {
+		font-size: 44px;
+	}
+}
+@utility text-h1 {
+	font-size: 24px;
+	line-height: 1.18;
+	letter-spacing: -0.02em;
+	font-weight: 600;
+	@media (min-width: 640px) {
+		font-size: 28px;
+		line-height: 1.12;
+	}
+}
+@utility text-h2 {
+	font-size: 20px;
+	line-height: 1.22;
+	letter-spacing: -0.015em;
+	font-weight: 600;
+	@media (min-width: 640px) {
+		font-size: 22px;
+		line-height: 1.18;
+	}
+}
+@utility text-h3 {
+	font-size: 16px;
+	line-height: 1.28;
+	letter-spacing: -0.01em;
+	font-weight: 600;
+	@media (min-width: 640px) {
+		font-size: 17px;
+		line-height: 1.24;
+	}
+}
+@utility text-body {
+	font-size: 15px;
+	line-height: 1.55;
+	letter-spacing: -0.005em;
+}
+@utility text-body-emph {
+	font-size: 15px;
+	line-height: 1.4;
+	letter-spacing: -0.005em;
+	font-weight: 600;
+}
+@utility text-small {
+	font-size: 13px;
+	line-height: 1.45;
+}
+@utility text-caption {
+	font-size: 12px;
+	line-height: 1.4;
+}
+@utility text-micro {
+	font-size: 11px;
+	line-height: 1.35;
+}
+
+/*
+ * ─── Page Container ───────────────────────────────────────────────
+ * 全ページ共通の幅制約 + 段階的 padding。
+ * DESIGN.md §3 レイアウトの「最大幅 980px」を維持。padding だけを
+ * ブレイクポイントで段階化して、モバイルは詰めつつデスクトップは
+ * ゆったり取る。
+ */
+@utility container-page {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 980px;
+	padding-left: 1rem; /* mobile: 16px */
+	padding-right: 1rem;
+	@media (min-width: 640px) {
+		padding-left: 1.5rem; /* tablet: 24px */
+		padding-right: 1.5rem;
+	}
+	@media (min-width: 1024px) {
+		padding-left: 2rem; /* desktop: 32px */
+		padding-right: 2rem;
+	}
+}
+
+/*
+ * ─── Mobile baseline ──────────────────────────────────────────────
+ * 日本語長文の禁則処理 + 長い raw ラベル（「人文社会科学部 人文科学コース」
+ * 等）の親幅突き出し防止。
+ */
+body {
+	overflow-wrap: anywhere;
+	line-break: strict;
+}
+
+/*
+ * iOS Safari / Android Chrome のタップ時ハイライト（青い四角）を消す。
+ * focus-visible のリングは別途残るので視認性は保たれる。
+ */
+a,
+button,
+[role="button"] {
+	-webkit-tap-highlight-color: transparent;
+}
+
+/*
+ * ─── Skip-table（モバイル時にカード化） ────────────────────────────
+ * import ページの「スキップ理由」テーブルは、モバイルでは横スクロールを
+ * 避けるためブロック要素に畳んで「ラベル: 値」形式で縦に並べる。
+ * tablet (md=768) 以上では通常の table に戻し、thead を sticky にする。
+ */
+@media (max-width: 639px) {
+	.skip-table,
+	.skip-table thead,
+	.skip-table tbody,
+	.skip-table tr,
+	.skip-table td {
+		display: block;
+		width: 100%;
+	}
+	.skip-table thead {
+		display: none;
+	}
+	.skip-table tr {
+		border-bottom: 1px solid var(--color-warning-border);
+		padding: 8px 0;
+	}
+	.skip-table tr:last-child {
+		border-bottom: none;
+	}
+	.skip-table td {
+		padding: 2px 0;
+		border: none;
+	}
+	.skip-table td[data-label]::before {
+		content: attr(data-label) ": ";
+		font-weight: 600;
+		color: var(--color-warning-fg);
+		margin-right: 4px;
+	}
+}
