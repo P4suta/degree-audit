@@ -70,6 +70,8 @@
 		return fields;
 	};
 
+	const pageTitle = "プロフィール設定 — 卒業要件判定ツール";
+
 	const handleSubmit = (event: SubmitEvent) => {
 		event.preventDefault();
 		errorsStore.clear();
@@ -91,6 +93,10 @@
 		void safeGoto(`${base}/import`);
 	};
 </script>
+
+<svelte:head>
+	<title>{pageTitle}</title>
+</svelte:head>
 
 <header class="space-y-3">
 	<h2
