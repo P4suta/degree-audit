@@ -40,6 +40,13 @@
 			"trailingCommas": "none"
 		}
 	},
+	"css": {
+		"parser": {
+			"cssModules": true,
+			"allowWrongLineComments": false,
+			"tailwindDirectives": true
+		}
+	},
 	"linter": {
 		"enabled": true,
 		"rules": {

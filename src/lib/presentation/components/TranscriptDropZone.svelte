@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { FileUp } from "lucide-svelte";
+	import Button from "../ui/Button.svelte";
 
 	interface Props {
 		readonly onFile: (file: File) => void;
@@ -30,17 +31,20 @@
 		if (file && !disabled) onFile(file);
 		target.value = "";
 	};
+
+	const containerClass = $derived.by(() => {
+		if (disabled) {
+			return "cursor-not-allowed border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] opacity-60";
+		}
+		if (dragging) {
+			return "border-[color:var(--color-accent)] bg-[color:var(--color-surface-muted)]";
+		}
+		return "border-[color:var(--color-border-strong)] bg-[color:var(--color-surface)]";
+	});
 </script>
 
 <div
-	class={`rounded-lg border-2 border-dashed p-10 text-center transition
-		${
-			disabled
-				? "cursor-not-allowed border-slate-200 bg-slate-100 opacity-60"
-				: dragging
-					? "border-sky-500 bg-sky-50"
-					: "border-slate-300 bg-slate-50"
-		}`}
+	class="rounded-[var(--radius-card)] border-2 border-dashed p-10 text-center motion-safe:transition-colors {containerClass}"
 	ondragover={(e) => {
 		e.preventDefault();
 		if (!disabled) dragging = true;
@@ -52,19 +56,24 @@
 	role="region"
 	aria-label="成績ファイルのドロップゾーン"
 >
-	<FileUp class="mx-auto h-10 w-10 text-slate-400" aria-hidden="true" />
-	<p class="mt-3 text-sm text-slate-700">
+	<FileUp
+		class="mx-auto h-10 w-10 text-[color:var(--color-fg-subtle)]"
+		aria-hidden="true"
+	/>
+	<p class="mt-3 text-sm text-[color:var(--color-fg)]">
 		成績閲覧画面を保存した MHTML ファイルをここにドロップ
 	</p>
-	<p class="mt-1 text-xs text-slate-500">または</p>
-	<button
-		type="button"
-		class="mt-3 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
-		onclick={() => inputElement?.click()}
-		{disabled}
-	>
-		ファイルを選択
-	</button>
+	<p class="mt-1 text-xs text-[color:var(--color-fg-subtle)]">または</p>
+	<div class="mt-3">
+		<Button
+			variant="primary"
+			size="md"
+			onclick={() => inputElement?.click()}
+			{disabled}
+		>
+			ファイルを選択
+		</Button>
+	</div>
 	<input
 		bind:this={inputElement}
 		type="file"

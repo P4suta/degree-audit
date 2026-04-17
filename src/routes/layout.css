@@ -1,1 +1,117 @@
 @import "tailwindcss";
+
+/*
+ * v1 デザイントークン。色は oklch で指定し、同じ hue を維持したまま明度を
+ * 切り替えることでライト/ダーク両方で自然に馴染む配色を得る。
+ *
+ * 運用ルール：
+ *   - 画面側クラスで `text-slate-*` / `bg-white` を直書きしない
+ *   - 代わりに `text-fg` / `bg-surface` / `border-border` 等を使う
+ *   - 新しい色を追加する時は `@theme` にトークンを増やしてから参照する
+ */
+
+@theme {
+	--color-surface: oklch(99% 0.003 240);
+	--color-surface-muted: oklch(96% 0.005 240);
+	--color-surface-raised: oklch(100% 0 0);
+	--color-border: oklch(90% 0.005 240);
+	--color-border-strong: oklch(80% 0.008 240);
+	--color-fg: oklch(25% 0.015 240);
+	--color-fg-muted: oklch(45% 0.012 240);
+	--color-fg-subtle: oklch(60% 0.008 240);
+
+	--color-accent: oklch(55% 0.15 240);
+	--color-accent-hover: oklch(48% 0.17 240);
+	--color-accent-fg: oklch(99% 0.005 240);
+
+	--color-danger: oklch(55% 0.18 25);
+	--color-danger-bg: oklch(97% 0.015 25);
+	--color-danger-fg: oklch(35% 0.15 25);
+	--color-danger-border: oklch(80% 0.08 25);
+
+	--color-warning: oklch(70% 0.13 75);
+	--color-warning-bg: oklch(97% 0.05 85);
+	--color-warning-fg: oklch(40% 0.1 65);
+	--color-warning-border: oklch(80% 0.11 80);
+
+	--color-success: oklch(55% 0.14 145);
+	--color-success-bg: oklch(96% 0.03 145);
+	--color-success-fg: oklch(38% 0.12 145);
+	--color-success-border: oklch(80% 0.12 145);
+
+	--radius-card: 0.75rem;
+	--radius-control: 0.5rem;
+	--shadow-card:
+		0 1px 2px oklch(0% 0 0 / 0.04), 0 4px 12px oklch(0% 0 0 / 0.05);
+	--shadow-card-hover:
+		0 2px 4px oklch(0% 0 0 / 0.06), 0 8px 24px oklch(0% 0 0 / 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+	@theme {
+		--color-surface: oklch(18% 0.01 240);
+		--color-surface-muted: oklch(22% 0.015 240);
+		--color-surface-raised: oklch(24% 0.018 240);
+		--color-border: oklch(32% 0.015 240);
+		--color-border-strong: oklch(45% 0.02 240);
+		--color-fg: oklch(95% 0.005 240);
+		--color-fg-muted: oklch(75% 0.012 240);
+		--color-fg-subtle: oklch(60% 0.015 240);
+
+		--color-accent: oklch(70% 0.15 240);
+		--color-accent-hover: oklch(78% 0.16 240);
+		--color-accent-fg: oklch(15% 0.02 240);
+
+		--color-danger: oklch(70% 0.18 25);
+		--color-danger-bg: oklch(28% 0.06 25);
+		--color-danger-fg: oklch(92% 0.05 25);
+		--color-danger-border: oklch(50% 0.14 25);
+
+		--color-warning: oklch(80% 0.13 75);
+		--color-warning-bg: oklch(30% 0.05 70);
+		--color-warning-fg: oklch(95% 0.05 80);
+		--color-warning-border: oklch(55% 0.11 80);
+
+		--color-success: oklch(75% 0.14 145);
+		--color-success-bg: oklch(25% 0.05 145);
+		--color-success-fg: oklch(92% 0.06 145);
+		--color-success-border: oklch(50% 0.12 145);
+
+		--shadow-card:
+			0 1px 2px oklch(0% 0 0 / 0.3), 0 4px 12px oklch(0% 0 0 / 0.4);
+		--shadow-card-hover:
+			0 2px 4px oklch(0% 0 0 / 0.35), 0 8px 24px oklch(0% 0 0 / 0.45);
+	}
+}
+
+/*
+ * ページの基礎色。body に直接流すことで Tailwind クラスを書いていない
+ * 要素（SVG 背景など）も一貫した配色になる。
+ */
+html {
+	background-color: var(--color-surface-muted);
+	color: var(--color-fg);
+	color-scheme: light dark;
+}
+
+body {
+	background-color: var(--color-surface-muted);
+	color: var(--color-fg);
+}
+
+/* OS の reduce-motion を尊重。`motion-safe:` prefix を付けたクラスは自動で
+ * 無効化されるが、component 側の JS アニメーションなどは別途考慮する。
+ * ※ これは a11y の推奨パターンで、どんな author style にも勝つ必要があるため
+ *   !important が正当化される。 */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		/* biome-ignore lint/complexity/noImportantStyles: a11y override for prefers-reduced-motion */
+		animation-duration: 0.01ms !important;
+		/* biome-ignore lint/complexity/noImportantStyles: a11y override for prefers-reduced-motion */
+		animation-iteration-count: 1 !important;
+		/* biome-ignore lint/complexity/noImportantStyles: a11y override for prefers-reduced-motion */
+		transition-duration: 0.01ms !important;
+	}
+}

@@ -18,4 +18,4 @@
 	});
 </script>
 
-<p class="text-sm text-slate-600">リダイレクト中…</p>
+<p class="text-sm text-[color:var(--color-fg-muted)]">リダイレクト中…</p>

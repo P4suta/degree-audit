@@ -7,6 +7,7 @@
 	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
 	import { profileStore } from "$lib/presentation/stores/profile.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
+	import Button from "$lib/presentation/ui/Button.svelte";
 	import { warningsStore } from "$lib/presentation/stores/warnings.svelte";
 	import "./layout.css";
 
@@ -28,12 +29,21 @@
 	};
 </script>
 
-<div class="min-h-screen bg-slate-50 text-slate-900 antialiased">
-	<header class="border-b border-slate-200 bg-white">
+<div class="min-h-screen antialiased">
+	<header
+		class="border-b border-[color:var(--color-border)] bg-[color:var(--color-surface)]"
+	>
 		<div class="mx-auto flex max-w-5xl items-center gap-3 px-4 py-4">
-			<GraduationCap class="h-6 w-6 text-slate-900" aria-hidden="true" />
-			<h1 class="text-lg font-bold">卒業要件判定ツール</h1>
-			<p class="ml-2 text-xs text-slate-500">高知大学 v1</p>
+			<GraduationCap
+				class="h-6 w-6 text-[color:var(--color-accent)]"
+				aria-hidden="true"
+			/>
+			<h1 class="text-lg font-bold text-[color:var(--color-fg)]">
+				卒業要件判定ツール
+			</h1>
+			<p class="ml-2 text-xs text-[color:var(--color-fg-subtle)]">
+				高知大学 v1
+			</p>
 		</div>
 	</header>
 	<main class="mx-auto max-w-5xl space-y-6 px-4 py-8">
@@ -42,20 +52,16 @@
 		{@render children()}
 	</main>
 	<footer
-		class="mx-auto max-w-5xl space-y-3 px-4 pb-8 pt-4 text-xs text-slate-500"
+		class="mx-auto max-w-5xl space-y-3 px-4 pb-8 pt-4 text-xs text-[color:var(--color-fg-muted)]"
 	>
 		<p>
 			このブラウザに学生プロフィールと成績データが保存されます。送信や外部通信は
 			行われません。共用 PC・公共 PC ではご使用を避けるか、利用後に必ずデータを
 			消去してください。
 		</p>
-		<button
-			type="button"
-			class="inline-flex items-center gap-1 rounded border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-100"
-			onclick={handleClearAll}
-		>
+		<Button variant="secondary" size="sm" onclick={handleClearAll}>
 			<Trash2 class="h-3.5 w-3.5" aria-hidden="true" />
 			保存されている全データを消去
-		</button>
+		</Button>
 	</footer>
 </div>

@@ -11,24 +11,30 @@
 </script>
 
 {#if courses.length === 0}
-	<p class="text-sm text-slate-500">{emptyMessage}</p>
+	<p class="text-sm text-[color:var(--color-fg-subtle)]">{emptyMessage}</p>
 {:else}
-	<ul class="divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+	<ul
+		class="divide-y divide-[color:var(--color-border)] rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)]"
+	>
 		{#each courses as course (course.id)}
 			<li class="flex items-center justify-between gap-3 px-4 py-3 text-sm">
 				<div class="flex-1 min-w-0">
-					<p class="truncate font-medium text-slate-900">{course.name}</p>
-					<p class="truncate text-xs text-slate-500">
+					<p class="truncate font-medium text-[color:var(--color-fg)]">
+						{course.name}
+					</p>
+					<p class="truncate text-xs text-[color:var(--color-fg-subtle)]">
 						{course.rawCategoryLabel}
 						{#if course.year !== undefined}
 							・{course.year}年度
 						{/if}
 					</p>
 				</div>
-				<span class="shrink-0 rounded bg-slate-100 px-2 py-0.5 text-xs font-mono text-slate-700">
+				<span
+					class="shrink-0 rounded bg-[color:var(--color-surface-muted)] px-2 py-0.5 text-xs font-mono text-[color:var(--color-fg-muted)]"
+				>
 					{course.grade}
 				</span>
-				<span class="shrink-0 text-xs text-slate-600">
+				<span class="shrink-0 text-xs text-[color:var(--color-fg-muted)]">
 					{Credit.toNumber(course.credit)} 単位
 				</span>
 			</li>
