@@ -1,13 +1,17 @@
 <script lang="ts">
 	import { base } from "$app/paths";
+	import {
+		listCourseOptions,
+		listFacultyOptions,
+	} from "$lib/application/list-profile-options";
 	import { StudentProfile } from "$lib/domain/entities/student-profile";
 	import { isErr } from "$lib/domain/errors/result";
+	import { defaultRegistry } from "$lib/domain/rulesets/index";
 	import { safeGoto } from "$lib/presentation/navigation";
 	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
 	import { profileStore } from "$lib/presentation/stores/profile.svelte";
 	import Button from "$lib/presentation/ui/Button.svelte";
 	import Card from "$lib/presentation/ui/Card.svelte";
-	import Input from "$lib/presentation/ui/Input.svelte";
 	import Select from "$lib/presentation/ui/Select.svelte";
 
 	// 令和元年度以前（2019 年度以前）のカリキュラムは要件データが無いため
@@ -25,9 +29,67 @@
 		MIN_SUPPORTED_YEAR,
 		currentYear - TYPICAL_SENIOR_OFFSET,
 	);
+
+	// 学部・コースは双方向にカスケードする。
+	//   - 学部を選ぶとコース候補がその学部のものに絞られる
+	//   - コースを選ぶと学部候補がそのコースを含む学部に絞られる
+	//   - どちらの方向でも「候補が一意に決まった時点で自動選択」する
+	// これにより「コースから入力しても破綻しない」UX が実現できる。
 	const existing = profileStore.current;
-	let facultyId = $state(existing?.facultyId ?? "");
-	let courseId = $state(existing?.courseId ?? "");
+
+	// 初期値は既存プロフィールが registry に適合する場合だけ引き継ぐ。
+	// 適合しない場合は空のまま → 下記 $effect が候補一意時に自動補完する。
+	const initialFacultyOptions = listFacultyOptions(defaultRegistry);
+	const initialFaculty =
+		existing !== null && initialFacultyOptions.includes(existing.facultyId)
+			? existing.facultyId
+			: "";
+	const initialCourseOptions = listCourseOptions(defaultRegistry, {
+		faculty: initialFaculty,
+	});
+	const initialCourse =
+		existing !== null && initialCourseOptions.includes(existing.courseId)
+			? existing.courseId
+			: "";
+
+	let facultyId = $state(initialFaculty);
+	let courseId = $state(initialCourse);
+
+	// 反応的な候補リスト。相手側の選択値で絞り込む（空なら絞らない = 全候補）
+	const facultyOptions = $derived(
+		listFacultyOptions(defaultRegistry, { course: courseId }),
+	);
+	const courseOptions = $derived(
+		listCourseOptions(defaultRegistry, { faculty: facultyId }),
+	);
+
+	// 片方の候補が一意に決まったら自動選択。
+	// 現在の値が候補から外れた場合（学部変更でコースが無効になった等）も空に戻す。
+	$effect(() => {
+		const only = facultyOptions.length === 1 ? facultyOptions[0] : undefined;
+		if (only !== undefined && facultyId !== only) {
+			facultyId = only;
+		} else if (
+			facultyId !== "" &&
+			facultyOptions.length > 0 &&
+			!facultyOptions.includes(facultyId)
+		) {
+			facultyId = "";
+		}
+	});
+	$effect(() => {
+		const only = courseOptions.length === 1 ? courseOptions[0] : undefined;
+		if (only !== undefined && courseId !== only) {
+			courseId = only;
+		} else if (
+			courseId !== "" &&
+			courseOptions.length > 0 &&
+			!courseOptions.includes(courseId)
+		) {
+			courseId = "";
+		}
+	});
+
 	let matriculationYear = $state(
 		existing !== null && existing.matriculationYear >= MIN_SUPPORTED_YEAR
 			? existing.matriculationYear
@@ -118,21 +180,23 @@
 			>
 				学部
 			</label>
-			<Input
+			<Select
 				id="profile-faculty-id"
-				type="text"
 				class="mt-1"
-				placeholder="例: 人文社会科学部"
 				invalid={fieldErrors.facultyId !== undefined}
 				errorId={fieldErrors.facultyId
 					? "profile-faculty-id-error"
 					: undefined}
 				bind:value={facultyId}
-				autocapitalize="off"
-				autocorrect="off"
-				spellcheck={false}
 				required
-			/>
+			>
+				{#if facultyId === ""}
+					<option value="" disabled>— 学部を選択 —</option>
+				{/if}
+				{#each facultyOptions as f (f)}
+					<option value={f}>{f}</option>
+				{/each}
+			</Select>
 			{#if fieldErrors.facultyId}
 				<p
 					id="profile-faculty-id-error"
@@ -149,21 +213,23 @@
 			>
 				コース
 			</label>
-			<Input
+			<Select
 				id="profile-course-id"
-				type="text"
 				class="mt-1"
-				placeholder="例: 人文科学コース"
 				invalid={fieldErrors.courseId !== undefined}
 				errorId={fieldErrors.courseId
 					? "profile-course-id-error"
 					: undefined}
 				bind:value={courseId}
-				autocapitalize="off"
-				autocorrect="off"
-				spellcheck={false}
 				required
-			/>
+			>
+				{#if courseId === ""}
+					<option value="" disabled>— コースを選択 —</option>
+				{/if}
+				{#each courseOptions as c (c)}
+					<option value={c}>{c}</option>
+				{/each}
+			</Select>
 			{#if fieldErrors.courseId}
 				<p
 					id="profile-course-id-error"
