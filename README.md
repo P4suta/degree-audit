@@ -1,42 +1,86 @@
-# sv
+# 卒業要件判定ツール（高知大学）
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+高知大学「Web 成績」からコピー＆ペースト or MHTML 保存した成績データを取り込み、
+**卒業要件の充足状況**と**卒業論文履修資格**を可視化する非公式 Web ツール。
 
-## Creating a project
+ブラウザ内だけで動くクライアントサイド SPA（SvelteKit + adapter-static）で、
+サーバーへのアップロード・永続保存は一切ありません。
 
-If you're seeing this, you've probably already done this step. Congrats!
+## 対応範囲
+
+現時点で対応している学生：
+
+- **人文社会科学部 人文科学コース**
+  - 令和 2〜5 年度（2020〜2023 年度）入学生
+  - 令和 6 年度（2024 年度）以降入学生
+
+令和元年度（2019 年度）以前の入学生、他学部・他コースは現時点では未対応です。
+
+## 免責事項
+
+本ツール「卒業要件判定ツール」（以下「本ツール」）は、個人が作成・提供する
+**非公式**のものであり、高知大学とは一切の関係がなく、同大学による承認又は
+推奨を受けたものではありません。
+
+本ツールが使用する卒業要件データは、同大学が一般に公開している「履修案内」の
+うち、本ツール作成時点（2026 年 4 月現在）で確認できたものに基づいており、
+非公開情報は一切使用していません。大学の履修案内は改定されることがあり、
+本ツールが最新の規程を反映していない可能性があります。
+
+本ツールは現状有姿（AS IS）で提供され、明示又は黙示を問わず、正確性、
+完全性、最新性、特定目的への適合性その他一切の保証をいたしません。本ツールの
+利用又は利用不能により生じた直接的又は間接的な損害（履修登録の誤り、単位
+不足による留年・卒業延期その他の不利益を含みます）について、作成者は一切の
+責任を負いません。
+
+**本ツールの判定結果は、履修計画を立てる際の参考情報にすぎません。**
+**卒業・履修に関わる最終的な判断は、必ず**
+
+- 所属学部が発行する最新の**履修案内**
+- 所属学部の**教務担当**（学生支援課、教務課等）
+- **指導教員（チューター）**
+
+**のいずれかによりご確認ください。**
+特に卒業論文履修資格については、年 2 回（3 月・9 月）に開催される大学の
+卒業論文履修資格判定会議が公式な判定機関となります。
+
+入力された学生プロフィール・成績データは、すべてご利用中のブラウザタブ内の
+メモリ上でのみ処理されます。サーバーへの送信、ブラウザへの永続保存
+（LocalStorage / Cookie 等）は一切行われません。
+
+## 開発
+
+### 必要なもの
+
+- [Bun](https://bun.com) 最新版
+
+### セットアップ
 
 ```sh
-# create a new project
-npx sv create my-app
+bun install
 ```
 
-To recreate this project with the same configuration:
+### 開発サーバー
 
 ```sh
-# recreate this project
-bun x sv@0.15.1 create --template minimal --types ts --add vitest="usages:unit,component" playwright tailwindcss="plugins:none" sveltekit-adapter="adapter:static" --no-download-check --install bun .
+bun run dev
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### 本番ビルド
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun run build
 ```
 
-## Building
+ビルド成果物は `build/` に出力され、任意の静的ホスティングにそのまま乗せられます。
 
-To create a production version of your app:
+### テスト・型・Lint
 
 ```sh
-npm run build
+bun run test        # Vitest
+bun run test:coverage  # カバレッジ付き
+bun run check       # svelte-check + TypeScript
+bun run lint        # Biome
 ```
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+プロジェクトのテスト方針は `CLAUDE.md` と `DESIGN.md` を参照してください。

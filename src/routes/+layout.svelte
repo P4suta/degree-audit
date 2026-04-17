@@ -1,13 +1,28 @@
 <script lang="ts">
+	import { base } from "$app/paths";
 	import GraduationCap from "lucide-svelte/icons/graduation-cap";
+	import Disclaimer from "$lib/presentation/components/Disclaimer.svelte";
 	import ErrorBanner from "$lib/presentation/components/ErrorBanner.svelte";
 	import WarningBanner from "$lib/presentation/components/WarningBanner.svelte";
+	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
 	import "./layout.css";
 
 	let { children } = $props();
 </script>
 
-<div class="min-h-screen antialiased">
+<!--
+  免責事項の同意モーダル。disclaimerStore.acknowledged が true になるまで
+  本体コンテンツへアクセスできない（fixed inset-0 + z-50 で被さる）。
+  卒業に関わる判定を提供する性質上、毎セッション確認を取る設計。
+-->
+{#if !disclaimerStore.acknowledged}
+	<Disclaimer />
+{/if}
+
+<div
+	class="min-h-screen antialiased"
+	aria-hidden={!disclaimerStore.acknowledged}
+>
 	<!-- DESIGN.md: translucent glass header（ライト版）。
 	     sticky + backdrop-filter で軽い浮遊感。罫線でコンテンツと区切る。 -->
 	<header
@@ -28,6 +43,12 @@
 			>
 				高知大学 v1
 			</span>
+			<span
+				class="ml-auto inline-flex items-center gap-1 rounded-[var(--radius-micro)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] px-2 py-0.5 text-[11px] font-medium text-[color:var(--color-warning-fg)]"
+				title="個人開発の非公式ツールです"
+			>
+				非公式
+			</span>
 		</div>
 	</header>
 	<main class="mx-auto max-w-[980px] space-y-8 px-5 py-10 sm:py-14">
@@ -38,6 +59,22 @@
 	<footer
 		class="mx-auto max-w-[980px] space-y-2 px-5 pb-10 pt-6 text-xs text-[color:var(--color-fg-subtle)]"
 	>
+		<p>
+			<strong class="text-[color:var(--color-fg-muted)]"
+				>本ツールは個人が作成した非公式のツールで、高知大学とは関係ありません。</strong
+			>
+			判定は参考情報にすぎず、卒業・履修の最終確認は必ず
+			<strong class="text-[color:var(--color-fg-muted)]"
+				>最新の履修案内・所属学部の教務担当・指導教員</strong
+			>
+			にご相談ください。詳細は
+			<a
+				href={`${base}/disclaimer`}
+				class="text-[color:var(--color-accent-link)] underline hover:no-underline"
+			>免責事項</a
+			>
+			をご覧ください。
+		</p>
 		<p>
 			入力した学生プロフィールと成績データは、このタブ内のメモリにのみ保持されます。
 			ブラウザには保存されず、外部への送信もありません。タブを閉じる・リロードする・

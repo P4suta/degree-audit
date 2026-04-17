@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from "$app/paths";
 	import type { Assessment } from "$lib/application/assess-graduation";
 	import { Credit } from "$lib/domain/value-objects/credit";
 	import Badge from "../ui/Badge.svelte";
@@ -42,6 +43,16 @@
 			卒業要件まであと{totalRemaining > 0 ? ` ${totalRemaining} 単位` : ""}
 		{/if}
 	</h2>
+	<p class="text-xs text-[color:var(--color-fg-subtle)]">
+		※ この判定は参考情報です。最終確認は<strong
+			class="font-medium text-[color:var(--color-fg-muted)]"
+			>最新の履修案内・所属学部の教務担当・指導教員</strong
+		>で必ず行ってください（<a
+			href={`${base}/disclaimer`}
+			class="text-[color:var(--color-accent-link)] underline hover:no-underline"
+			>免責事項</a
+		>）。
+	</p>
 	<p class="text-base text-[color:var(--color-fg-muted)]">
 		総修得単位
 		<span class="font-semibold tabular-nums text-[color:var(--color-fg)]">
