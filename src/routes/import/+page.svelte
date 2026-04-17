@@ -289,9 +289,9 @@
 		>
 			{skippedStore.count} 件の科目を解析できずスキップしました（クリックで詳細）
 		</summary>
-		<div class="mt-3 overflow-x-auto">
-			<table class="min-w-full text-xs">
-				<thead class="text-left">
+		<div class="mt-3 md:overflow-x-auto">
+			<table class="skip-table min-w-full text-xs md:text-small">
+				<thead class="text-left md:sticky md:top-[56px] md:z-10 md:bg-[color:var(--color-warning-bg)]">
 					<tr
 						class="border-b border-[color:var(--color-warning-border)] text-[color:var(--color-warning-fg)]"
 					>
@@ -305,9 +305,9 @@
 						<tr
 							class="border-b border-[color:var(--color-warning-border)]/50 last:border-0"
 						>
-							<td class="py-1 pr-3">{failure.raw.name || "（不明）"}</td>
-							<td class="py-1 pr-3">{failure.raw.rawCategoryLabel}</td>
-							<td class="py-1">{failure.error.userMessage}</td>
+							<td data-label="科目名" class="py-1 pr-3">{failure.raw.name || "（不明）"}</td>
+							<td data-label="区分ラベル" class="py-1 pr-3">{failure.raw.rawCategoryLabel}</td>
+							<td data-label="理由" class="py-1">{failure.error.userMessage}</td>
 						</tr>
 					{/each}
 				</tbody>
