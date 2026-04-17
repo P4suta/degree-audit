@@ -233,7 +233,7 @@
 			disabled={importing}
 			rows="10"
 			placeholder="ここに成績ページからコピーしたテキストを貼り付け"
-			class="block w-full rounded-[var(--radius-control)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-raised)] p-3 font-mono text-xs text-[color:var(--color-fg)] shadow-sm focus:border-[color:var(--color-accent)] focus:outline-none focus:ring-1 focus:ring-[color:var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-60"
+			class="block w-full rounded-[var(--radius-control)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-raised)] p-3 font-mono text-[13px] leading-relaxed text-[color:var(--color-fg)] shadow-sm focus:border-[color:var(--color-accent)] focus:outline-none focus:ring-1 focus:ring-[color:var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-60"
 		></textarea>
 
 		<div class="flex items-center gap-2">

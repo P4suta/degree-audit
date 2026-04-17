@@ -7,6 +7,8 @@
 	import { profileStore } from "$lib/presentation/stores/profile.svelte";
 	import Button from "$lib/presentation/ui/Button.svelte";
 	import Card from "$lib/presentation/ui/Card.svelte";
+	import Input from "$lib/presentation/ui/Input.svelte";
+	import Select from "$lib/presentation/ui/Select.svelte";
 
 	// 令和元年度以前（2019 年度以前）のカリキュラムは要件データが無いため
 	// 選択肢から除外する。ここの定数を上げれば UI から古い学年が自動で消える
@@ -118,18 +120,19 @@
 			>
 				学部
 			</label>
-			<input
+			<Input
 				id="profile-faculty-id"
 				type="text"
-				class="mt-1 block w-full rounded-[var(--radius-control)] border bg-[color:var(--color-surface-raised)] px-3 py-2 text-sm text-[color:var(--color-fg)] shadow-sm focus:outline-none focus:ring-1 {fieldErrors.facultyId
-					? 'border-[color:var(--color-danger-border)] focus:border-[color:var(--color-danger)] focus:ring-[color:var(--color-danger)]'
-					: 'border-[color:var(--color-border)] focus:border-[color:var(--color-accent)] focus:ring-[color:var(--color-accent)]'}"
+				class="mt-1"
 				placeholder="例: 人文社会科学部"
-				aria-invalid={fieldErrors.facultyId ? "true" : undefined}
-				aria-describedby={fieldErrors.facultyId
+				invalid={fieldErrors.facultyId !== undefined}
+				errorId={fieldErrors.facultyId
 					? "profile-faculty-id-error"
 					: undefined}
 				bind:value={facultyId}
+				autocapitalize="off"
+				autocorrect="off"
+				spellcheck={false}
 				required
 			/>
 			{#if fieldErrors.facultyId}
@@ -148,18 +151,19 @@
 			>
 				コース
 			</label>
-			<input
+			<Input
 				id="profile-course-id"
 				type="text"
-				class="mt-1 block w-full rounded-[var(--radius-control)] border bg-[color:var(--color-surface-raised)] px-3 py-2 text-sm text-[color:var(--color-fg)] shadow-sm focus:outline-none focus:ring-1 {fieldErrors.courseId
-					? 'border-[color:var(--color-danger-border)] focus:border-[color:var(--color-danger)] focus:ring-[color:var(--color-danger)]'
-					: 'border-[color:var(--color-border)] focus:border-[color:var(--color-accent)] focus:ring-[color:var(--color-accent)]'}"
+				class="mt-1"
 				placeholder="例: 人文科学コース"
-				aria-invalid={fieldErrors.courseId ? "true" : undefined}
-				aria-describedby={fieldErrors.courseId
+				invalid={fieldErrors.courseId !== undefined}
+				errorId={fieldErrors.courseId
 					? "profile-course-id-error"
 					: undefined}
 				bind:value={courseId}
+				autocapitalize="off"
+				autocorrect="off"
+				spellcheck={false}
 				required
 			/>
 			{#if fieldErrors.courseId}
@@ -178,13 +182,11 @@
 			>
 				入学年度
 			</label>
-			<select
+			<Select
 				id="profile-matriculation-year"
-				class="mt-1 block w-full rounded-[var(--radius-control)] border bg-[color:var(--color-surface-raised)] px-3 py-2 text-sm text-[color:var(--color-fg)] shadow-sm focus:outline-none focus:ring-1 {fieldErrors.matriculationYear
-					? 'border-[color:var(--color-danger-border)] focus:border-[color:var(--color-danger)] focus:ring-[color:var(--color-danger)]'
-					: 'border-[color:var(--color-border)] focus:border-[color:var(--color-accent)] focus:ring-[color:var(--color-accent)]'}"
-				aria-invalid={fieldErrors.matriculationYear ? "true" : undefined}
-				aria-describedby={fieldErrors.matriculationYear
+				class="mt-1"
+				invalid={fieldErrors.matriculationYear !== undefined}
+				errorId={fieldErrors.matriculationYear
 					? "profile-matriculation-year-error"
 					: undefined}
 				bind:value={matriculationYear}
@@ -193,7 +195,7 @@
 				{#each yearOptions as y (y)}
 					<option value={y}>{y} 年度</option>
 				{/each}
-			</select>
+			</Select>
 			<p class="mt-1 text-xs text-[color:var(--color-fg-subtle)]">
 				現在、令和 2 年度（2020 年度）以降入学生に対応しています。
 			</p>
