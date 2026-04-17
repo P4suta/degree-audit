@@ -15,7 +15,6 @@ export const ErrorCode = {
 	RawCourseMappingFailed: "DEGREE_AUDIT/RAW_COURSE/MAPPING_FAILED",
 	ImportAllCategoriesUnknown: "DEGREE_AUDIT/IMPORT/ALL_CATEGORIES_UNKNOWN",
 	ImportFileReadFailed: "DEGREE_AUDIT/IMPORT/FILE_READ_FAILED",
-	StorageQuotaExceeded: "DEGREE_AUDIT/STORAGE/QUOTA_EXCEEDED",
 	NavigationFailed: "DEGREE_AUDIT/UI/NAVIGATION_FAILED",
 } as const satisfies Record<string, `DEGREE_AUDIT/${string}`>;
 
