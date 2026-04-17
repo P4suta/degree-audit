@@ -54,41 +54,40 @@
 
 <!--
   ご利用にあたって（免責事項）同意モーダル。
-  アプリ全体の front で表示し、disclaimerStore.acknowledged が true になるまで
-  コンテンツを触れない。tab キー・スクリーンリーダは aria-modal と aria-labelledby
-  で誘導する。
 
-  レイアウト構造:
-    外側 wrapper (fixed inset-0)
-      ├─ items-start sm:items-center: モバイルは上端固定（長文でも先頭から読める）
-      └─ ダイアログ本体 (max-w-[560px] max-h-[calc(100dvh-48px)] flex-col)
-           ├─ ヘッダー（固定）
-           ├─ スクロール領域 (flex-1 overflow-y-auto)
-           └─ フッター（固定）: 同意ボタン
-  これによりモバイル横画面や小さな画面でも本文がスクロールでき、同意ボタンが
-  常に見える状態を保つ。100dvh は Safari 16+ の dynamic viewport。未対応は
-  100vh にフォールバックする。
+  レイアウト方針:
+    - モバイル（<640px）: フル viewport の "シート"。rounded/border なし。
+      viewport 全体を使いきるので「縦にはみ出す」感を消す。notch/ホームバー
+      対応で safe-area-inset を padding に乗せる。
+    - デスクトップ（≥640px）: 中央配置の max-w-[560px] カード。従来の挙動。
+
+  高さは 100dvh (dynamic viewport height) を優先。iOS Safari で address bar
+  が表示されているとき 100vh が実画面より大きくなる問題を回避する。
+  古いブラウザは同値の 100vh にフォールバックする。
 -->
 <div
 	bind:this={dialogEl}
-	class="fixed inset-0 z-50 flex items-start justify-center bg-[rgba(0,0,0,0.45)] px-4 py-6 backdrop-blur-md motion-safe:animate-[fadeIn_0.2s_ease-out] sm:items-center"
+	class="disclaimer-overlay fixed left-0 right-0 top-0 z-50 flex items-stretch justify-center bg-[rgba(0,0,0,0.45)] backdrop-blur-md motion-safe:animate-[fadeIn_0.2s_ease-out] sm:items-center sm:px-4 sm:py-6"
 	role="dialog"
 	aria-modal="true"
 	aria-labelledby="disclaimer-title"
 	aria-describedby="disclaimer-body"
 >
 	<div
-		class="disclaimer-modal flex w-full max-w-[560px] flex-col rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] shadow-[var(--shadow-lifted)]"
+		class="flex w-full flex-col bg-[color:var(--color-surface)] sm:max-h-[calc(100dvh-48px)] sm:max-w-[560px] sm:rounded-[var(--radius-card)] sm:border sm:border-[color:var(--color-border)] sm:shadow-[var(--shadow-lifted)]"
 	>
-		<div class="flex-shrink-0 p-5 pb-3 sm:p-8 sm:pb-4">
-			<h2 id="disclaimer-title" class="text-h1 text-[color:var(--color-fg)]">
+		<div
+			class="flex-shrink-0 px-4 pb-2 pt-4 sm:p-8 sm:pb-4"
+			style="padding-top: max(1rem, env(safe-area-inset-top));"
+		>
+			<h2 id="disclaimer-title" class="text-h2 text-[color:var(--color-fg)] sm:text-h1">
 				ご利用にあたって
 			</h2>
 		</div>
 
 		<div
 			id="disclaimer-body"
-			class="flex-1 space-y-3 overflow-y-auto px-5 text-small leading-[1.7] text-[color:var(--color-fg-muted)] sm:px-8"
+			class="flex-1 space-y-3 overflow-y-auto px-4 text-small leading-relaxed text-[color:var(--color-fg-muted)] sm:px-8 sm:leading-[1.7]"
 		>
 			<p>
 				本ツールは個人が作成・提供する<strong
@@ -130,7 +129,10 @@
 			</p>
 		</div>
 
-		<div class="flex-shrink-0 p-5 sm:p-8">
+		<div
+			class="flex-shrink-0 border-t border-[color:var(--color-divider)] px-4 py-4 sm:border-t-0 sm:p-8 sm:pt-4"
+			style="padding-bottom: max(1rem, env(safe-area-inset-bottom));"
+		>
 			<Button
 				variant="primary"
 				size="lg"
@@ -141,7 +143,7 @@
 				上記を確認のうえ、利用する
 			</Button>
 			<p
-				class="mt-3 text-center text-caption text-[color:var(--color-fg-subtle)]"
+				class="mt-2 text-center text-caption text-[color:var(--color-fg-subtle)] sm:mt-3"
 			>
 				完全版は <a
 					href={`${base}/disclaimer`}
@@ -154,10 +156,16 @@
 </div>
 
 <style>
-	.disclaimer-modal {
-		/* 古いブラウザ fallback → モダン Safari 16+ では dvh を採用 */
-		max-height: calc(100vh - 48px);
-		max-height: calc(100dvh - 48px);
+	/*
+	 * overlay は fixed だが inset:0 を使うと iOS Safari で大きい viewport
+	 * (address bar 含む) を指してしまう。明示的に height を 100dvh (dynamic
+	 * viewport height) に固定することで、address bar の有無や software
+	 * keyboard の開閉に追従して visual viewport に収まる。
+	 * 100dvh 未対応ブラウザは同値の 100vh にフォールバックする。
+	 */
+	.disclaimer-overlay {
+		height: 100vh;
+		height: 100dvh;
 	}
 
 	@keyframes fadeIn {
