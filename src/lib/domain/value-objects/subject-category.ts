@@ -94,3 +94,30 @@ export const isElective = (c: SubjectCategory): boolean =>
 
 export const isLiberal = (c: SubjectCategory): boolean =>
 	c.kind.startsWith("common-education/liberal");
+
+/**
+ * 画面表示用のカテゴリ名。診断メッセージやバッジなどで kind の生文字列
+ * （例: `common-education/liberal/field`）を出さないようにするための単一情報源。
+ * ここを更新するだけで全画面の表示が揃う。
+ */
+const KIND_DISPLAY_NAMES: Readonly<Record<SubjectCategoryKind, string>> = {
+	"common-education/primary": "初年次科目",
+	"common-education/liberal/field": "教養 分野",
+	"common-education/liberal/foreign-language": "教養 外国語",
+	"common-education/liberal/career": "教養 キャリア形成支援",
+	"seminar/1-2": "ゼミナール I・II",
+	"seminar/3-4/spring": "ゼミナール III（演習 I）",
+	"seminar/3-4/fall": "ゼミナール IV（演習 II）",
+	"seminar/5-6-thesis": "卒業論文・ゼミナール V・VI",
+	"platform/basic-a": "PF 基礎 A 群",
+	"platform/basic-b": "PF 基礎 B 群",
+	"platform/foreign-language": "PF 外国語",
+	"platform/advanced": "PF 発展",
+	"elective/own-course": "自コース専門",
+	"elective/other-course": "他コース専門",
+	"elective/other-faculty": "他学部専門",
+	unknown: "区分未判定",
+};
+
+export const kindDisplayName = (kind: SubjectCategoryKind): string =>
+	KIND_DISPLAY_NAMES[kind];

@@ -219,6 +219,15 @@ const electiveSpec = elective({
 		"platform/foreign-language",
 		"platform/advanced",
 	],
+	// 上流で既に処理された kind は pool に残っていても診断に載せない
+	// （例：初年次や教養の超過 / cap-excluded で取りこぼされた科目）
+	upstreamHandledKinds: [
+		"common-education/primary",
+		"common-education/liberal/field",
+		"common-education/liberal/foreign-language",
+		"common-education/liberal/career",
+		"seminar/5-6-thesis",
+	],
 	otherFacultyCap: 8,
 	frameKinds: [
 		"elective/other-course",
@@ -232,8 +241,10 @@ const electiveSpec = elective({
 });
 
 export const requirements: readonly PipelineStep[] = [
-	{ spec: primary12, allocation: "consume-required" },
-	{ spec: liberal, allocation: "consume-required" },
+	// 初年次・教養・卒論ゼミ V-VI は 選択への読み替え対象ではない → consume-all
+	// ゼミ I-IV と PF は超過分が 選択 に読み替えられる → consume-required
+	{ spec: primary12, allocation: "consume-all" },
+	{ spec: liberal, allocation: "consume-all" },
 	{ spec: seminar12, allocation: "consume-required" },
 	{ spec: seminar34, allocation: "consume-required" },
 	{ spec: seminar56, allocation: "consume-all" },

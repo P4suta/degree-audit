@@ -240,6 +240,32 @@ describe("decision-table — unknown kind does not contribute to elective", () =
 	});
 });
 
+describe("decision-table — liberal overflow must not surface as elective diagnostic", () => {
+	it("career over-cap and extra 教養 stay silent in elective diagnostics", () => {
+		counter = 10_000;
+		const record = deriveFrom(fixtures.graduatable(), (cs) => [
+			...cs,
+			// 教養 career cap 6 超過 + 外国語/field を追加で積んでも、
+			// elective の「対象外 kind」診断に liberal/* は出てはいけない
+			mk(2, SubjectCategory.liberalCareer()),
+			mk(2, SubjectCategory.liberalCareer()),
+			mk(2, SubjectCategory.liberalForeignLanguage("英語")),
+			mk(2, SubjectCategory.liberalField(FieldCategory.Humanities)),
+		]);
+		const a = assess(record);
+		const elective = a.steps.find((s) => s.id === "elective-38");
+		const noisy = elective?.result.diagnostics.filter((d) =>
+			d.includes("common-education/liberal"),
+		);
+		expect(noisy).toEqual([]);
+		// primary の超過も同様に無言で除外されるべき
+		const primaryNoisy = elective?.result.diagnostics.filter((d) =>
+			d.includes("common-education/primary"),
+		);
+		expect(primaryNoisy).toEqual([]);
+	});
+});
+
 describe("decision-table — thesis eligibility fails when seminar I-II short", () => {
 	it("reports thesis unavailable when seminar I・II < 4", () => {
 		counter = 10_000;

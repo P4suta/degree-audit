@@ -1,32 +1,43 @@
 import type { Course } from "../../entities/course.ts";
-import type { SubjectCategoryKind } from "../../value-objects/subject-category.ts";
+import {
+	kindDisplayName,
+	type SubjectCategoryKind,
+} from "../../value-objects/subject-category.ts";
 import type { EvalContext, Specification, SpecResult } from "../types.ts";
 
 /**
  * 選択科目要件。leftoverPool（ゼミ超過 / PF 超過 + 他コース・他学部・自コース科目）
  * から required 単位を積み上げる。
  *
- * 3 段のフィルタを持つ：
+ * 4 段のフィルタを持つ：
+ *   - `upstreamHandledKinds`：上流要件（初年次・教養・卒論ゼミ V-VI 等）で
+ *     既にカウントされるべき kind。pool に残っていても選択 38 には関係しない
+ *     ため **診断にも出さず無言で除外**する。これが無いと超過や cap-excluded で
+ *     pool に残った上流 kind が「対象外 kind」と誤報される
  *   - `allowedKinds`：選択 38 に算入可能な kind ホワイトリスト（Kochi では
  *     自コース + ゼミ I-IV 超過 + 他コース + 他学部 + PF 超過）。
- *     leftoverPool に unknown や V-VI 等の想定外 kind が混入しても算入しない
+ *     ここに無い kind のうち upstream 扱いでないものは診断に載る
  *   - `otherFacultyCap`：他学部科目単独の上限（Kochi では 8 単位）
  *   - `frameKinds` + `frameCap`：他コース + 他学部 + PF 超過の合算上限
  *     （Kochi では 16 単位枠）。この枠の中で上記 otherFacultyCap がさらに効く
  *
  * 判定順序は pool の順（＝ pipeline から流れてきた順）。上限を超える科目・
- * 対象外 kind は contributingCourses から除外し、diagnostics で明示する。
+ * 真に想定外の kind は contributingCourses から除外し、diagnostics で明示する。
  */
 export const elective = (options: {
 	readonly id: string;
 	readonly label: string;
 	readonly required: number;
 	readonly allowedKinds: readonly SubjectCategoryKind[];
+	readonly upstreamHandledKinds?: readonly SubjectCategoryKind[];
 	readonly otherFacultyCap: number;
 	readonly frameKinds: readonly SubjectCategoryKind[];
 	readonly frameCap: number;
 }): Specification => {
 	const allowedKindSet = new Set<SubjectCategoryKind>(options.allowedKinds);
+	const upstreamHandledSet = new Set<SubjectCategoryKind>(
+		options.upstreamHandledKinds ?? [],
+	);
 	const frameKindSet = new Set<SubjectCategoryKind>(options.frameKinds);
 	return {
 		id: options.id,
@@ -42,6 +53,8 @@ export const elective = (options: {
 			for (const course of ctx.pool) {
 				const credit = course.credit as number;
 				const kind = course.category.kind;
+				// upstream で既に消費されるべき kind は診断に出さず無言でスキップ
+				if (upstreamHandledSet.has(kind)) continue;
 				if (!allowedKindSet.has(kind)) {
 					disallowedByKind.set(
 						kind,
@@ -83,7 +96,7 @@ export const elective = (options: {
 			}
 			for (const [kind, total] of disallowedByKind) {
 				diagnostics.push(
-					`対象外 kind \`${kind}\` が ${total} 単位（選択算入外）`,
+					`${kindDisplayName(kind)} の ${total} 単位は選択科目には算入できません`,
 				);
 			}
 			return {

@@ -81,7 +81,7 @@ describe("minCreditsWithCaps", () => {
 		const r = liberalSpec.evaluate({ pool });
 		expect(
 			r.diagnostics.some(
-				(d) => d.includes("career") && d.includes("卒業要件外"),
+				(d) => d.includes("キャリア形成支援") && d.includes("卒業要件外"),
 			),
 		).toBe(true);
 	});

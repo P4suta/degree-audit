@@ -122,21 +122,38 @@ describe("elective", () => {
 		expect(r.diagnostics.some((d) => d.includes("16 単位枠"))).toBe(true);
 	});
 
-	it("excludes kinds not listed in allowedKinds (unknown, seminar V-VI, etc.)", () => {
+	it("reports truly unexpected kinds (unknown) but silently ignores upstreamHandledKinds", () => {
+		const specWithUpstream = elective({
+			id: "elective-upstream",
+			label: "選択",
+			required: 38,
+			allowedKinds: ALLOWED_KINDS,
+			upstreamHandledKinds: ["seminar/5-6-thesis"],
+			otherFacultyCap: 8,
+			frameKinds: FRAME_KINDS,
+			frameCap: 16,
+		});
 		const pool = [
 			course("own1", 30, SubjectCategory.electiveOwnCourse()),
 			course("vvi1", 10, SubjectCategory.seminar56Thesis()),
 			course("unk1", 10, SubjectCategory.unknown("??")),
 		];
-		const r = spec.evaluate({ pool });
+		const r = specWithUpstream.evaluate({ pool });
 		expect(r.actual).toBe(30);
 		expect(r.contributingCourses.map((c) => c.id as string)).toEqual(["own1"]);
-		expect(
-			r.diagnostics.some((d) => d.includes("対象外 kind `seminar/5-6-thesis`")),
-		).toBe(true);
-		expect(r.diagnostics.some((d) => d.includes("対象外 kind `unknown`"))).toBe(
-			true,
-		);
+		// V-VI は upstream 扱いで無言で除外 → 診断に現れない
+		expect(r.diagnostics.some((d) => d.includes("ゼミナール V"))).toBe(false);
+		// unknown は allowedKinds にも upstream にもないので診断に出る
+		expect(r.diagnostics.some((d) => d.includes("区分未判定"))).toBe(true);
+	});
+
+	it("without upstreamHandledKinds, still reports every unlisted kind in diagnostics", () => {
+		const pool = [
+			course("own1", 30, SubjectCategory.electiveOwnCourse()),
+			course("vvi1", 10, SubjectCategory.seminar56Thesis()),
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.diagnostics.some((d) => d.includes("ゼミナール V"))).toBe(true);
 	});
 
 	it("counts all six eligible families (own, seminar I-II, seminar III-IV spring+fall, other-course, other-faculty, PF)", () => {

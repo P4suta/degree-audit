@@ -1,5 +1,8 @@
 import type { Course } from "../../entities/course.ts";
-import type { SubjectCategoryKind } from "../../value-objects/subject-category.ts";
+import {
+	kindDisplayName,
+	type SubjectCategoryKind,
+} from "../../value-objects/subject-category.ts";
 import type { EvalContext, Specification, SpecResult } from "../types.ts";
 
 export interface PredicateCap {
@@ -91,12 +94,13 @@ export const minCreditsWithCaps = (options: {
 			for (const [kind, cap] of capEntries) {
 				const raw = rawTotalPerKind.get(kind) ?? 0;
 				const counted = consumedPerKind.get(kind) ?? 0;
+				const label = kindDisplayName(kind);
 				if (raw > cap) {
 					diagnostics.push(
-						`${kind} 上限 ${cap} 単位（履修 ${raw} 単位、算入 ${counted} 単位、${raw - counted} 単位は卒業要件外）`,
+						`${label} 上限 ${cap} 単位（履修 ${raw} 単位、算入 ${counted} 単位、${raw - counted} 単位は卒業要件外）`,
 					);
 				} else if (raw > 0) {
-					diagnostics.push(`${kind} ${counted} / ${cap} 単位（上限枠内）`);
+					diagnostics.push(`${label} ${counted} / ${cap} 単位（上限枠内）`);
 				}
 			}
 			for (const pc of predicateCaps) {
