@@ -42,13 +42,15 @@
 	>
 		{#each courses as course (course.id)}
 			{@const badge = badgeById.get(course.id as string)}
-			<li class="flex items-center justify-between gap-3 px-5 py-3 text-sm">
+			<li
+				class="flex flex-col gap-2 px-4 py-3 text-sm sm:flex-row sm:items-center sm:gap-3 sm:px-5"
+			>
 				<div class="flex-1 min-w-0 space-y-0.5">
-					<p class="truncate text-[color:var(--color-fg)]">
+					<p class="break-words text-[color:var(--color-fg)] sm:truncate">
 						{course.name}
 					</p>
 					<p
-						class="truncate text-xs text-[color:var(--color-fg-subtle)] tabular-nums"
+						class="break-words text-xs text-[color:var(--color-fg-subtle)] tabular-nums sm:truncate"
 					>
 						{course.rawCategoryLabel}
 						{#if course.year !== undefined}
@@ -61,16 +63,18 @@
 						</div>
 					{/if}
 				</div>
-				<span
-					class="shrink-0 rounded-[var(--radius-micro)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] px-2 py-0.5 text-xs font-mono text-[color:var(--color-fg-muted)]"
-				>
-					{course.grade}
-				</span>
-				<span
-					class="shrink-0 text-xs tabular-nums text-[color:var(--color-fg-muted)]"
-				>
-					{Credit.toNumber(course.credit)} 単位
-				</span>
+				<div class="flex items-center gap-3 self-end sm:self-auto">
+					<span
+						class="shrink-0 rounded-[var(--radius-micro)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] px-2 py-0.5 text-xs font-mono text-[color:var(--color-fg-muted)]"
+					>
+						{course.grade}
+					</span>
+					<span
+						class="shrink-0 text-xs tabular-nums text-[color:var(--color-fg-muted)]"
+					>
+						{Credit.toNumber(course.credit)} 単位
+					</span>
+				</div>
 			</li>
 		{/each}
 	</ul>
