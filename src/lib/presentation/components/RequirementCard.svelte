@@ -39,7 +39,7 @@
 >
 	<div class="flex items-start justify-between gap-3">
 		<h3
-			class="flex-1 text-[15px] font-semibold leading-snug tracking-[-0.01em] text-[color:var(--color-fg)]"
+			class="flex-1 text-body-emph leading-snug text-[color:var(--color-fg)]"
 		>
 			{label}
 		</h3>

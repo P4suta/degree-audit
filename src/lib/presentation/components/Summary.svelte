@@ -34,9 +34,7 @@
   Apple 流の hero: 背景なしで大きい見出しを前面に。カードで囲わない。
 -->
 <section class="space-y-4" aria-label="卒業判定サマリ">
-	<h2
-		class="text-[40px] font-semibold leading-[1.08] tracking-[-0.02em] text-[color:var(--color-fg)] sm:text-[44px]"
-	>
+	<h2 class="text-display text-[color:var(--color-fg)]">
 		{#if assessment.graduatable}
 			卒業要件を満たしています
 		{:else}

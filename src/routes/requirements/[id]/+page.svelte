@@ -209,9 +209,7 @@
 {:else}
 	{@const r = result()}
 	{#if r !== null}
-		<h2
-			class="text-[40px] font-semibold leading-[1.08] tracking-[-0.02em] text-[color:var(--color-fg)] sm:text-[44px]"
-		>
+		<h2 class="text-display text-[color:var(--color-fg)]">
 			{label()}
 		</h2>
 		{@const tr = tentativeResult()}
@@ -276,7 +274,7 @@
 
 		{#if r.subResults.length > 0}
 			<section class="space-y-2">
-				<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">内訳</h3>
+				<h3 class="text-h3 text-[color:var(--color-fg)]">内訳</h3>
 				<ul class="space-y-2">
 					{#each r.subResults as sub, i (`${sub.required}-${i}`)}
 						<li>
@@ -306,7 +304,7 @@
 		{/if}
 
 		<section class="space-y-2">
-			<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">貢献科目</h3>
+			<h3 class="text-h3 text-[color:var(--color-fg)]">貢献科目</h3>
 			{#if contributingAnnotated.length === 0}
 				<Card padding="md" variant="flat">
 					<p class="text-sm text-[color:var(--color-fg-subtle)]">
@@ -332,7 +330,7 @@
 		{#if isPipelineStep && inProgressForThisReq.length > 0}
 			<section class="space-y-2">
 				<h3
-					class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]"
+					class="text-h3 text-[color:var(--color-fg)]"
 				>
 					履修中（評価待ち）
 				</h3>
@@ -350,7 +348,7 @@
 		{:else if !isPipelineStep && allInProgressCourses.length > 0}
 			<section class="space-y-2">
 				<h3
-					class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]"
+					class="text-h3 text-[color:var(--color-fg)]"
 				>
 					履修中（評価待ち）
 				</h3>
@@ -371,7 +369,7 @@
 			{@const countedCount = reallocatedOut.filter((e) => e.counted).length}
 			{@const excludedCount = reallocatedOut.length - countedCount}
 			<section class="space-y-2">
-				<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">
+				<h3 class="text-h3 text-[color:var(--color-fg)]">
 					ここから読み替え（超過分の行き先）
 				</h3>
 				<p class="text-sm text-[color:var(--color-fg-muted)]">
@@ -405,7 +403,7 @@
 
 		{#if r.excludedCourses && r.excludedCourses.length > 0}
 			<section class="space-y-2">
-				<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">
+				<h3 class="text-h3 text-[color:var(--color-fg)]">
 					算入外（上限超過）
 				</h3>
 				<p class="text-sm text-[color:var(--color-fg-muted)]">
@@ -423,7 +421,7 @@
 
 		{#if unusedOverflow.length > 0}
 			<section class="space-y-2">
-				<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">
+				<h3 class="text-h3 text-[color:var(--color-fg)]">
 					要件超過（卒業単位には使われず）
 				</h3>
 				<p class="text-sm text-[color:var(--color-fg-muted)]">

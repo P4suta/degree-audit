@@ -56,9 +56,7 @@
 	{/if}
 	<Summary {assessment} />
 	<section class="space-y-4">
-		<h2
-			class="text-[22px] font-semibold leading-[1.18] tracking-[-0.015em] text-[color:var(--color-fg)]"
-		>
+		<h2 class="text-h2 text-[color:var(--color-fg)]">
 			要件ごとの充足状況
 		</h2>
 		<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

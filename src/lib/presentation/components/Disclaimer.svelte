@@ -33,14 +33,14 @@
 	>
 		<h2
 			id="disclaimer-title"
-			class="text-[24px] font-semibold leading-[1.2] tracking-[-0.015em] text-[color:var(--color-fg)] sm:text-[28px]"
+			class="text-h1 text-[color:var(--color-fg)]"
 		>
 			ご利用にあたって
 		</h2>
 
 		<div
 			id="disclaimer-body"
-			class="mt-5 space-y-3 text-[13.5px] leading-[1.7] text-[color:var(--color-fg-muted)]"
+			class="mt-5 space-y-3 text-small leading-[1.7] text-[color:var(--color-fg-muted)]"
 		>
 			<p>
 				本ツールは個人が作成・提供する<strong

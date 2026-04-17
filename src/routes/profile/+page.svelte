@@ -101,9 +101,7 @@
 </svelte:head>
 
 <header class="space-y-3">
-	<h2
-		class="text-[40px] font-semibold leading-[1.08] tracking-[-0.02em] text-[color:var(--color-fg)] sm:text-[44px]"
-	>
+	<h2 class="text-display text-[color:var(--color-fg)]">
 		学生プロフィール
 	</h2>
 	<p class="text-base text-[color:var(--color-fg-muted)] max-w-[640px]">
