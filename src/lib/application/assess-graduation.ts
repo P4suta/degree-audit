@@ -16,17 +16,39 @@ export interface Assessment {
 	readonly totalCredits: Credit;
 	readonly totalCreditsRequired: number;
 	readonly graduatable: boolean;
+	/** 履修中（評価未確定）の単位合計。現時点の卒業判定には入らない。 */
+	readonly inProgressCredits: Credit;
+	/** 履修中の科目一覧。UI で「履修中」セクションを出すために使う。 */
+	readonly inProgressCourses: readonly Course[];
+	/**
+	 * 「履修中の科目がすべて合格した場合」の tentative 評価。
+	 * 現時点 graduatable=false でも、tentative.graduatable=true なら
+	 * 「今期をすべてパスすれば卒業できる」ことが UI で分かる。
+	 * 履修中が 0 件の時は undefined（現在と同じなので不要）。
+	 */
+	readonly tentative?: TentativeAssessment;
 }
 
-export const assessGraduation = (
-	record: AcademicRecord,
+export interface TentativeAssessment {
+	readonly steps: readonly StepOutcome[];
+	readonly total: SpecResult;
+	readonly thesisEligibility: SpecResult;
+	readonly graduatable: boolean;
+}
+
+const runCoreAssessment = (
+	pool: readonly Course[],
 	ruleSet: RuleSet,
-): Assessment => {
-	const passed = AcademicRecord.passedCourses(record);
-	const pipeline = runPipeline(passed, ruleSet.requirements);
-	const total = ruleSet.totalRequirement.evaluate({ pool: passed });
-	const thesis = ruleSet.thesisEligibility.evaluate({ pool: passed });
-	const totalCredits = AcademicRecord.totalCredits(record);
+): {
+	readonly steps: readonly StepOutcome[];
+	readonly leftoverCourses: readonly Course[];
+	readonly total: SpecResult;
+	readonly thesisEligibility: SpecResult;
+	readonly graduatable: boolean;
+} => {
+	const pipeline = runPipeline(pool, ruleSet.requirements);
+	const total = ruleSet.totalRequirement.evaluate({ pool });
+	const thesis = ruleSet.thesisEligibility.evaluate({ pool });
 	const graduatable =
 		pipeline.steps.every((s) => s.result.satisfied) && total.satisfied;
 	return {
@@ -34,8 +56,44 @@ export const assessGraduation = (
 		leftoverCourses: pipeline.leftoverPool,
 		total,
 		thesisEligibility: thesis,
+		graduatable,
+	};
+};
+
+export const assessGraduation = (
+	record: AcademicRecord,
+	ruleSet: RuleSet,
+): Assessment => {
+	const passed = AcademicRecord.passedCourses(record);
+	const current = runCoreAssessment(passed, ruleSet);
+	const totalCredits = AcademicRecord.totalCredits(record);
+	const inProgressCourses = AcademicRecord.inProgressCourses(record);
+	const inProgressCredits = AcademicRecord.inProgressCredits(record);
+
+	let tentative: TentativeAssessment | undefined;
+	if (inProgressCourses.length > 0) {
+		// 履修中を合格扱いにしたときの再評価。pipeline / totalRequirement /
+		// thesisEligibility をもう一度回して「もし全部通ったら」を見せる
+		const poolWithInProgress = AcademicRecord.passedOrInProgressCourses(record);
+		const t = runCoreAssessment(poolWithInProgress, ruleSet);
+		tentative = {
+			steps: t.steps,
+			total: t.total,
+			thesisEligibility: t.thesisEligibility,
+			graduatable: t.graduatable,
+		};
+	}
+
+	return {
+		steps: current.steps,
+		leftoverCourses: current.leftoverCourses,
+		total: current.total,
+		thesisEligibility: current.thesisEligibility,
 		totalCredits,
 		totalCreditsRequired: ruleSet.totalCreditsRequired,
-		graduatable,
+		graduatable: current.graduatable,
+		inProgressCredits,
+		inProgressCourses,
+		...(tentative !== undefined ? { tentative } : {}),
 	};
 };

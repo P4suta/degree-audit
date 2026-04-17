@@ -59,6 +59,34 @@ describe("viewCourseAllocations — not-passed courses", () => {
 	});
 });
 
+describe("viewCourseAllocations — in-progress courses", () => {
+	it("marks in-progress courses as in-progress (not not-passed)", () => {
+		const inProgress = Course.of({
+			id: CourseId.of("IP1"),
+			name: "卒業論文（履修中）",
+			credit: Credit.of(8),
+			grade: Grade.Risyuchu,
+			category: SubjectCategory.seminar56Thesis(),
+			rawCategoryLabel: "raw",
+		});
+		const record = fixtures.graduatable();
+		const a = assessGraduation(record, defaultRuleSet);
+		const passedIds = new Set(
+			AcademicRecord.passedCourses(record).map((c) => c.id as string),
+		);
+		const v = viewCourseAllocations(
+			a,
+			[...record.courses, inProgress],
+			passedIds,
+		);
+		const alloc = v.get(inProgress.id as string);
+		expect(alloc?.status.kind).toBe("in-progress");
+		if (alloc?.status.kind === "in-progress") {
+			expect(alloc.status.naturalHome).toBe("seminar-56");
+		}
+	});
+});
+
 describe("viewCourseAllocations — edge cases", () => {
 	it("assigns naturalHome=null to courses with unknown kind", () => {
 		const record = fixtures.graduatable();

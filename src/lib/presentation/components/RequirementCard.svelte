@@ -3,17 +3,30 @@
 	import type { SpecResult } from "$lib/domain/specifications/types";
 	import Badge from "../ui/Badge.svelte";
 	import Progress from "../ui/Progress.svelte";
+	import { resolveProgressState } from "../ui/progress-layout.ts";
 
 	interface Props {
 		readonly id: string;
 		readonly label: string;
 		readonly result: SpecResult;
+		readonly tentativeResult?: SpecResult | undefined;
 	}
 
-	const { id, label, result }: Props = $props();
+	const { id, label, result, tentativeResult }: Props = $props();
 
 	const remaining = $derived(Math.max(0, result.required - result.actual));
 	const unit = $derived(result.unit ?? "単位");
+	const state = $derived(
+		resolveProgressState({
+			satisfied: result.satisfied,
+			tentativeSatisfied: tentativeResult?.satisfied,
+		}),
+	);
+	const inProgressDelta = $derived(
+		tentativeResult === undefined
+			? 0
+			: Math.max(0, tentativeResult.actual - result.actual),
+	);
 </script>
 
 <!--
@@ -30,8 +43,10 @@
 		>
 			{label}
 		</h3>
-		{#if result.satisfied}
+		{#if state === "satisfied"}
 			<Badge variant="success">充足</Badge>
+		{:else if state === "in-progress"}
+			<Badge variant="accent" pill>履修中</Badge>
 		{:else}
 			<Badge variant="warning">不足</Badge>
 		{/if}
@@ -42,6 +57,8 @@
 			actual={result.actual}
 			required={result.required}
 			satisfied={result.satisfied}
+			tentativeActual={tentativeResult?.actual}
+			tentativeSatisfied={tentativeResult?.satisfied}
 			{unit}
 			showLabel={false}
 		/>
@@ -51,7 +68,13 @@
 			<span class="tabular-nums">
 				{result.actual} / {result.required} {unit}
 			</span>
-			{#if !result.satisfied && remaining > 0}
+			{#if state === "in-progress"}
+				<span
+					class="font-medium text-[color:var(--color-accent-link)] tabular-nums"
+				>
+					履修中 {inProgressDelta} {unit}
+				</span>
+			{:else if state === "unmet" && remaining > 0}
 				<span
 					class="font-medium text-[color:var(--color-warning-fg)] tabular-nums"
 				>

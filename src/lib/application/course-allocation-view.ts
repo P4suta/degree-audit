@@ -1,4 +1,5 @@
 import type { Course } from "../domain/entities/course.ts";
+import { isInProgress } from "../domain/value-objects/grade.ts";
 import {
 	kindDisplayName,
 	type SubjectCategoryKind,
@@ -52,7 +53,13 @@ export type CourseStatus =
 			readonly naturalHome: string | null;
 	  }
 	| {
-			/** 不合格 / 履修中 の科目。卒業単位からは除外される。 */
+			/** 履修中（評価未確定）。現時点の卒業単位からは除外されるが、
+			 *  「合格すればどこに算入されるか」の tentative では算入候補になる。 */
+			readonly kind: "in-progress";
+			readonly naturalHome: string | null;
+	  }
+	| {
+			/** 不合格 / 未評価 の科目。卒業単位からは除外される。 */
 			readonly kind: "not-passed";
 			readonly naturalHome: string | null;
 	  };
@@ -104,10 +111,17 @@ export const viewCourseAllocations = (
 		const naturalHome = NATURAL_HOME_BY_KIND.get(kind) ?? null;
 
 		if (!passedCourseIds.has(id)) {
-			result.set(id, {
-				course,
-				status: { kind: "not-passed", naturalHome },
-			});
+			if (isInProgress(course.grade)) {
+				result.set(id, {
+					course,
+					status: { kind: "in-progress", naturalHome },
+				});
+			} else {
+				result.set(id, {
+					course,
+					status: { kind: "not-passed", naturalHome },
+				});
+			}
 			continue;
 		}
 

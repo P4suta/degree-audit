@@ -20,6 +20,11 @@
 	});
 
 	const assessment = $derived(assessmentStore.current);
+
+	// tentative: 履修中をすべて合格した場合の assessment。各要件カードの
+	// 「履修中込みで充足予定」判定に使う
+	const tentativeStepResult = (id: string) =>
+		assessment?.tentative?.steps.find((s) => s.id === id)?.result;
 </script>
 
 {#if assessment === null}
@@ -54,17 +59,24 @@
 		</h2>
 		<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
 			{#each assessment.steps as step (step.id)}
-				<RequirementCard id={step.id} label={step.label} result={step.result} />
+				<RequirementCard
+					id={step.id}
+					label={step.label}
+					result={step.result}
+					tentativeResult={tentativeStepResult(step.id)}
+				/>
 			{/each}
 			<RequirementCard
 				id="total-124"
 				label="総修得単位"
 				result={assessment.total}
+				tentativeResult={assessment.tentative?.total}
 			/>
 			<RequirementCard
 				id="thesis-eligibility"
 				label="卒業論文履修資格"
 				result={assessment.thesisEligibility}
+				tentativeResult={assessment.tentative?.thesisEligibility}
 			/>
 		</div>
 	</section>

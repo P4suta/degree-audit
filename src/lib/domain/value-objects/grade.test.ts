@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { Grade, isPassing, parseGrade } from "./grade.ts";
+import { Grade, isInProgress, isPassing, parseGrade } from "./grade.ts";
 
 describe("Grade", () => {
-	it("has all 9 literal values", () => {
+	it("has all 10 literal values", () => {
 		expect(Object.values(Grade)).toEqual([
 			"秀",
 			"優",
@@ -12,6 +12,7 @@ describe("Grade", () => {
 			"認定",
 			"取消",
 			"放棄",
+			"履修中",
 			"不明",
 		]);
 	});
@@ -32,9 +33,30 @@ describe("isPassing", () => {
 		Grade.Fuka,
 		Grade.Torikeshi,
 		Grade.Hoki,
+		Grade.Risyuchu,
 		Grade.Unknown,
 	])("%s is not passing", (g) => {
 		expect(isPassing(g)).toBe(false);
+	});
+});
+
+describe("isInProgress", () => {
+	it("returns true for 履修中", () => {
+		expect(isInProgress(Grade.Risyuchu)).toBe(true);
+	});
+
+	it.each([
+		Grade.Shu,
+		Grade.Yu,
+		Grade.Ryo,
+		Grade.Ka,
+		Grade.Fuka,
+		Grade.Nintei,
+		Grade.Torikeshi,
+		Grade.Hoki,
+		Grade.Unknown,
+	])("%s is not in-progress", (g) => {
+		expect(isInProgress(g)).toBe(false);
 	});
 });
 
@@ -50,6 +72,9 @@ describe("parseGrade", () => {
 		["履修取消", Grade.Torikeshi],
 		["放棄", Grade.Hoki],
 		["履修放棄", Grade.Hoki],
+		["履修中", Grade.Risyuchu],
+		["履修", Grade.Risyuchu],
+		["履", Grade.Risyuchu],
 	])("maps %s to %s", (raw, expected) => {
 		expect(parseGrade(raw)).toBe(expected);
 	});
@@ -66,6 +91,8 @@ describe("parseGrade", () => {
 		["P", Grade.Nintei],
 		["Pass", Grade.Nintei],
 		["W", Grade.Torikeshi],
+		["enrolled", Grade.Risyuchu],
+		["In Progress", Grade.Risyuchu],
 	])("maps English alias %s to %s", (raw, expected) => {
 		expect(parseGrade(raw)).toBe(expected);
 	});

@@ -11,6 +11,7 @@
 		requirementDisplayName,
 		viewCourseAllocations,
 	} from "$lib/application/course-allocation-view";
+	import { resolveProgressState } from "$lib/presentation/ui/progress-layout";
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
 
@@ -32,6 +33,16 @@
 		if (requirementId === "total-124") return "総修得単位";
 		if (requirementId === "thesis-eligibility") return "卒業論文履修資格";
 		return step?.label ?? requirementId;
+	});
+
+	// tentative: 履修中をすべて合格した場合の同じ要件の評価。
+	// current と値が違えば「→ 履修中込みで N」と progress の下に出す
+	const tentativeResult = $derived(() => {
+		if (assessment === null || assessment.tentative === undefined) return null;
+		const t = assessment.tentative;
+		if (requirementId === "total-124") return t.total;
+		if (requirementId === "thesis-eligibility") return t.thesisEligibility;
+		return t.steps.find((s) => s.id === requirementId)?.result ?? null;
 	});
 
 	// 各科目の allocation view（natural home vs effective home）
@@ -90,6 +101,25 @@
 		}
 		return out;
 	});
+
+	// この要件が natural home の履修中科目。まだ未評価だが、合格すればここに算入
+	// される候補。tentative で算入が確定しているものは "→ 算入予定" を出す
+	const inProgressForThisReq = $derived.by(() => {
+		if (allocations === null) return [] as Course[];
+		if (isPipelineStep === false) return [] as Course[];
+		const out: Course[] = [];
+		for (const [, alloc] of allocations) {
+			if (alloc.status.kind !== "in-progress") continue;
+			if (alloc.status.naturalHome !== requirementId) continue;
+			out.push(alloc.course);
+		}
+		return out;
+	});
+
+	// total-124 / thesis-eligibility 用の一覧（natural home に関係なく全履修中を表示）
+	const allInProgressCourses = $derived(
+		assessment?.inProgressCourses ?? ([] as readonly Course[]),
+	);
 
 	// この要件に「実際に算入されている」科目だけを抜き出す。
 	// spec.contributingCourses は kind にマッチした pool 全部を返すので、
@@ -167,6 +197,12 @@
 		>
 			{label()}
 		</h2>
+		{@const tr = tentativeResult()}
+		{@const state = resolveProgressState({
+			satisfied: r.satisfied,
+			tentativeSatisfied: tr?.satisfied,
+		})}
+		{@const inProgressDelta = tr === null ? 0 : Math.max(0, tr.actual - r.actual)}
 		<Card padding="lg">
 			<div class="space-y-3">
 				<Progress
@@ -174,6 +210,8 @@
 					actual={r.actual}
 					required={r.required}
 					satisfied={r.satisfied}
+					tentativeActual={tr?.actual}
+					tentativeSatisfied={tr?.satisfied}
 					unit={r.unit ?? "単位"}
 				/>
 				<div
@@ -182,15 +220,31 @@
 					<span class="tabular-nums">
 						{r.actual} / {r.required} {r.unit ?? "単位"}
 					</span>
-					<Badge variant={r.satisfied ? "success" : "warning"}>
-						{r.satisfied ? "充足" : "不足"}
-					</Badge>
-					{#if !r.satisfied && r.required - r.actual > 0}
+					{#if state === "satisfied"}
+						<Badge variant="success">充足</Badge>
+					{:else if state === "in-progress"}
+						<Badge variant="accent" pill>履修中</Badge>
+					{:else}
+						<Badge variant="warning">不足</Badge>
+					{/if}
+					{#if state === "in-progress"}
+						<span class="text-[color:var(--color-accent-link)] font-semibold">
+							履修中 {inProgressDelta} {r.unit ?? "単位"} で充足予定
+						</span>
+					{:else if state === "unmet" && r.required - r.actual > 0}
 						<span class="text-[color:var(--color-warning-fg)] font-semibold">
 							あと {r.required - r.actual} {r.unit ?? "単位"}
 						</span>
 					{/if}
 				</div>
+				{#if state === "unmet" && tr !== null && tr.actual > r.actual}
+					<p class="text-xs text-[color:var(--color-fg-muted)]">
+						履修中込み：
+						<span class="tabular-nums text-[color:var(--color-fg)]">
+							{tr.actual} / {tr.required} {tr.unit ?? "単位"}
+						</span>
+					</p>
+				{/if}
 				{#if r.diagnostics.length > 0}
 					<ul
 						class="list-inside list-disc text-sm text-[color:var(--color-fg-muted)]"
@@ -257,6 +311,44 @@
 				/>
 			{/if}
 		</section>
+
+		{#if isPipelineStep && inProgressForThisReq.length > 0}
+			<section class="space-y-2">
+				<h3
+					class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]"
+				>
+					履修中（評価待ち）
+				</h3>
+				<p class="text-sm text-[color:var(--color-fg-muted)]">
+					現時点では算入されていませんが、合格すればこの要件に算入される候補です。
+				</p>
+				<CourseList
+					courses={inProgressForThisReq}
+					annotations={inProgressForThisReq.map((c) => ({
+						course: c,
+						badge: { variant: "accent" as const, label: "履修中" },
+					}))}
+				/>
+			</section>
+		{:else if !isPipelineStep && allInProgressCourses.length > 0}
+			<section class="space-y-2">
+				<h3
+					class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]"
+				>
+					履修中（評価待ち）
+				</h3>
+				<p class="text-sm text-[color:var(--color-fg-muted)]">
+					現時点の合計には含まれていません。すべて合格した場合の tentative 判定は下のヒント欄で確認できます。
+				</p>
+				<CourseList
+					courses={allInProgressCourses}
+					annotations={allInProgressCourses.map((c) => ({
+						course: c,
+						badge: { variant: "accent" as const, label: "履修中" },
+					}))}
+				/>
+			</section>
+		{/if}
 
 		{#if reallocatedOut.length > 0}
 			{@const countedCount = reallocatedOut.filter((e) => e.counted).length}
