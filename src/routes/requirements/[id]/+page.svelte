@@ -169,7 +169,19 @@
 		}
 		return entries;
 	});
+
+	// ページタイトルは動的。要件名が解決できるまでは汎用タイトル
+	const resolvedLabel = $derived(label());
+	const pageTitle = $derived(
+		resolvedLabel !== "" && resolvedLabel !== requirementId
+			? `${resolvedLabel} — 卒業要件判定ツール`
+			: "要件詳細 — 卒業要件判定ツール",
+	);
 </script>
+
+<svelte:head>
+	<title>{pageTitle}</title>
+</svelte:head>
 
 <a
 	href={`${base}/dashboard`}

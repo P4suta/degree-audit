@@ -151,6 +151,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>成績を取り込む — 卒業要件判定ツール</title>
+</svelte:head>
+
 <header class="space-y-3">
 	<h2
 		class="text-[40px] font-semibold leading-[1.08] tracking-[-0.02em] text-[color:var(--color-fg)] sm:text-[44px]"

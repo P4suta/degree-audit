@@ -27,6 +27,10 @@
 		assessment?.tentative?.steps.find((s) => s.id === id)?.result;
 </script>
 
+<svelte:head>
+	<title>判定結果 — 卒業要件判定ツール</title>
+</svelte:head>
+
 {#if assessment === null}
 	<div class="space-y-4" aria-busy="true" aria-label="成績データを読み込み中">
 		<div
