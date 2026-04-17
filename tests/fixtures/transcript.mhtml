@@ -1,0 +1,61 @@
+From: <Synthetic Test Fixture>
+Snapshot-Content-Location: https://example.invalid/synthetic-grades
+Subject: =?utf-8?Q?synthetic_grade_fixture?=
+Date: Fri, 17 Apr 2026 05:00:00 +0900
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----SyntheticFixtureBoundary"
+
+
+------SyntheticFixtureBoundary
+Content-Type: text/html
+Content-ID: <frame@synthetic.invalid>
+Content-Transfer-Encoding: 8bit
+Content-Location: https://example.invalid/synthetic-grades
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>synthetic grade fixture</title>
+</head>
+<body>
+<h1>成績閲覧（合成テストデータ）</h1>
+<table>
+<thead>
+<tr>
+<th>学則科目名称</th>
+<th>単位数</th>
+<th>素点</th>
+<th>評価</th>
+<th>成績 確定年度</th>
+<th>教員名称</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>共通教育</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>初年次科目</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>大学基礎論</td><td>2</td><td>85</td><td>優</td><td>2022</td><td>山田　太郎</td></tr>
+<tr><td>学問基礎論</td><td>2</td><td>78</td><td>良</td><td>2022</td><td>山田　太郎</td></tr>
+<tr><td>課題探求実践セミナー</td><td>2</td><td>90</td><td>秀</td><td>2022</td><td>佐藤　花子</td></tr>
+<tr><td>情報処理</td><td>2</td><td>88</td><td>優</td><td>2022</td><td>鈴木　一郎</td></tr>
+<tr><td>大学英語入門I</td><td>1</td><td>82</td><td>優</td><td>2022</td><td>田中　次郎</td></tr>
+<tr><td>英会話I</td><td>1</td><td>85</td><td>優</td><td>2022</td><td>高橋　三郎</td></tr>
+<tr><td>専門科目</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>プラットフォーム科目</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>基礎科目Ａ群</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>哲学概論Ⅱ</td><td>2</td><td>82</td><td>優</td><td>2025</td><td>中村　五郎</td></tr>
+<tr><td>心理学概論Ⅰ</td><td>2</td><td>95</td><td>秀</td><td>2025</td><td>小林　六郎</td></tr>
+<tr><td>ゼミナール科目</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>ゼミナールI・II</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>西洋哲学基礎演習</td><td>1</td><td>85</td><td>優</td><td>2023</td><td>田中　次郎</td></tr>
+<tr><td>選択科目</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>他学部専門科目</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>会計学概論</td><td>2</td><td>65</td><td>可</td><td>2023</td><td>高橋　三郎</td></tr>
+</tbody>
+</table>
+</body>
+</html>
+
+------SyntheticFixtureBoundary--
