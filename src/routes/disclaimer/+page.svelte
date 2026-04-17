@@ -24,9 +24,7 @@
 </a>
 
 <header class="space-y-3">
-	<h2
-		class="text-[40px] font-semibold leading-[1.08] tracking-[-0.02em] text-[color:var(--color-fg)] sm:text-[44px]"
-	>
+	<h2 class="text-display text-[color:var(--color-fg)]">
 		免責事項
 	</h2>
 	<p class="max-w-[640px] text-base text-[color:var(--color-fg-muted)]">
@@ -36,11 +34,11 @@
 
 <Card padding="lg">
 	<div
-		class="space-y-6 text-[14px] leading-[1.75] text-[color:var(--color-fg)]"
+		class="space-y-6 text-small leading-[1.75] text-[color:var(--color-fg)]"
 	>
 		<section class="space-y-2">
 			<h3
-				class="text-[17px] font-semibold tracking-[-0.01em] text-[color:var(--color-fg)]"
+				class="text-h3 text-[color:var(--color-fg)]"
 			>
 				1. 非公式性
 			</h3>
@@ -51,7 +49,7 @@
 
 		<section class="space-y-2">
 			<h3
-				class="text-[17px] font-semibold tracking-[-0.01em] text-[color:var(--color-fg)]"
+				class="text-h3 text-[color:var(--color-fg)]"
 			>
 				2. 対応範囲
 			</h3>
@@ -72,7 +70,7 @@
 
 		<section class="space-y-2">
 			<h3
-				class="text-[17px] font-semibold tracking-[-0.01em] text-[color:var(--color-fg)]"
+				class="text-h3 text-[color:var(--color-fg)]"
 			>
 				3. 無保証（AS IS）
 			</h3>
@@ -84,7 +82,7 @@
 
 		<section class="space-y-2">
 			<h3
-				class="text-[17px] font-semibold tracking-[-0.01em] text-[color:var(--color-fg)]"
+				class="text-h3 text-[color:var(--color-fg)]"
 			>
 				4. 責任制限
 			</h3>
@@ -95,7 +93,7 @@
 
 		<section class="space-y-2">
 			<h3
-				class="text-[17px] font-semibold tracking-[-0.01em] text-[color:var(--color-fg)]"
+				class="text-h3 text-[color:var(--color-fg)]"
 			>
 				5. 最終判断は必ず公式情報で
 			</h3>
@@ -124,7 +122,7 @@
 
 		<section class="space-y-2">
 			<h3
-				class="text-[17px] font-semibold tracking-[-0.01em] text-[color:var(--color-fg)]"
+				class="text-h3 text-[color:var(--color-fg)]"
 			>
 				6. データの取り扱い
 			</h3>
@@ -139,7 +137,7 @@
 
 		<section class="space-y-2">
 			<h3
-				class="text-[17px] font-semibold tracking-[-0.01em] text-[color:var(--color-fg)]"
+				class="text-h3 text-[color:var(--color-fg)]"
 			>
 				7. 改訂
 			</h3>

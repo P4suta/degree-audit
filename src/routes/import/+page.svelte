@@ -156,9 +156,7 @@
 </svelte:head>
 
 <header class="space-y-3">
-	<h2
-		class="text-[40px] font-semibold leading-[1.08] tracking-[-0.02em] text-[color:var(--color-fg)] sm:text-[44px]"
-	>
+	<h2 class="text-display text-[color:var(--color-fg)]">
 		成績を取り込む
 	</h2>
 	<p class="text-base text-[color:var(--color-fg-muted)] max-w-[640px]">
@@ -173,7 +171,7 @@
 		<div class="space-y-2">
 			<h3
 				id="paste-heading"
-				class="text-[22px] font-semibold leading-[1.18] tracking-[-0.015em] text-[color:var(--color-fg)]"
+				class="text-h2 text-[color:var(--color-fg)]"
 			>
 				成績ページからコピペ
 			</h3>
