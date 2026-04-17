@@ -11,7 +11,7 @@ import {
 import type { TranscriptParser } from "../infrastructure/parsers/transcript-parser.ts";
 
 export interface ImportInput {
-	readonly source: string;
+	readonly source: Uint8Array;
 	readonly parser: TranscriptParser;
 	readonly ruleSet: RuleSet;
 	readonly profile: StudentProfile;
@@ -50,10 +50,10 @@ const assertRecognisableCategories = (
 	return ok(outcome);
 };
 
-export const importTranscript = (
+export const importTranscript = async (
 	input: ImportInput,
-): Result<ImportOutcome, DomainError> => {
-	const parseResult = input.parser.parse(input.source);
+): Promise<Result<ImportOutcome, DomainError>> => {
+	const parseResult = await input.parser.parse(input.source);
 	const built = flatMap(
 		parseResult,
 		(raws): Result<ImportOutcome, DomainError> => {

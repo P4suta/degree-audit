@@ -21,12 +21,14 @@ const profile = (() => {
 	return r.value;
 })();
 
+const STUB_SOURCE = new TextEncoder().encode("<stub>");
+
 const stubParser = (raws: readonly RawCourse[]): TranscriptParser => ({
-	parse: () => ok(raws),
+	parse: async () => ok(raws),
 });
 
 const failingParser: TranscriptParser = {
-	parse: () =>
+	parse: async () =>
 		err(
 			new DomainError({
 				code: ErrorCode.MhtmlBoundaryMissing,
@@ -45,13 +47,13 @@ const rawCourse = (overrides: Partial<RawCourse> = {}): RawCourse => ({
 });
 
 describe("importTranscript", () => {
-	it("combines parser + mapper and builds an AcademicRecord", () => {
+	it("combines parser + mapper and builds an AcademicRecord", async () => {
 		const parser = stubParser([
 			rawCourse(),
 			rawCourse({ name: "ゼミナールI", rawCategoryLabel: "ゼミナールI" }),
 		]);
-		const result = importTranscript({
-			source: "<stub>",
+		const result = await importTranscript({
+			source: STUB_SOURCE,
 			parser,
 			ruleSet: defaultRuleSet,
 			profile,
@@ -63,9 +65,9 @@ describe("importTranscript", () => {
 		}
 	});
 
-	it("propagates parser errors as DomainError", () => {
-		const result = importTranscript({
-			source: "<stub>",
+	it("propagates parser errors as DomainError", async () => {
+		const result = await importTranscript({
+			source: STUB_SOURCE,
 			parser: failingParser,
 			ruleSet: defaultRuleSet,
 			profile,
@@ -76,13 +78,13 @@ describe("importTranscript", () => {
 		}
 	});
 
-	it("returns skipped entries for malformed individual rows", () => {
+	it("returns skipped entries for malformed individual rows", async () => {
 		const parser = stubParser([
 			rawCourse({ name: "X", creditText: "bad" }),
 			rawCourse({ name: "Y" }),
 		]);
-		const result = importTranscript({
-			source: "<stub>",
+		const result = await importTranscript({
+			source: STUB_SOURCE,
 			parser,
 			ruleSet: defaultRuleSet,
 			profile,
@@ -94,13 +96,13 @@ describe("importTranscript", () => {
 		}
 	});
 
-	it("rejects the import when every course maps to an unknown category", () => {
+	it("rejects the import when every course maps to an unknown category", async () => {
 		const parser = stubParser([
 			rawCourse({ name: "謎科目A", rawCategoryLabel: "不明区分" }),
 			rawCourse({ name: "謎科目B", rawCategoryLabel: "まったく不明" }),
 		]);
-		const result = importTranscript({
-			source: "<stub>",
+		const result = await importTranscript({
+			source: STUB_SOURCE,
 			parser,
 			ruleSet: defaultRuleSet,
 			profile,
@@ -113,9 +115,9 @@ describe("importTranscript", () => {
 		}
 	});
 
-	it("accepts a parsed transcript with zero rows without invoking the unknown-ratio guard", () => {
-		const result = importTranscript({
-			source: "<stub>",
+	it("accepts a parsed transcript with zero rows without invoking the unknown-ratio guard", async () => {
+		const result = await importTranscript({
+			source: STUB_SOURCE,
 			parser: stubParser([]),
 			ruleSet: defaultRuleSet,
 			profile,
@@ -127,10 +129,10 @@ describe("importTranscript", () => {
 		}
 	});
 
-	it("reports unknownCategoryCount on successful imports", () => {
+	it("reports unknownCategoryCount on successful imports", async () => {
 		const parser = stubParser([rawCourse()]);
-		const result = importTranscript({
-			source: "<stub>",
+		const result = await importTranscript({
+			source: STUB_SOURCE,
 			parser,
 			ruleSet: defaultRuleSet,
 			profile,

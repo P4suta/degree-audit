@@ -8,6 +8,11 @@ export default defineConfig({
 		environment: "node",
 		include: ["src/**/*.{test,spec}.{js,ts}"],
 		exclude: ["src/**/*.svelte.{test,spec}.{js,ts}"],
+		// pdfjs-dist が内部で worker_threads を立ち上げるため、
+		// Vitest の worker_threads プールと入れ子になると structuredClone の
+		// ArrayBuffer transfer がハングしたりエラーになったりする。
+		// fork プールに切り替えて回避する。
+		pool: "forks",
 		coverage: {
 			provider: "istanbul",
 			reporter: ["text", "html"],

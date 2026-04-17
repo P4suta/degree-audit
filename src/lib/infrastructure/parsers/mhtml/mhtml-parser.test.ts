@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { ErrorCode } from "../../../domain/errors/error-code.ts";
 import { hasCode } from "../../../domain/errors/guards.ts";
 import { isErr, isOk } from "../../../domain/errors/result.ts";
-import { mhtmlParser } from "./mhtml-parser.ts";
+import { parseMhtmlSource } from "./mhtml-parser.ts";
 
 const buildMhtml = (htmlBody: string, boundary = "BOUNDARY"): string =>
 	[
@@ -17,7 +17,7 @@ const buildMhtml = (htmlBody: string, boundary = "BOUNDARY"): string =>
 		`--${boundary}--`,
 	].join("\r\n");
 
-describe("mhtmlParser.parse", () => {
+describe("parseMhtmlSource", () => {
 	it("extracts courses from a minimal MHTML document", () => {
 		const html = `<!doctype html><html><body>
 			<table>
@@ -25,7 +25,7 @@ describe("mhtmlParser.parse", () => {
 				<tr><td>共通教育 初年次</td><td>大学基礎論</td><td>2</td><td>優</td></tr>
 			</table>
 		</body></html>`;
-		const result = mhtmlParser.parse(buildMhtml(html));
+		const result = parseMhtmlSource(buildMhtml(html));
 		expect(isOk(result)).toBe(true);
 		if (isOk(result)) {
 			expect(result.value).toHaveLength(1);
@@ -43,7 +43,7 @@ describe("mhtmlParser.parse", () => {
 			"binary-blob",
 			"--X--",
 		].join("\r\n");
-		const result = mhtmlParser.parse(source);
+		const result = parseMhtmlSource(source);
 		expect(isErr(result)).toBe(true);
 		if (isErr(result)) {
 			expect(hasCode(result.error, ErrorCode.MhtmlTableExtractionFailed)).toBe(
@@ -53,7 +53,7 @@ describe("mhtmlParser.parse", () => {
 	});
 
 	it("returns MhtmlBoundaryMissing when top-level header has no boundary", () => {
-		const result = mhtmlParser.parse("Content-Type: text/plain\r\n\r\nhi");
+		const result = parseMhtmlSource("Content-Type: text/plain\r\n\r\nhi");
 		expect(isErr(result)).toBe(true);
 		if (isErr(result)) {
 			expect(hasCode(result.error, ErrorCode.MhtmlBoundaryMissing)).toBe(true);
@@ -62,7 +62,7 @@ describe("mhtmlParser.parse", () => {
 
 	it("rejects an MHTML source that exceeds the byte limit", () => {
 		const huge = "x".repeat(21 * 1024 * 1024);
-		const result = mhtmlParser.parse(huge);
+		const result = parseMhtmlSource(huge);
 		expect(isErr(result)).toBe(true);
 		if (isErr(result)) {
 			expect(hasCode(result.error, ErrorCode.MhtmlSourceTooLarge)).toBe(true);
@@ -75,7 +75,7 @@ describe("mhtmlParser.parse", () => {
 				<tr><th>履修科目</th><th>単位</th><th>成績</th></tr>
 			</table>
 		</body></html>`;
-		const result = mhtmlParser.parse(buildMhtml(html));
+		const result = parseMhtmlSource(buildMhtml(html));
 		expect(isErr(result)).toBe(true);
 		if (isErr(result)) {
 			expect(hasCode(result.error, ErrorCode.MhtmlNoCoursesFound)).toBe(true);
@@ -95,7 +95,7 @@ describe("mhtmlParser.parse", () => {
 			"nothtml",
 			"--X--",
 		].join("\r\n");
-		const result = mhtmlParser.parse(source);
+		const result = parseMhtmlSource(source);
 		expect(isErr(result)).toBe(true);
 		if (isErr(result)) {
 			expect(hasCode(result.error, ErrorCode.MhtmlTableExtractionFailed)).toBe(

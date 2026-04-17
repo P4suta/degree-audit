@@ -32,5 +32,6 @@ test-results
 
 # Personal transcript fixtures (contain real grade data — do not commit)
 /tests/fixtures/transcript.mhtml
+/tests/fixtures/transcript.pdf
 /tests/fixtures/transcript-truth.csv
 /tests/fixtures/transcript-basic.csv

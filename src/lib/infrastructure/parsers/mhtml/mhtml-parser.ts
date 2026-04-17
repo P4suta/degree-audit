@@ -70,15 +70,24 @@ const assertSomeCourses = (
 	return ok(rows);
 };
 
+/**
+ * 同期パース本体。テストからはバイト経由を通さずに直接呼び出せる。
+ * `mhtmlParser.parse` は async wrapper として Uint8Array 経由で呼ぶ。
+ */
+export const parseMhtmlSource = (
+	source: string,
+): Result<readonly RawCourse[], DomainError> => {
+	const sized = assertSourceSize(source);
+	const firstHtmlPart = flatMap(sized, (src) => findFirstPart(src, isHtmlPart));
+	const htmlPart = flatMap(firstHtmlPart, ensureHtmlPart);
+	const decoded = flatMap(htmlPart, decodePart);
+	const extracted = flatMap(decoded, extractRawCoursesFromHtml);
+	return flatMap(extracted, assertSomeCourses);
+};
+
 export const mhtmlParser: TranscriptParser = {
-	parse(source: string): Result<readonly RawCourse[], DomainError> {
-		const sized = assertSourceSize(source);
-		const firstHtmlPart = flatMap(sized, (src) =>
-			findFirstPart(src, isHtmlPart),
-		);
-		const htmlPart = flatMap(firstHtmlPart, ensureHtmlPart);
-		const decoded = flatMap(htmlPart, decodePart);
-		const extracted = flatMap(decoded, extractRawCoursesFromHtml);
-		return flatMap(extracted, assertSomeCourses);
+	async parse(bytes: Uint8Array) {
+		const source = new TextDecoder("utf-8").decode(bytes);
+		return parseMhtmlSource(source);
 	},
 };

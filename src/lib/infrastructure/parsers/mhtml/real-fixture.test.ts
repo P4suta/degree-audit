@@ -2,7 +2,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { isOk } from "../../../domain/errors/result.ts";
-import { mhtmlParser } from "./mhtml-parser.ts";
+import { parseMhtmlSource } from "./mhtml-parser.ts";
 
 const FIXTURE_PATH = "tests/fixtures/transcript.mhtml";
 
@@ -14,12 +14,12 @@ describe.skipIf(!existsSync(FIXTURE_PATH))(
 			: "";
 
 		it("parses without errors", () => {
-			const result = mhtmlParser.parse(source);
+			const result = parseMhtmlSource(source);
 			expect(isOk(result)).toBe(true);
 		});
 
 		it("extracts at least one course with the expected shape", () => {
-			const result = mhtmlParser.parse(source);
+			const result = parseMhtmlSource(source);
 			expect(isOk(result)).toBe(true);
 			if (isOk(result)) {
 				expect(result.value.length).toBeGreaterThan(0);

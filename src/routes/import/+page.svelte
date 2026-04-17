@@ -39,11 +39,11 @@
 		}
 		importing = true;
 		try {
-			const source = await file.text();
-			// 同期パース（1.9MB で ~400ms）の前にフレームを 1 つ譲ることで、
-			// 「読み込み中…」表示が確実に描画される。
+			const source = new Uint8Array(await file.arrayBuffer());
+			// 同期パース開始前にフレームを 1 つ譲ることで、「読み込み中…」の
+			// 表示が確実に描画される。PDF は pdfjs-dist 側がさらに非同期で走る。
 			await yieldToMain();
-			const outcome = importTranscript({
+			const outcome = await importTranscript({
 				source,
 				parser: mhtmlParser,
 				ruleSet: resolved.value,
