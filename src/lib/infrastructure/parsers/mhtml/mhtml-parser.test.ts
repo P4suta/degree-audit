@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { ErrorCode } from "../../../domain/errors/error-code.ts";
 import { hasCode } from "../../../domain/errors/guards.ts";
 import { isErr, isOk } from "../../../domain/errors/result.ts";
-import { parseMhtmlSource } from "./mhtml-parser.ts";
+import { mhtmlParser, parseMhtmlSource } from "./mhtml-parser.ts";
 
 const buildMhtml = (htmlBody: string, boundary = "BOUNDARY"): string =>
 	[
@@ -102,5 +102,30 @@ describe("parseMhtmlSource", () => {
 				true,
 			);
 		}
+	});
+});
+
+describe("mhtmlParser (public async TranscriptParser interface)", () => {
+	it("decodes bytes as UTF-8 and parses via parseMhtmlSource", async () => {
+		const html = `<!doctype html><html><body>
+			<table>
+				<tr><th>科目分類</th><th>履修科目</th><th>単位数</th><th>成績評価</th></tr>
+				<tr><td>共通教育 初年次</td><td>大学基礎論</td><td>2</td><td>優</td></tr>
+			</table>
+		</body></html>`;
+		const src = [
+			'Content-Type: multipart/related; boundary="BOUNDARY"',
+			"",
+			"--BOUNDARY",
+			"Content-Type: text/html; charset=UTF-8",
+			"Content-Transfer-Encoding: 8bit",
+			"",
+			html,
+			"--BOUNDARY--",
+		].join("\r\n");
+		const bytes = new TextEncoder().encode(src);
+		const result = await mhtmlParser.parse(bytes);
+		expect(isOk(result)).toBe(true);
+		if (isOk(result)) expect(result.value).toHaveLength(1);
 	});
 });

@@ -3,16 +3,15 @@ import { ErrorCode } from "../../domain/errors/error-code.ts";
 import { err, type Result } from "../../domain/errors/result.ts";
 import { detectTranscriptFormat } from "./detect-format.ts";
 import { mhtmlParser } from "./mhtml/mhtml-parser.ts";
-import { pdfParser } from "./pdf/pdf-parser.ts";
 import { textParser } from "./text/text-parser.ts";
 import type { RawCourse, TranscriptParser } from "./transcript-parser.ts";
 
 /**
- * 先頭バイトで PDF / MHTML / text を判別し、対応するパーサにディスパッチする。
- * ユーザーは拡張子・ファイル名を気にせずドロップ / ペーストできる。
+ * 先頭バイトで成績ページのコピペテキスト / MHTML を判別し、対応するパーサに
+ * ディスパッチする。ユーザーは拡張子・ファイル名を気にせずドロップ / ペースト
+ * できる。
  */
 export const createAutoParser = (options: {
-	readonly pdf: TranscriptParser;
 	readonly mhtml: TranscriptParser;
 	readonly text: TranscriptParser;
 }): TranscriptParser => ({
@@ -21,8 +20,6 @@ export const createAutoParser = (options: {
 	): Promise<Result<readonly RawCourse[], DomainError>> {
 		const format = detectTranscriptFormat(bytes);
 		switch (format) {
-			case "pdf":
-				return options.pdf.parse(bytes);
 			case "mhtml":
 				return options.mhtml.parse(bytes);
 			case "text":
@@ -31,10 +28,9 @@ export const createAutoParser = (options: {
 				return err(
 					new DomainError({
 						code: ErrorCode.UnsupportedFileFormat,
-						message:
-							"Could not detect PDF / MHTML / text paste from leading bytes",
+						message: "Could not detect MHTML / text paste from leading bytes",
 						userMessage:
-							"PDF / MHTML / 成績ページのコピペ のいずれも認識できませんでした。高知大学「個別成績表」の PDF、「成績閲覧」画面の MHTML、もしくは成績ページからのコピペを入れてください。",
+							"成績ページのコピペ、もしくは MHTML として認識できませんでした。成績ページからコピーしたテキストを貼り付けるか、MHTML ファイルをドロップしてください。",
 						context: { byteLength: bytes.byteLength },
 					}),
 				);
@@ -43,7 +39,6 @@ export const createAutoParser = (options: {
 });
 
 export const autoParser: TranscriptParser = createAutoParser({
-	pdf: pdfParser,
 	mhtml: mhtmlParser,
 	text: textParser,
 });

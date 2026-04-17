@@ -8,11 +8,6 @@ export default defineConfig({
 		environment: "node",
 		include: ["src/**/*.{test,spec}.{js,ts}"],
 		exclude: ["src/**/*.svelte.{test,spec}.{js,ts}"],
-		// pdfjs-dist が内部で worker_threads を立ち上げるため、
-		// Vitest の worker_threads プールと入れ子になると structuredClone の
-		// ArrayBuffer transfer がハングしたりエラーになったりする。
-		// fork プールに切り替えて回避する。
-		pool: "forks",
 		coverage: {
 			provider: "istanbul",
 			reporter: ["text", "html"],
@@ -22,11 +17,6 @@ export default defineConfig({
 				"src/lib/**/index.ts",
 				"src/lib/**/fixtures.ts",
 				"src/lib/presentation/**",
-				// Worker ファイルは実ブラウザでしか全経路走らないので除外
-				// （ロジックは `auto-parser` / `pdf-parser` / `text-parser` などに
-				//  集約してあるので、これらのテストで論理面はカバー済み）
-				"src/lib/infrastructure/workers/transcript-worker.ts",
-				"src/lib/infrastructure/workers/transcript-worker-client.ts",
 			],
 			thresholds: {
 				"src/lib/domain/**": {
@@ -42,11 +32,10 @@ export default defineConfig({
 					statements: 100,
 				},
 				"src/lib/infrastructure/**": {
-					// 入力ソースが外部（PDF 座標・ブラウザコピペテキスト）なので、
-					// noUncheckedIndexedAccess の defensive `?? ""` や、
-					// 仕様外入力のガードで実際に到達しないブランチ・文が残る。
-					// 100% を目指すと istanbul-ignore コメントだらけになるので
-					// lines/functions は 100%、branches/statements は 90% 水準に緩める
+					// コピペ入力は外部由来で、noUncheckedIndexedAccess の
+					// defensive `?? ""` や仕様外ガードで実際に到達しないブランチが
+					// 残る。100% を目指すと istanbul-ignore まみれになるので
+					// branches/statements は 90% 水準に緩め、lines/functions は 100%
 					branches: 90,
 					functions: 100,
 					lines: 100,

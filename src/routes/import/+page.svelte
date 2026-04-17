@@ -9,7 +9,7 @@
 	import { isErr } from "$lib/domain/errors/result";
 	import { defaultRegistry } from "$lib/domain/rulesets/index";
 	import TranscriptDropZone from "$lib/presentation/components/TranscriptDropZone.svelte";
-	import { workerBackedAutoParser } from "$lib/infrastructure/workers/transcript-worker-client";
+	import { autoParser } from "$lib/infrastructure/parsers/auto-parser";
 	import { yieldToMain } from "$lib/infrastructure/parsers/mhtml/yield";
 	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
 	import { logger } from "$lib/presentation/stores/logger.svelte";
@@ -48,7 +48,7 @@
 			await yieldToMain();
 			const outcome = await importTranscript({
 				source,
-				parser: workerBackedAutoParser,
+				parser: autoParser,
 				ruleSet: resolved.value,
 				profile,
 			});
@@ -108,7 +108,7 @@
 			await yieldToMain();
 			const outcome = await importTranscript({
 				source,
-				parser: workerBackedAutoParser,
+				parser: autoParser,
 				ruleSet: resolved.value,
 				profile,
 			});

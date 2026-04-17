@@ -1,9 +1,8 @@
-export type TranscriptFormat = "pdf" | "mhtml" | "text" | "unknown";
+export type TranscriptFormat = "mhtml" | "text" | "unknown";
 
 /**
  * 先頭バイトで transcript のフォーマットを判別する。
  *
- * - PDF: マジックバイト `%PDF-` から始まる
  * - MHTML: multipart メッセージ（`MIME-Version:` / `Content-Type: multipart/related`
  *   / `From: ` 等で始まる）。BOM や先頭空白には寛容
  * - text: Kochi「Web 成績」コピペ。先頭 2KB に `学則科目名称` / `共通教育`
@@ -13,8 +12,6 @@ export type TranscriptFormat = "pdf" | "mhtml" | "text" | "unknown";
  * 解析に失敗したときのユーザー体験を守るため、拡張子やファイル名には
  * 依存せずに中身だけで判定する。
  */
-const PDF_MAGIC = "%PDF-";
-
 const MHTML_HEADS = [
 	"MIME-Version:",
 	"Content-Type: multipart/related",
@@ -30,12 +27,11 @@ const stripLeadingWhitespaceAndBom = (text: string): string =>
 
 export const detectTranscriptFormat = (bytes: Uint8Array): TranscriptFormat => {
 	if (bytes.byteLength === 0) return "unknown";
-	// 先頭 2KB を見る（text 判定のため MHTML/PDF より広め）
+	// 先頭 2KB を見る（text 判定のため広めに確保）
 	const head = new TextDecoder("utf-8", { fatal: false }).decode(
 		bytes.subarray(0, Math.min(2048, bytes.byteLength)),
 	);
 	const cleaned = stripLeadingWhitespaceAndBom(head);
-	if (cleaned.startsWith(PDF_MAGIC)) return "pdf";
 	// MHTML は先頭数行以内に識別ヘッダがある
 	const firstChunk = cleaned.slice(0, 300);
 	for (const h of MHTML_HEADS) {

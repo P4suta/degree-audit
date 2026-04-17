@@ -4,11 +4,6 @@ import { detectTranscriptFormat } from "./detect-format.ts";
 const enc = new TextEncoder();
 
 describe("detectTranscriptFormat", () => {
-	it("identifies PDF by %PDF- magic bytes", () => {
-		const bytes = enc.encode("%PDF-1.7\n...");
-		expect(detectTranscriptFormat(bytes)).toBe("pdf");
-	});
-
 	it("identifies MHTML by MIME-Version header", () => {
 		const bytes = enc.encode("MIME-Version: 1.0\r\nContent-Type: ...");
 		expect(detectTranscriptFormat(bytes)).toBe("mhtml");
@@ -74,7 +69,7 @@ describe("detectTranscriptFormat", () => {
 		expect(detectTranscriptFormat(bytes)).toBe("text");
 	});
 
-	it("returns unknown for binary that isn't PDF", () => {
+	it("returns unknown for arbitrary binary bytes", () => {
 		const bytes = new Uint8Array([0x00, 0x01, 0x02, 0x03]);
 		expect(detectTranscriptFormat(bytes)).toBe("unknown");
 	});
