@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { base } from "$app/paths";
-	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
 	import { importTranscript } from "$lib/application/import-transcript";
 	import { resolveRuleSet } from "$lib/application/resolve-rule-set";
+	import { safeGoto } from "$lib/presentation/navigation";
 	import { DomainError } from "$lib/domain/errors/domain-error";
 	import { ErrorCode } from "$lib/domain/errors/error-code";
 	import { isErr } from "$lib/domain/errors/result";
@@ -21,7 +21,7 @@
 
 	onMount(() => {
 		if (profileStore.current === null) {
-			void goto(`${base}/profile`);
+			void safeGoto(`${base}/profile`);
 		}
 	});
 
@@ -63,7 +63,7 @@
 				skipped: skippedCount,
 				unknownCategories: unknownCount,
 			});
-			void goto(`${base}/dashboard`);
+			void safeGoto(`${base}/dashboard`);
 		} catch (cause) {
 			const error = new DomainError({
 				code: ErrorCode.ImportFileReadFailed,

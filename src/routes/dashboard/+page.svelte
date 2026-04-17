@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { base } from "$app/paths";
-	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
+	import { safeGoto } from "$lib/presentation/navigation";
 	import RequirementCard from "$lib/presentation/components/RequirementCard.svelte";
 	import Summary from "$lib/presentation/components/Summary.svelte";
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
@@ -10,11 +10,11 @@
 
 	onMount(() => {
 		if (profileStore.current === null) {
-			void goto(`${base}/profile`);
+			void safeGoto(`${base}/profile`);
 			return;
 		}
 		if (transcriptStore.current === null) {
-			void goto(`${base}/import`);
+			void safeGoto(`${base}/import`);
 		}
 	});
 

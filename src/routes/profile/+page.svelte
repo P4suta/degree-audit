@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { base } from "$app/paths";
-	import { goto } from "$app/navigation";
 	import { StudentProfile } from "$lib/domain/entities/student-profile";
 	import { isErr } from "$lib/domain/errors/result";
+	import { safeGoto } from "$lib/presentation/navigation";
 	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
 	import { profileStore } from "$lib/presentation/stores/profile.svelte";
 
@@ -36,7 +36,7 @@
 			return;
 		}
 		profileStore.set(parsed.value);
-		void goto(`${base}/import`);
+		void safeGoto(`${base}/import`);
 	};
 </script>
 

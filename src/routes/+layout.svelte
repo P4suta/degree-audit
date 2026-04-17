@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { base } from "$app/paths";
-	import { goto } from "$app/navigation";
 	import { GraduationCap, Trash2 } from "lucide-svelte";
 	import ErrorBanner from "$lib/presentation/components/ErrorBanner.svelte";
 	import WarningBanner from "$lib/presentation/components/WarningBanner.svelte";
+	import { safeGoto } from "$lib/presentation/navigation";
 	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
 	import { profileStore } from "$lib/presentation/stores/profile.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
@@ -24,7 +24,7 @@
 		profileStore.clear();
 		errorsStore.clear();
 		warningsStore.clear();
-		void goto(`${base}/profile`);
+		void safeGoto(`${base}/profile`);
 	};
 </script>
 
