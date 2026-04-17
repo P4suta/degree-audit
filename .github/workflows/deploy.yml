@@ -23,25 +23,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.3.12
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Type check gate
-        run: bun run check
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@v5
 
-      - name: Build
-        env:
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}
-        run: bun run build
+      - name: Build static site via Docker
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: build-output
+          build-args: |
+            BASE_PATH=${{ steps.pages.outputs.base_path }}
+          outputs: type=local,dest=./build
+          cache-from: type=gha,scope=degree-audit
+          cache-to: type=gha,mode=max,scope=degree-audit
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
