@@ -85,6 +85,13 @@ docker buildx build \
 ホスト側の `node_modules`（別 OS / 別 Bun バージョンでインストールされた残骸）と
 衝突しません。
 
+開発が終わったらコンテナと network を片付けます:
+
+```sh
+docker compose down        # コンテナと network を削除
+docker compose down -v     # さらに named volume も削除（次回起動で bun install が再実行）
+```
+
 ### Devcontainer
 
 `.devcontainer/devcontainer.json` を同梱しています。
