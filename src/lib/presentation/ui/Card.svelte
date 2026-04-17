@@ -5,14 +5,19 @@
 		children: Snippet;
 		class?: string;
 		padding?: "sm" | "md" | "lg" | "none";
-		elevation?: "flat" | "raised";
+		/**
+		 * "bordered" (default) = 境界 1px + 影なし（Apple 流）
+		 * "flat"     = 境界なし + 影なし（画面の背景差で区切るとき）
+		 * "lifted"   = 影あり（重要な最前面カード。多用しない）
+		 */
+		variant?: "bordered" | "flat" | "lifted";
 	}
 
 	const {
 		children,
 		class: className = "",
 		padding = "md",
-		elevation = "raised",
+		variant = "bordered",
 	}: Props = $props();
 
 	const paddingClass = $derived.by(() => {
@@ -20,23 +25,28 @@
 			case "none":
 				return "";
 			case "sm":
-				return "p-3";
+				return "p-4";
 			case "md":
-				return "p-4 sm:p-5";
+				return "p-5";
 			case "lg":
-				return "p-6";
+				return "p-6 sm:p-8";
 		}
 	});
 
-	const elevationClass = $derived(
-		elevation === "raised"
-			? "shadow-[var(--shadow-card)]"
-			: "",
-	);
+	const variantClass = $derived.by(() => {
+		switch (variant) {
+			case "bordered":
+				return "border border-[color:var(--color-border)]";
+			case "flat":
+				return "";
+			case "lifted":
+				return "shadow-[var(--shadow-card)]";
+		}
+	});
 </script>
 
 <div
-	class="rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] text-[color:var(--color-fg)] {elevationClass} {paddingClass} {className}"
+	class="rounded-[var(--radius-card)] bg-[color:var(--color-surface)] text-[color:var(--color-fg)] {variantClass} {paddingClass} {className}"
 >
 	{@render children()}
 </div>

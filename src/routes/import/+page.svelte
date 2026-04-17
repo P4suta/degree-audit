@@ -151,23 +151,27 @@
 	};
 </script>
 
-<h2 class="text-xl font-bold text-[color:var(--color-fg)]">
-	成績を取り込む
-</h2>
-<p class="text-sm text-[color:var(--color-fg-muted)]">
-	高知大学「Web 成績 / 成績閲覧」ページから <strong>コピペ</strong>
-	するだけで取り込めます。データはブラウザ内のメモリだけで処理され、
-	外部には送信されません。
-</p>
+<header class="space-y-3">
+	<h2
+		class="text-[40px] font-semibold leading-[1.08] tracking-[-0.02em] text-[color:var(--color-fg)] sm:text-[44px]"
+	>
+		成績を取り込む
+	</h2>
+	<p class="text-base text-[color:var(--color-fg-muted)] max-w-[640px]">
+		高知大学「Web 成績 / 成績閲覧」ページから <strong
+			class="font-semibold text-[color:var(--color-fg)]">コピペするだけ</strong
+		>で取り込めます。データはブラウザ内のメモリだけで処理され、外部には送信されません。
+	</p>
+</header>
 
 <Card padding="lg">
-	<section aria-labelledby="paste-heading" class="space-y-4">
-		<div class="space-y-1">
+	<section aria-labelledby="paste-heading" class="space-y-5">
+		<div class="space-y-2">
 			<h3
 				id="paste-heading"
-				class="text-base font-semibold text-[color:var(--color-fg)]"
+				class="text-[22px] font-semibold leading-[1.18] tracking-[-0.015em] text-[color:var(--color-fg)]"
 			>
-				📋 成績ページからコピペで取り込む
+				成績ページからコピペ
 			</h3>
 			<p class="text-sm text-[color:var(--color-fg-muted)]">
 				高知大学「Web 成績 / 成績閲覧」ページを開いて、以下の手順でコピーしてください。
@@ -175,21 +179,22 @@
 		</div>
 
 		<ol
-			class="list-inside list-decimal space-y-1 text-sm text-[color:var(--color-fg)]"
+			class="list-inside list-decimal space-y-1.5 text-sm text-[color:var(--color-fg)] marker:text-[color:var(--color-fg-subtle)]"
 		>
 			<li>
-				成績テーブルの <strong>先頭行「共通教育」</strong> から
-				<strong>末尾行「修得単位計」</strong> までをマウスで選択
+				成績テーブルの <strong class="font-semibold">先頭行「共通教育」</strong>
+				から <strong class="font-semibold">末尾行「修得単位計」</strong>
+				までをマウスで選択
 			</li>
 			<li>コピー（<kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>⌘</kbd>+<kbd>C</kbd>）</li>
-			<li>下のテキストエリアに貼り付け → 「取り込み」</li>
+			<li>下のテキストエリアに貼り付け →「取り込み」</li>
 		</ol>
 
 		<p class="text-xs text-[color:var(--color-fg-subtle)]">
-			※ ページ全体を <kbd>Ctrl</kbd>+<kbd>A</kbd> → コピーでも OK です。前後の
-			不要な情報（タブ名・学生情報・GPA 欄など）は自動で無視されます。<br />
-			※ 一部のセクション（例：教養科目 から 次のセクションまで）だけを貼り付けて、
-			部分的に確認することもできます。
+			※ ページ全体を <kbd>Ctrl</kbd>+<kbd>A</kbd> → コピーでも OK
+			です。前後の不要な情報（タブ名・学生情報・GPA 欄など）は自動で無視されます。<br
+			/>
+			※ 一部のセクション（例：教養科目 から 次のセクションまで）だけを貼り付けて、部分的に確認することもできます。
 		</p>
 
 		<pre

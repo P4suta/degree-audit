@@ -22,14 +22,15 @@
 		actions,
 	}: Props = $props();
 
+	// DESIGN.md: 左 3px のアクセントボーダー + 薄い色背景 + アイコン
 	const variantClass = $derived.by(() => {
 		switch (variant) {
 			case "info":
-				return "bg-[color:var(--color-surface-muted)] text-[color:var(--color-fg)] border-l-[color:var(--color-accent)]";
+				return "bg-[color:var(--color-surface-alt)] text-[color:var(--color-fg)] border-l-[color:var(--color-accent)]";
 			case "warning":
-				return "bg-[color:var(--color-warning-bg)] text-[color:var(--color-warning-fg)] border-l-[color:var(--color-warning)]";
+				return "bg-[color:var(--color-warning-bg)] text-[color:var(--color-warning-fg)] border-l-[color:var(--color-warning-fg)]";
 			case "danger":
-				return "bg-[color:var(--color-danger-bg)] text-[color:var(--color-danger-fg)] border-l-[color:var(--color-danger)]";
+				return "bg-[color:var(--color-danger-bg)] text-[color:var(--color-danger-fg)] border-l-[color:var(--color-danger-fg)]";
 		}
 	});
 
@@ -51,9 +52,9 @@
 <div
 	{role}
 	aria-live={ariaLive}
-	class="flex items-start gap-3 rounded-[var(--radius-control)] border border-l-4 border-[color:var(--color-border)] p-3 {variantClass} {className}"
+	class="flex items-start gap-3 rounded-[var(--radius-md)] border border-l-[3px] border-[color:var(--color-border)] px-4 py-3 {variantClass} {className}"
 >
-	<Icon class="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+	<Icon class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
 	<div class="flex-1 space-y-1">
 		{#if title}
 			<p class="text-sm font-semibold">{title}</p>

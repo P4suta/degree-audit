@@ -1,108 +1,136 @@
 @import "tailwindcss";
 
 /*
- * v1 デザイントークン。色は oklch で指定し、同じ hue を維持したまま明度を
- * 切り替えることでライト/ダーク両方で自然に馴染む配色を得る。
+ * DESIGN.md に沿った Apple 風のデザイントークン。
  *
- * 運用ルール：
- *   - 画面側クラスで `text-slate-*` / `bg-white` を直書きしない
- *   - 代わりに `text-fg` / `bg-surface` / `border-border` 等を使う
- *   - 新しい色を追加する時は `@theme` にトークンを増やしてから参照する
+ * 方針：
+ *   - ライトテーマ単一（dark mode は廃止）
+ *   - アクセントは Apple Blue 1 色のみ。インタラクティブ要素専用
+ *   - システムフォント（Web フォント無読み込み）
+ *   - 影は極力使わず、境界 / 背景色差で区切る
+ *
+ * 既存クラスとの互換のため、旧トークン名（--color-accent / --color-fg 等）
+ * をそのまま使い続ける。v1 デザインの oklch 値だけを Apple 風の実数に
+ * 置き換える形。
  */
 
 @theme {
-	--color-surface: oklch(99% 0.003 240);
-	--color-surface-muted: oklch(96% 0.005 240);
-	--color-surface-raised: oklch(100% 0 0);
-	--color-border: oklch(90% 0.005 240);
-	--color-border-strong: oklch(80% 0.008 240);
-	--color-fg: oklch(25% 0.015 240);
-	--color-fg-muted: oklch(45% 0.012 240);
-	--color-fg-subtle: oklch(60% 0.008 240);
+	/* --- surfaces --- */
+	--color-background: #f5f5f7;
+	--color-surface: #ffffff;
+	--color-surface-alt: #fbfbfd;
+	--color-surface-muted: #f5f5f7;
+	--color-surface-raised: #ffffff;
 
-	--color-accent: oklch(55% 0.15 240);
-	--color-accent-hover: oklch(48% 0.17 240);
-	--color-accent-fg: oklch(99% 0.005 240);
+	/* --- borders --- */
+	--color-border: rgba(0, 0, 0, 0.08);
+	--color-border-strong: rgba(0, 0, 0, 0.16);
+	--color-divider: rgba(0, 0, 0, 0.06);
 
-	--color-danger: oklch(55% 0.18 25);
-	--color-danger-bg: oklch(97% 0.015 25);
-	--color-danger-fg: oklch(35% 0.15 25);
-	--color-danger-border: oklch(80% 0.08 25);
+	/* --- text --- */
+	--color-fg: #1d1d1f;
+	--color-fg-muted: rgba(29, 29, 31, 0.72);
+	--color-fg-subtle: rgba(29, 29, 31, 0.48);
 
-	--color-warning: oklch(70% 0.13 75);
-	--color-warning-bg: oklch(97% 0.05 85);
-	--color-warning-fg: oklch(40% 0.1 65);
-	--color-warning-border: oklch(80% 0.11 80);
+	/* --- accent: Apple Blue (唯一のインタラクティブ色) --- */
+	--color-accent: #0071e3;
+	--color-accent-hover: #0077ed;
+	--color-accent-link: #0066cc;
+	--color-accent-fg: #ffffff;
+	--color-accent-ring: rgba(0, 113, 227, 0.2);
 
-	--color-success: oklch(55% 0.14 145);
-	--color-success-bg: oklch(96% 0.03 145);
-	--color-success-fg: oklch(38% 0.12 145);
-	--color-success-border: oklch(80% 0.12 145);
+	/* --- semantic（穏やかなトーン、色相控えめ） --- */
+	--color-success: #1b6b3a;
+	--color-success-fg: #1b6b3a;
+	--color-success-bg: #e6f4ea;
+	--color-success-border: #b7e0c6;
 
-	--radius-card: 0.75rem;
-	--radius-control: 0.5rem;
-	--shadow-card:
-		0 1px 2px oklch(0% 0 0 / 0.04), 0 4px 12px oklch(0% 0 0 / 0.05);
-	--shadow-card-hover:
-		0 2px 4px oklch(0% 0 0 / 0.06), 0 8px 24px oklch(0% 0 0 / 0.08);
-}
+	--color-warning: #8a5a00;
+	--color-warning-fg: #8a5a00;
+	--color-warning-bg: #fff7e0;
+	--color-warning-border: #f4d988;
 
-@media (prefers-color-scheme: dark) {
-	@theme {
-		--color-surface: oklch(18% 0.01 240);
-		--color-surface-muted: oklch(22% 0.015 240);
-		--color-surface-raised: oklch(24% 0.018 240);
-		--color-border: oklch(32% 0.015 240);
-		--color-border-strong: oklch(45% 0.02 240);
-		--color-fg: oklch(95% 0.005 240);
-		--color-fg-muted: oklch(75% 0.012 240);
-		--color-fg-subtle: oklch(60% 0.015 240);
+	--color-danger: #a1001a;
+	--color-danger-fg: #a1001a;
+	--color-danger-bg: #fde8e8;
+	--color-danger-border: #f4b8b8;
 
-		--color-accent: oklch(70% 0.15 240);
-		--color-accent-hover: oklch(78% 0.16 240);
-		--color-accent-fg: oklch(15% 0.02 240);
+	/* --- radius --- */
+	--radius-micro: 4px;
+	--radius-sm: 6px;
+	--radius-md: 8px;
+	--radius-card: 12px;
+	--radius-control: 6px;
+	--radius-lg: 12px;
+	--radius-pill: 9999px;
 
-		--color-danger: oklch(70% 0.18 25);
-		--color-danger-bg: oklch(28% 0.06 25);
-		--color-danger-fg: oklch(92% 0.05 25);
-		--color-danger-border: oklch(50% 0.14 25);
+	/* --- shadows（基本使わない。使うときはこの 2 種のみ） --- */
+	--shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06);
+	--shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.08);
+	--shadow-lifted: 0 3px 30px rgba(0, 0, 0, 0.22);
 
-		--color-warning: oklch(80% 0.13 75);
-		--color-warning-bg: oklch(30% 0.05 70);
-		--color-warning-fg: oklch(95% 0.05 80);
-		--color-warning-border: oklch(55% 0.11 80);
+	/* --- font stack --- */
+	--font-sans:
+		system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI Variable",
+		"Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+		"Yu Gothic", "Meiryo", sans-serif;
+	--font-mono:
+		ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+		monospace;
 
-		--color-success: oklch(75% 0.14 145);
-		--color-success-bg: oklch(25% 0.05 145);
-		--color-success-fg: oklch(92% 0.06 145);
-		--color-success-border: oklch(50% 0.12 145);
-
-		--shadow-card:
-			0 1px 2px oklch(0% 0 0 / 0.3), 0 4px 12px oklch(0% 0 0 / 0.4);
-		--shadow-card-hover:
-			0 2px 4px oklch(0% 0 0 / 0.35), 0 8px 24px oklch(0% 0 0 / 0.45);
-	}
+	--default-font-family: var(--font-sans);
+	--default-mono-font-family: var(--font-mono);
 }
 
 /*
- * ページの基礎色。body に直接流すことで Tailwind クラスを書いていない
- * 要素（SVG 背景など）も一貫した配色になる。
+ * ページ基礎
  */
 html {
-	background-color: var(--color-surface-muted);
+	background-color: var(--color-background);
 	color: var(--color-fg);
-	color-scheme: light dark;
+	color-scheme: light;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
 }
 
 body {
-	background-color: var(--color-surface-muted);
+	background-color: var(--color-background);
 	color: var(--color-fg);
+	font-family: var(--font-sans);
+	/* DESIGN.md: 本文にも軽い負トラッキングを載せる */
+	letter-spacing: -0.005em;
+	font-size: 15px;
+	line-height: 1.55;
 }
 
-/* OS の reduce-motion を尊重。`motion-safe:` prefix を付けたクラスは自動で
- * 無効化されるが、component 側の JS アニメーションなどは別途考慮する。
- * ※ これは a11y の推奨パターンで、どんな author style にも勝つ必要があるため
- *   !important が正当化される。 */
+h1,
+h2,
+h3,
+h4 {
+	letter-spacing: -0.015em;
+	line-height: 1.2;
+}
+
+code,
+kbd,
+pre,
+samp {
+	font-family: var(--font-mono);
+}
+
+/* キーボードキー風の表示（コピペガイダンスで使う） */
+kbd {
+	font-family: var(--font-mono);
+	font-size: 0.85em;
+	padding: 1px 6px;
+	border-radius: 4px;
+	border: 1px solid var(--color-border);
+	background: var(--color-surface-alt);
+	color: var(--color-fg-muted);
+}
+
+/* OS の reduce-motion を尊重。全アニメを実質停止 */
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,

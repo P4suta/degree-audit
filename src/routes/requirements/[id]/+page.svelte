@@ -138,7 +138,7 @@
 
 <a
 	href={`${base}/dashboard`}
-	class="text-sm text-[color:var(--color-accent)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-surface-muted)]"
+	class="text-sm text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
 >
 	&larr; Dashboard へ戻る
 </a>
@@ -162,7 +162,11 @@
 {:else}
 	{@const r = result()}
 	{#if r !== null}
-		<h2 class="text-xl font-bold text-[color:var(--color-fg)]">{label()}</h2>
+		<h2
+			class="text-[40px] font-semibold leading-[1.08] tracking-[-0.02em] text-[color:var(--color-fg)] sm:text-[44px]"
+		>
+			{label()}
+		</h2>
 		<Card padding="lg">
 			<div class="space-y-3">
 				<Progress
@@ -201,7 +205,7 @@
 
 		{#if r.subResults.length > 0}
 			<section class="space-y-2">
-				<h3 class="font-semibold text-[color:var(--color-fg)]">内訳</h3>
+				<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">内訳</h3>
 				<ul class="space-y-2">
 					{#each r.subResults as sub, i (`${sub.required}-${i}`)}
 						<li>
@@ -231,9 +235,9 @@
 		{/if}
 
 		<section class="space-y-2">
-			<h3 class="font-semibold text-[color:var(--color-fg)]">貢献科目</h3>
+			<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">貢献科目</h3>
 			{#if contributingAnnotated.length === 0}
-				<Card padding="md" elevation="flat">
+				<Card padding="md" variant="flat">
 					<p class="text-sm text-[color:var(--color-fg-subtle)]">
 						この要件に貢献している科目はまだありません。
 					</p>
@@ -258,7 +262,7 @@
 			{@const countedCount = reallocatedOut.filter((e) => e.counted).length}
 			{@const excludedCount = reallocatedOut.length - countedCount}
 			<section class="space-y-2">
-				<h3 class="font-semibold text-[color:var(--color-fg)]">
+				<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">
 					ここから読み替え（超過分の行き先）
 				</h3>
 				<p class="text-sm text-[color:var(--color-fg-muted)]">
@@ -292,7 +296,7 @@
 
 		{#if r.excludedCourses && r.excludedCourses.length > 0}
 			<section class="space-y-2">
-				<h3 class="font-semibold text-[color:var(--color-fg)]">
+				<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">
 					算入外（上限超過）
 				</h3>
 				<p class="text-sm text-[color:var(--color-fg-muted)]">
@@ -310,7 +314,7 @@
 
 		{#if unusedOverflow.length > 0}
 			<section class="space-y-2">
-				<h3 class="font-semibold text-[color:var(--color-fg)]">
+				<h3 class="text-[17px] font-semibold leading-[1.24] tracking-[-0.01em] text-[color:var(--color-fg)]">
 					要件超過（卒業単位には使われず）
 				</h3>
 				<p class="text-sm text-[color:var(--color-fg-muted)]">

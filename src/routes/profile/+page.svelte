@@ -84,12 +84,16 @@
 	};
 </script>
 
-<h2 class="text-xl font-bold text-[color:var(--color-fg)]">
-	学生プロフィールの設定
-</h2>
-<p class="text-sm text-[color:var(--color-fg-muted)]">
-	卒業要件ルールの解決に使用します。いつでも再設定できます。
-</p>
+<header class="space-y-3">
+	<h2
+		class="text-[40px] font-semibold leading-[1.08] tracking-[-0.02em] text-[color:var(--color-fg)] sm:text-[44px]"
+	>
+		学生プロフィール
+	</h2>
+	<p class="text-base text-[color:var(--color-fg-muted)] max-w-[640px]">
+		卒業要件ルールの解決に使用します。いつでも再設定できます。
+	</p>
+</header>
 
 <Card padding="lg">
 	<form class="space-y-4" onsubmit={handleSubmit}>

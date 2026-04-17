@@ -34,17 +34,17 @@
 
 	const containerClass = $derived.by(() => {
 		if (disabled) {
-			return "cursor-not-allowed border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] opacity-60";
+			return "cursor-not-allowed border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] opacity-60";
 		}
 		if (dragging) {
-			return "border-[color:var(--color-accent)] bg-[color:var(--color-surface-muted)]";
+			return "border-[color:var(--color-accent)] bg-[color:var(--color-accent-ring)]";
 		}
-		return "border-[color:var(--color-border-strong)] bg-[color:var(--color-surface)]";
+		return "border-[color:var(--color-border)] bg-[color:var(--color-surface)]";
 	});
 </script>
 
 <div
-	class="rounded-[var(--radius-card)] border-2 border-dashed p-10 text-center motion-safe:transition-colors {containerClass}"
+	class="rounded-[var(--radius-card)] border border-dashed p-8 text-center motion-safe:transition-colors {containerClass}"
 	ondragover={(e) => {
 		e.preventDefault();
 		if (!disabled) dragging = true;
@@ -57,18 +57,17 @@
 	aria-label="成績ファイルのドロップゾーン"
 >
 	<FileUp
-		class="mx-auto h-10 w-10 text-[color:var(--color-fg-subtle)]"
+		class="mx-auto h-6 w-6 text-[color:var(--color-fg-subtle)]"
 		aria-hidden="true"
 	/>
 	<p class="mt-3 text-sm text-[color:var(--color-fg)]">
-		個別成績表の <strong>PDF</strong>、または成績閲覧画面の
-		<strong>MHTML</strong> をここにドロップ
+		MHTML ファイルをここにドロップ
 	</p>
 	<p class="mt-1 text-xs text-[color:var(--color-fg-subtle)]">または</p>
 	<div class="mt-3">
 		<Button
-			variant="primary"
-			size="md"
+			variant="secondary"
+			size="sm"
 			onclick={() => inputElement?.click()}
 			{disabled}
 		>
