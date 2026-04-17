@@ -1,5 +1,10 @@
 # 卒業要件判定ツール
 
+[![CI](https://github.com/P4suta/degree-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/P4suta/degree-audit/actions/workflows/ci.yml)
+[![Deploy](https://github.com/P4suta/degree-audit/actions/workflows/deploy.yml/badge.svg)](https://github.com/P4suta/degree-audit/actions/workflows/deploy.yml)
+
+公開 URL: <https://p4suta.github.io/degree-audit/>
+
 大学の「Web 成績」からコピー＆ペースト or MHTML 保存した成績データを取り込み、
 **卒業要件の充足状況**と**卒業論文履修資格**を可視化する非公式 Web ツール。
 
