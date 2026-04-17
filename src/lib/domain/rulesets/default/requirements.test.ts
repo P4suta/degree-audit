@@ -82,6 +82,46 @@ describe("default ruleset — careerOverflow fixture", () => {
 	});
 });
 
+describe("default ruleset — seminar34FallMissing fixture", () => {
+	it("fails seminar-34 when 演習 I 4 units but 演習 II 0 units", () => {
+		const record = fixtures.seminar34FallMissing();
+		const outcome = runAll(record);
+		const seminar34Step = outcome.pipeline.steps.find(
+			(s) => s.id === "seminar-34",
+		);
+		expect(seminar34Step?.result.satisfied).toBe(false);
+		const fallSub = seminar34Step?.result.subResults.find(
+			(r) => r.required === 2 && r.actual === 0,
+		);
+		expect(fallSub).toBeDefined();
+		expect(fallSub?.satisfied).toBe(false);
+	});
+});
+
+describe("default ruleset — seminar56Overflow fixture", () => {
+	it("consumes all V-VI courses so the excess does not flow into elective", () => {
+		const record = fixtures.seminar56Overflow();
+		const outcome = runAll(record);
+		const seminar56Step = outcome.pipeline.steps.find(
+			(s) => s.id === "seminar-56",
+		);
+		const electiveStep = outcome.pipeline.steps.find(
+			(s) => s.id === "elective-38",
+		);
+		const seminar56Ids = new Set(seminar56Step?.consumedCourseIds);
+		const electiveIds = new Set(
+			electiveStep?.result.contributingCourses.map((c) => c.id as string),
+		);
+		const seminar56CourseIds = record.courses
+			.filter((c) => c.category.kind === "seminar/5-6-thesis")
+			.map((c) => c.id as string);
+		for (const id of seminar56CourseIds) {
+			expect(seminar56Ids.has(id)).toBe(true);
+			expect(electiveIds.has(id)).toBe(false);
+		}
+	});
+});
+
 describe("default ruleset — thesisBlocked fixture", () => {
 	it("main requirements may pass while thesis eligibility fails on language", () => {
 		const record = fixtures.thesisBlocked();

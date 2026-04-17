@@ -7,19 +7,43 @@ import { minCreditsInCategory } from "../../specifications/combinators/min-credi
 import { minCreditsWithCaps } from "../../specifications/combinators/min-credits-with-caps.ts";
 import { minFieldsCovered } from "../../specifications/combinators/min-fields-covered.ts";
 import { perLanguageMin } from "../../specifications/combinators/per-language-min.ts";
+import { requireNamedSubjects } from "../../specifications/combinators/require-named-subjects.ts";
 import { requirementGroup } from "../../specifications/combinators/requirement-group.ts";
 import type { Specification } from "../../specifications/types.ts";
+import { isSportsScience } from "./predicates.ts";
 
-const primary12 = minCreditsInCategory({
-	id: "primary-12",
-	label: "初年次科目 12単位",
+const PRIMARY_REQUIRED_SUBJECTS = [
+	{ key: "大学基礎論", displayName: "大学基礎論" },
+	{ key: "大学英語入門", displayName: "大学英語入門 I・II" },
+	{ key: "英会話", displayName: "英会話 I・II" },
+	{ key: "情報処理", displayName: "情報処理" },
+	{ key: "学問基礎論", displayName: "学問基礎論" },
+	{ key: "課題探求実践セミナー", displayName: "課題探求実践セミナー" },
+] as const;
+
+const primaryNamed = requireNamedSubjects({
+	id: "primary-named",
+	label: "初年次 6 科目（名称必修）",
+	required: PRIMARY_REQUIRED_SUBJECTS,
+});
+
+const primaryTotal = minCreditsInCategory({
+	id: "primary-total-12",
+	label: "初年次科目 合計 12単位",
 	required: 12,
 	kinds: ["common-education/primary"],
 });
 
+const primary12 = allOf({
+	id: "primary-12",
+	label: "初年次科目（6 科目 × 2単位 = 12単位）",
+	specs: [primaryNamed, primaryTotal],
+});
+
 const liberalTotal28 = minCreditsWithCaps({
 	id: "liberal-total-28",
-	label: "教養 合計 28単位（キャリア形成支援は上限 6 単位まで算入）",
+	label:
+		"教養 合計 28単位（キャリア形成支援は上限 6 単位、スポーツ科学は上限 4 単位まで算入）",
 	required: 28,
 	kinds: [
 		"common-education/liberal/field",
@@ -29,6 +53,14 @@ const liberalTotal28 = minCreditsWithCaps({
 	caps: {
 		"common-education/liberal/career": 6,
 	},
+	predicateCaps: [
+		{
+			id: "sports-4",
+			label: "スポーツ科学",
+			predicate: isSportsScience,
+			cap: 4,
+		},
+	],
 });
 
 const liberalFields3 = minFieldsCovered({
@@ -38,11 +70,21 @@ const liberalFields3 = minFieldsCovered({
 	requiredFieldCount: 3,
 });
 
+const MANDATORY_FOREIGN_LANGUAGES = [
+	"ドイツ語",
+	"フランス語",
+	"中国語",
+	"韓国語",
+	"朝鮮語",
+	"スペイン語",
+] as const;
+
 const liberalPerLanguage = perLanguageMin({
 	id: "liberal-language-4",
-	label: "外国語 1言語につき 4単位以上",
+	label: "外国語 1言語につき 4単位以上（独/仏/中/韓/朝/西 のいずれか）",
 	requiredPerLanguage: 4,
 	requiredLanguageCount: 1,
+	allowedLanguages: MANDATORY_FOREIGN_LANGUAGES,
 });
 
 const liberalCareerCap = cappedContribution({
@@ -66,11 +108,31 @@ const seminar12 = minCreditsInCategory({
 	kinds: ["seminar/1-2"],
 });
 
-const seminar34 = minCreditsInCategory({
-	id: "seminar-34",
-	label: "ゼミナール III・IV 4単位",
+const seminar34Spring = minCreditsInCategory({
+	id: "seminar-34-spring",
+	label: "演習 I（前期）2単位",
+	required: 2,
+	kinds: ["seminar/3-4/spring"],
+});
+
+const seminar34Fall = minCreditsInCategory({
+	id: "seminar-34-fall",
+	label: "演習 II（後期）2単位",
+	required: 2,
+	kinds: ["seminar/3-4/fall"],
+});
+
+const seminar34Total = minCreditsInCategory({
+	id: "seminar-34-total",
+	label: "ゼミナール III・IV 合計 4単位",
 	required: 4,
-	kinds: ["seminar/3-4"],
+	kinds: ["seminar/3-4/spring", "seminar/3-4/fall"],
+});
+
+const seminar34 = allOf({
+	id: "seminar-34",
+	label: "ゼミナール III・IV 4単位（演習 I + 演習 II 各 2単位）",
+	specs: [seminar34Spring, seminar34Fall, seminar34Total],
 });
 
 const seminar56 = minCreditsInCategory({
@@ -145,6 +207,18 @@ const electiveSpec = elective({
 	label:
 		"選択科目 38単位（他コース + 他学部 + PF 超過は 16 単位枠、他学部 8 単位まで）",
 	required: 38,
+	allowedKinds: [
+		"elective/own-course",
+		"elective/other-course",
+		"elective/other-faculty",
+		"seminar/1-2",
+		"seminar/3-4/spring",
+		"seminar/3-4/fall",
+		"platform/basic-a",
+		"platform/basic-b",
+		"platform/foreign-language",
+		"platform/advanced",
+	],
 	otherFacultyCap: 8,
 	frameKinds: [
 		"elective/other-course",
@@ -162,7 +236,7 @@ export const requirements: readonly PipelineStep[] = [
 	{ spec: liberal, allocation: "consume-required" },
 	{ spec: seminar12, allocation: "consume-required" },
 	{ spec: seminar34, allocation: "consume-required" },
-	{ spec: seminar56, allocation: "consume-required" },
+	{ spec: seminar56, allocation: "consume-all" },
 	{ spec: platform, allocation: "consume-required" },
 	{ spec: electiveSpec, allocation: "observe" },
 ];
@@ -183,17 +257,23 @@ export const thesisEligibility: Specification = allOf({
 	id: "thesis-eligibility",
 	label: "卒業論文履修資格",
 	specs: [
+		requireNamedSubjects({
+			id: "thesis-primary-named",
+			label: "初年次 6 科目（名称必修）",
+			required: PRIMARY_REQUIRED_SUBJECTS,
+		}),
 		minCreditsInCategory({
-			id: "thesis-primary-12",
-			label: "初年次科目 12単位",
+			id: "thesis-primary-total-12",
+			label: "初年次科目 合計 12単位",
 			required: 12,
 			kinds: ["common-education/primary"],
 		}),
 		perLanguageMin({
 			id: "thesis-language-4",
-			label: "教養外国語 1言語につき 4単位以上",
+			label: "教養外国語 1言語につき 4単位以上（独/仏/中/韓/朝/西 のいずれか）",
 			requiredPerLanguage: 4,
 			requiredLanguageCount: 1,
+			allowedLanguages: MANDATORY_FOREIGN_LANGUAGES,
 		}),
 		minCreditsInCategory({
 			id: "thesis-seminar12-4",
@@ -202,10 +282,22 @@ export const thesisEligibility: Specification = allOf({
 			kinds: ["seminar/1-2"],
 		}),
 		minCreditsInCategory({
-			id: "thesis-seminar34-4",
-			label: "ゼミナール III・IV 4単位",
+			id: "thesis-seminar34-spring",
+			label: "演習 I（前期）2単位",
+			required: 2,
+			kinds: ["seminar/3-4/spring"],
+		}),
+		minCreditsInCategory({
+			id: "thesis-seminar34-fall",
+			label: "演習 II（後期）2単位",
+			required: 2,
+			kinds: ["seminar/3-4/fall"],
+		}),
+		minCreditsInCategory({
+			id: "thesis-seminar34-total",
+			label: "ゼミナール III・IV 合計 4単位",
 			required: 4,
-			kinds: ["seminar/3-4"],
+			kinds: ["seminar/3-4/spring", "seminar/3-4/fall"],
 		}),
 		minCredits({
 			id: "thesis-total-90",

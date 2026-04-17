@@ -19,7 +19,12 @@ describe("SubjectCategory factories", () => {
 			kind: "common-education/liberal/career",
 		});
 		expect(SubjectCategory.seminar12()).toEqual({ kind: "seminar/1-2" });
-		expect(SubjectCategory.seminar34()).toEqual({ kind: "seminar/3-4" });
+		expect(SubjectCategory.seminar34Spring()).toEqual({
+			kind: "seminar/3-4/spring",
+		});
+		expect(SubjectCategory.seminar34Fall()).toEqual({
+			kind: "seminar/3-4/fall",
+		});
 		expect(SubjectCategory.seminar56Thesis()).toEqual({
 			kind: "seminar/5-6-thesis",
 		});
@@ -85,7 +90,8 @@ describe("group predicates", () => {
 		[SubjectCategory.liberalCareer(), "common-education"],
 		[SubjectCategory.liberalField(FieldCategory.Social), "common-education"],
 		[SubjectCategory.seminar12(), "seminar"],
-		[SubjectCategory.seminar34(), "seminar"],
+		[SubjectCategory.seminar34Spring(), "seminar"],
+		[SubjectCategory.seminar34Fall(), "seminar"],
 		[SubjectCategory.seminar56Thesis(), "seminar"],
 		[SubjectCategory.platformBasicA(), "platform"],
 		[SubjectCategory.platformAdvanced(), "platform"],

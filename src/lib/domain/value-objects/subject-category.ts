@@ -6,7 +6,8 @@ export type SubjectCategoryKind =
 	| "common-education/liberal/foreign-language"
 	| "common-education/liberal/career"
 	| "seminar/1-2"
-	| "seminar/3-4"
+	| "seminar/3-4/spring"
+	| "seminar/3-4/fall"
 	| "seminar/5-6-thesis"
 	| "platform/basic-a"
 	| "platform/basic-b"
@@ -29,7 +30,8 @@ export type SubjectCategory =
 	  }
 	| { readonly kind: "common-education/liberal/career" }
 	| { readonly kind: "seminar/1-2" }
-	| { readonly kind: "seminar/3-4" }
+	| { readonly kind: "seminar/3-4/spring" }
+	| { readonly kind: "seminar/3-4/fall" }
 	| { readonly kind: "seminar/5-6-thesis" }
 	| { readonly kind: "platform/basic-a" }
 	| { readonly kind: "platform/basic-b" }
@@ -54,7 +56,8 @@ export const SubjectCategory = {
 		kind: "common-education/liberal/career",
 	}),
 	seminar12: (): SubjectCategory => ({ kind: "seminar/1-2" }),
-	seminar34: (): SubjectCategory => ({ kind: "seminar/3-4" }),
+	seminar34Spring: (): SubjectCategory => ({ kind: "seminar/3-4/spring" }),
+	seminar34Fall: (): SubjectCategory => ({ kind: "seminar/3-4/fall" }),
 	seminar56Thesis: (): SubjectCategory => ({ kind: "seminar/5-6-thesis" }),
 	platformBasicA: (): SubjectCategory => ({ kind: "platform/basic-a" }),
 	platformBasicB: (): SubjectCategory => ({ kind: "platform/basic-b" }),

@@ -132,3 +132,78 @@ describe("minCreditsWithCaps", () => {
 		expect(r.contributingCourses).toHaveLength(1);
 	});
 });
+
+describe("minCreditsWithCaps with predicateCaps (sports)", () => {
+	const sports = (credit: number) =>
+		Course.of({
+			id: CourseId.of(nextId()),
+			name: "スポーツ科学講義",
+			credit: Credit.of(credit),
+			grade: Grade.Yu,
+			category: SubjectCategory.liberalField(FieldCategory.BioMedical),
+			rawCategoryLabel: "raw",
+		});
+
+	const isSports = (c: Course) => c.name.startsWith("スポーツ科学");
+
+	const spec = minCreditsWithCaps({
+		id: "liberal-28",
+		label: "教養 28",
+		required: 28,
+		kinds: [
+			"common-education/liberal/field",
+			"common-education/liberal/foreign-language",
+			"common-education/liberal/career",
+		],
+		caps: { "common-education/liberal/career": 6 },
+		predicateCaps: [
+			{
+				id: "sports-4",
+				label: "スポーツ科学",
+				predicate: isSports,
+				cap: 4,
+			},
+		],
+	});
+
+	it("caps sports credits at 4 even though they live under liberal/field", () => {
+		counter = 0;
+		// sports 6 + hum 20 + english 4 = raw 30, but sports capped at 4 → actual 28
+		const pool = [sports(2), sports(2), sports(2), hum(20), english(4)];
+		const r = spec.evaluate({ pool });
+		expect(r.actual).toBe(4 + 20 + 4);
+		expect(r.satisfied).toBe(true);
+		expect(
+			r.diagnostics.some(
+				(d) => d.includes("スポーツ科学") && d.includes("卒業要件外"),
+			),
+		).toBe(true);
+	});
+
+	it("does not exclude non-sports field courses", () => {
+		counter = 0;
+		const pool = [sports(4), hum(20), english(4)];
+		const r = spec.evaluate({ pool });
+		expect(r.actual).toBe(28);
+		expect(r.contributingCourses).toHaveLength(3);
+	});
+
+	it("combined with kind cap (career) and predicate cap (sports)", () => {
+		counter = 0;
+		// sports 6 (capped to 4) + career 2+2+2 (capped to 6) + hum 14 + english 4
+		// = 4 + 6 + 14 + 4 = 28
+		const pool = [
+			sports(2),
+			sports(2),
+			sports(2),
+			career(2),
+			career(2),
+			career(2),
+			hum(14),
+			english(4),
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.actual).toBe(28);
+		expect(r.satisfied).toBe(true);
+	});
+});

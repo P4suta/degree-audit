@@ -59,10 +59,21 @@ const rules: readonly Rule[] = [
 			(name.includes("ゼミナール") && name.includes("v・vi")),
 		build: () => SubjectCategory.seminar56Thesis(),
 	},
-	// ゼミナール III・IV
+	// ゼミナール III・IV — 演習 I（前期）と演習 II（後期）が独立必修。
+	// 科目名が「…演習II」なら後期、それ以外（…演習I もしくは判別不能）は前期扱い。
+	// 「iv」を先に見るのは、NFKC 正規化後 "IV" → "iv" の 2 文字並びが "ii" を含んでしまい
+	// 演習 II と衝突するのを避けるため。
 	{
 		when: ({ label }) => label.includes("ゼミ") && label.includes("iii"),
-		build: () => SubjectCategory.seminar34(),
+		build: ({ name }) => {
+			if (name.includes("演習iv") || name.endsWith("iv")) {
+				return SubjectCategory.seminar34Fall();
+			}
+			if (name.includes("演習ii") || name.endsWith("ii")) {
+				return SubjectCategory.seminar34Fall();
+			}
+			return SubjectCategory.seminar34Spring();
+		},
 	},
 	// ゼミナール I・II（ゼミ系フォールバック）
 	{

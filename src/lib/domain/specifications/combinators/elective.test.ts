@@ -29,11 +29,25 @@ const FRAME_KINDS = [
 	"platform/advanced",
 ] as const;
 
+const ALLOWED_KINDS = [
+	"elective/own-course",
+	"elective/other-course",
+	"elective/other-faculty",
+	"seminar/1-2",
+	"seminar/3-4/spring",
+	"seminar/3-4/fall",
+	"platform/basic-a",
+	"platform/basic-b",
+	"platform/foreign-language",
+	"platform/advanced",
+] as const;
+
 describe("elective", () => {
 	const spec = elective({
 		id: "elective",
 		label: "選択",
 		required: 38,
+		allowedKinds: ALLOWED_KINDS,
 		otherFacultyCap: 8,
 		frameKinds: FRAME_KINDS,
 		frameCap: 16,
@@ -106,5 +120,37 @@ describe("elective", () => {
 		const r = spec.evaluate({ pool });
 		expect(r.diagnostics.some((d) => d.includes("他学部科目"))).toBe(true);
 		expect(r.diagnostics.some((d) => d.includes("16 単位枠"))).toBe(true);
+	});
+
+	it("excludes kinds not listed in allowedKinds (unknown, seminar V-VI, etc.)", () => {
+		const pool = [
+			course("own1", 30, SubjectCategory.electiveOwnCourse()),
+			course("vvi1", 10, SubjectCategory.seminar56Thesis()),
+			course("unk1", 10, SubjectCategory.unknown("??")),
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.actual).toBe(30);
+		expect(r.contributingCourses.map((c) => c.id as string)).toEqual(["own1"]);
+		expect(
+			r.diagnostics.some((d) => d.includes("対象外 kind `seminar/5-6-thesis`")),
+		).toBe(true);
+		expect(r.diagnostics.some((d) => d.includes("対象外 kind `unknown`"))).toBe(
+			true,
+		);
+	});
+
+	it("counts all six eligible families (own, seminar I-II, seminar III-IV spring+fall, other-course, other-faculty, PF)", () => {
+		const pool = [
+			course("own1", 10, SubjectCategory.electiveOwnCourse()),
+			course("s12", 2, SubjectCategory.seminar12()),
+			course("s34s", 2, SubjectCategory.seminar34Spring()),
+			course("s34f", 2, SubjectCategory.seminar34Fall()),
+			course("other1", 4, SubjectCategory.electiveOtherCourse()),
+			course("fac1", 4, SubjectCategory.electiveOtherFaculty()),
+			course("pf1", 4, SubjectCategory.platformAdvanced()),
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.actual).toBe(28);
+		expect(r.contributingCourses).toHaveLength(7);
 	});
 });

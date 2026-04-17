@@ -81,16 +81,17 @@ describe("minCreditsInCategory", () => {
 			id: "seminar-all",
 			label: "ゼミ全部",
 			required: 8,
-			kinds: ["seminar/1-2", "seminar/3-4"],
+			kinds: ["seminar/1-2", "seminar/3-4/spring", "seminar/3-4/fall"],
 		});
 		const pool = [
 			course("s1", 4, SubjectCategory.seminar12()),
-			course("s2", 4, SubjectCategory.seminar34()),
+			course("s2", 2, SubjectCategory.seminar34Spring()),
+			course("s4", 2, SubjectCategory.seminar34Fall()),
 			course("s3", 4, SubjectCategory.seminar56Thesis()),
 		];
 		const r = spec.evaluate(ctx(pool));
 		expect(r.actual).toBe(8);
-		expect(r.contributingCourses).toHaveLength(2);
+		expect(r.contributingCourses).toHaveLength(3);
 	});
 });
 

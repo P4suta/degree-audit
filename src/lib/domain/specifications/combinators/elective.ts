@@ -6,22 +6,27 @@ import type { EvalContext, Specification, SpecResult } from "../types.ts";
  * 選択科目要件。leftoverPool（ゼミ超過 / PF 超過 + 他コース・他学部・自コース科目）
  * から required 単位を積み上げる。
  *
- * 2 段の上限を持つ：
+ * 3 段のフィルタを持つ：
+ *   - `allowedKinds`：選択 38 に算入可能な kind ホワイトリスト（Kochi では
+ *     自コース + ゼミ I-IV 超過 + 他コース + 他学部 + PF 超過）。
+ *     leftoverPool に unknown や V-VI 等の想定外 kind が混入しても算入しない
  *   - `otherFacultyCap`：他学部科目単独の上限（Kochi では 8 単位）
  *   - `frameKinds` + `frameCap`：他コース + 他学部 + PF 超過の合算上限
  *     （Kochi では 16 単位枠）。この枠の中で上記 otherFacultyCap がさらに効く
  *
- * 判定順序は pool の順（＝ pipeline から流れてきた順）。上限を超える科目は
- * contributingCourses から除外し、diagnostics で明示する。
+ * 判定順序は pool の順（＝ pipeline から流れてきた順）。上限を超える科目・
+ * 対象外 kind は contributingCourses から除外し、diagnostics で明示する。
  */
 export const elective = (options: {
 	readonly id: string;
 	readonly label: string;
 	readonly required: number;
+	readonly allowedKinds: readonly SubjectCategoryKind[];
 	readonly otherFacultyCap: number;
 	readonly frameKinds: readonly SubjectCategoryKind[];
 	readonly frameCap: number;
 }): Specification => {
+	const allowedKindSet = new Set<SubjectCategoryKind>(options.allowedKinds);
 	const frameKindSet = new Set<SubjectCategoryKind>(options.frameKinds);
 	return {
 		id: options.id,
@@ -33,9 +38,17 @@ export const elective = (options: {
 			let otherFacultyUsed = 0;
 			let otherFacultyExcluded = 0;
 			let frameExcluded = 0;
+			const disallowedByKind = new Map<SubjectCategoryKind, number>();
 			for (const course of ctx.pool) {
 				const credit = course.credit as number;
 				const kind = course.category.kind;
+				if (!allowedKindSet.has(kind)) {
+					disallowedByKind.set(
+						kind,
+						(disallowedByKind.get(kind) ?? 0) + credit,
+					);
+					continue;
+				}
 				const inFrame = frameKindSet.has(kind);
 				if (kind === "elective/other-faculty") {
 					if (otherFacultyUsed + credit > options.otherFacultyCap) {
@@ -66,6 +79,11 @@ export const elective = (options: {
 			if (frameExcluded > 0) {
 				diagnostics.push(
 					`${options.frameCap} 単位枠超過で ${frameExcluded} 単位が算入外`,
+				);
+			}
+			for (const [kind, total] of disallowedByKind) {
+				diagnostics.push(
+					`対象外 kind \`${kind}\` が ${total} 単位（選択算入外）`,
 				);
 			}
 			return {

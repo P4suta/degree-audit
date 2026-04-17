@@ -102,7 +102,7 @@ describe("defaultCategoryMap", () => {
 			},
 		],
 		["ゼミナール / ゼミI・II", { kind: "seminar/1-2" }],
-		["ゼミナール / ゼミIII・IV", { kind: "seminar/3-4" }],
+		["ゼミナール / ゼミIII・IV", { kind: "seminar/3-4/spring" }],
 		["ゼミナール / 卒業論文・ゼミナールV・VI", { kind: "seminar/5-6-thesis" }],
 		["卒業論文", { kind: "seminar/5-6-thesis" }],
 		["専門教育 / プラットフォーム科目 / 基礎Ａ", { kind: "platform/basic-a" }],
@@ -128,5 +128,39 @@ describe("defaultCategoryMap", () => {
 	it("returns unknown for unrecognised labels", () => {
 		const result = defaultCategoryMap({ rawLabel: "謎のカテゴリ" });
 		expect(result).toEqual({ kind: "unknown", raw: "謎のカテゴリ" });
+	});
+
+	describe("seminar III・IV spring/fall disambiguation", () => {
+		it("routes 演習I to spring", () => {
+			const r = defaultCategoryMap({
+				rawLabel: "ゼミナール / ゼミIII・IV",
+				courseName: "哲学演習I",
+			});
+			expect(r).toEqual({ kind: "seminar/3-4/spring" });
+		});
+
+		it("routes 演習II to fall", () => {
+			const r = defaultCategoryMap({
+				rawLabel: "ゼミナール / ゼミIII・IV",
+				courseName: "哲学演習II",
+			});
+			expect(r).toEqual({ kind: "seminar/3-4/fall" });
+		});
+
+		it("routes 演習IV to fall (covers 演習IV naming variants)", () => {
+			const r = defaultCategoryMap({
+				rawLabel: "ゼミナール / ゼミIII・IV",
+				courseName: "歴史学演習IV",
+			});
+			expect(r).toEqual({ kind: "seminar/3-4/fall" });
+		});
+
+		it("defaults to spring when course name does not distinguish", () => {
+			const r = defaultCategoryMap({
+				rawLabel: "ゼミナール / ゼミIII・IV",
+				courseName: "演習",
+			});
+			expect(r).toEqual({ kind: "seminar/3-4/spring" });
+		});
 	});
 });
