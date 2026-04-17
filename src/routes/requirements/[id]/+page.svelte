@@ -61,12 +61,22 @@
 					actual={r.actual}
 					required={r.required}
 					satisfied={r.satisfied}
+					unit={r.unit ?? "単位"}
 				/>
-				<div class="flex items-center gap-2 text-sm text-[color:var(--color-fg)]">
-					<span>{r.actual} / {r.required}</span>
+				<div
+					class="flex items-center gap-2 text-sm text-[color:var(--color-fg)]"
+				>
+					<span class="tabular-nums">
+						{r.actual} / {r.required} {r.unit ?? "単位"}
+					</span>
 					<Badge variant={r.satisfied ? "success" : "warning"}>
 						{r.satisfied ? "充足" : "不足"}
 					</Badge>
+					{#if !r.satisfied && r.required - r.actual > 0}
+						<span class="text-[color:var(--color-warning-fg)] font-semibold">
+							あと {r.required - r.actual} {r.unit ?? "単位"}
+						</span>
+					{/if}
 				</div>
 				{#if r.diagnostics.length > 0}
 					<ul class="list-inside list-disc text-sm text-[color:var(--color-fg-muted)]">

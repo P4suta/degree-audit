@@ -75,6 +75,7 @@ export const perLanguageMin = (options: {
 				contributingCourses: contributing,
 				subResults: [],
 				diagnostics,
+				unit: "言語",
 			};
 		},
 	};

@@ -7,6 +7,12 @@ export interface SpecResult {
 	readonly contributingCourses: readonly Course[];
 	readonly subResults: readonly SpecResult[];
 	readonly diagnostics: readonly string[];
+	/**
+	 * UI で `${actual} / ${required} ${unit}` と表示する時の単位名。
+	 * 省略時は "単位"。`分野 / 言語 / 科目` など単位数以外をカウントする
+	 * combinator は明示的に設定する。
+	 */
+	readonly unit?: string;
 }
 
 export interface EvalContext {

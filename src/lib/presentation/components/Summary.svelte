@@ -12,6 +12,16 @@
 	const { assessment }: Props = $props();
 
 	const totalNumber = $derived(Credit.toNumber(assessment.totalCredits));
+
+	const totalRemaining = $derived(
+		Math.max(0, assessment.totalCreditsRequired - totalNumber),
+	);
+
+	const unmetStepCount = $derived(
+		assessment.steps.filter((s) => !s.result.satisfied).length +
+			(assessment.total.satisfied ? 0 : 1),
+	);
+
 	const thesisEligibleLabel = $derived(
 		assessment.thesisEligibility.satisfied ? "資格あり" : "未達",
 	);
@@ -19,14 +29,14 @@
 
 <Card padding="lg">
 	<section aria-label="卒業判定サマリ">
-		<div class="flex items-center gap-3">
+		<div class="flex items-start gap-3">
 			<GraduationCap
-				class="h-8 w-8 {assessment.graduatable
+				class="h-8 w-8 shrink-0 {assessment.graduatable
 					? 'text-[color:var(--color-success)]'
 					: 'text-[color:var(--color-warning)]'}"
 				aria-hidden="true"
 			/>
-			<div>
+			<div class="flex-1">
 				<p class="text-lg font-bold text-[color:var(--color-fg)]">
 					{assessment.graduatable
 						? "卒業要件を満たしています"
@@ -34,17 +44,27 @@
 				</p>
 				<p class="text-sm text-[color:var(--color-fg-muted)]">
 					総修得単位 {totalNumber} / {assessment.totalCreditsRequired} 単位
+					{#if totalRemaining > 0}
+						<span class="ml-2 font-semibold text-[color:var(--color-warning-fg)]">
+							あと {totalRemaining} 単位
+						</span>
+					{/if}
 				</p>
 			</div>
 		</div>
 		<div class="mt-4 flex flex-wrap items-center gap-3 text-sm">
 			<span class="text-[color:var(--color-fg-muted)]">卒論履修資格：</span>
-			<Badge variant={assessment.thesisEligibility.satisfied ? "success" : "warning"}>
+			<Badge
+				variant={assessment.thesisEligibility.satisfied ? "success" : "warning"}
+			>
 				{thesisEligibleLabel}
 			</Badge>
-			<span class="text-[color:var(--color-fg-muted)]">
-				要件ステップ数：{assessment.steps.length}
-			</span>
+			{#if unmetStepCount > 0}
+				<span class="text-[color:var(--color-fg-muted)]">
+					不足中の要件：
+				</span>
+				<Badge variant="warning">{unmetStepCount} 件</Badge>
+			{/if}
 		</div>
 	</section>
 </Card>

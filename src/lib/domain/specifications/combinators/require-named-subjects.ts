@@ -81,6 +81,7 @@ export const requireNamedSubjects = (options: {
 				contributingCourses: contributing,
 				subResults,
 				diagnostics,
+				unit: "科目",
 			};
 		},
 	};

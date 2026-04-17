@@ -114,8 +114,10 @@ describe("allOf", () => {
 		const r = spec.evaluate(ctx(pool));
 		expect(r.satisfied).toBe(false);
 		expect(r.subResults).toHaveLength(2);
-		expect(r.required).toBe(12);
-		expect(r.actual).toBe(8);
+		// allOf は要件件数ベース: 2 sub-spec のうち 1 件（a）だけ充足
+		expect(r.required).toBe(2);
+		expect(r.actual).toBe(1);
+		expect(r.unit).toBe("要件");
 		expect(r.contributingCourses).toHaveLength(1);
 	});
 

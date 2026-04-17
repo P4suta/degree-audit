@@ -54,6 +54,7 @@ export const minFieldsCovered = (options: {
 			contributingCourses: contributing,
 			subResults: [],
 			diagnostics,
+			unit: "分野",
 		};
 	},
 });

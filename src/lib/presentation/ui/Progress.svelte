@@ -8,8 +8,14 @@
 		readonly class?: string;
 	}
 
-	const { label, actual, required, satisfied, unit = "単位", class: className = "" }: Props =
-		$props();
+	const {
+		label,
+		actual,
+		required,
+		satisfied,
+		unit = "単位",
+		class: className = "",
+	}: Props = $props();
 
 	const ratio = $derived(
 		required === 0 ? 0 : Math.min(1, Math.max(0, actual / required)),
@@ -22,10 +28,14 @@
 			? "bg-[color:var(--color-success)]"
 			: "bg-[color:var(--color-accent)]",
 	);
+
+	const remaining = $derived(Math.max(0, required - actual));
 </script>
 
 <div class="space-y-1 {className}">
-	<div class="flex items-baseline justify-between gap-3 text-xs text-[color:var(--color-fg-muted)]">
+	<div
+		class="flex items-baseline justify-between gap-3 text-xs text-[color:var(--color-fg-muted)]"
+	>
 		<span class="truncate">{label}</span>
 		<span class="tabular-nums">{actual} / {required} {unit}</span>
 	</div>
@@ -42,4 +52,12 @@
 			style={`width: ${percent}`}
 		></div>
 	</div>
+	{#if !satisfied && remaining > 0}
+		<p
+			class="text-xs font-medium text-[color:var(--color-warning-fg)]"
+			aria-live="polite"
+		>
+			あと {remaining} {unit}
+		</p>
+	{/if}
 </div>

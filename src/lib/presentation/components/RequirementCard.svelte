@@ -41,6 +41,7 @@
 			actual={result.actual}
 			required={result.required}
 			satisfied={result.satisfied}
+			unit={result.unit ?? "単位"}
 		/>
 	</div>
 </a>
