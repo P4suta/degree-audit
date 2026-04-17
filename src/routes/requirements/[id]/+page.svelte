@@ -78,10 +78,15 @@
 				});
 			} else if (alloc.status.kind === "excluded") {
 				// elective が 16 単位枠 / 他学部 cap で落としたものも、
-				// 元所属から見ると「選択へ読み替えたが算入外」になる
+				// 元所属から見ると「選択へ読み替えたが算入外」になる。
+				// ruleset 差分で elective step id が変わるので、現 assessment の
+				// 実際の選択ステップ id を参照する
+				const electiveDestId =
+					assessment?.steps.find((s) => s.id.startsWith("elective-"))?.id ??
+					"elective-38";
 				out.push({
 					course: alloc.course,
-					destination: "elective-38",
+					destination: electiveDestId,
 					counted: false,
 					reason: alloc.status.reason,
 				});

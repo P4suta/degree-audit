@@ -99,3 +99,59 @@ describe("perLanguageMin with allowedLanguages (Kochi requirement)", () => {
 		expect(r.satisfied).toBe(true);
 	});
 });
+
+describe("perLanguageMin with R6+ introductory/foreign-language kind", () => {
+	const introLang = (id: string, language: string, credit: number) =>
+		Course.of({
+			id: CourseId.of(id),
+			name: `${language}-${id}`,
+			credit: Credit.of(credit),
+			grade: Grade.Yu,
+			category: SubjectCategory.introForeignLanguage(language),
+			rawCategoryLabel: "raw",
+		});
+
+	it("counts introductory/foreign-language courses when kinds is specified", () => {
+		const spec = perLanguageMin({
+			id: "intro-lang",
+			label: "intro",
+			requiredPerLanguage: 4,
+			requiredLanguageCount: 1,
+			kinds: ["common-education/introductory/foreign-language"],
+		});
+		const pool = [
+			introLang("g1", "ドイツ語", 2),
+			introLang("g2", "ドイツ語", 2),
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.satisfied).toBe(true);
+		expect(r.actual).toBe(1);
+	});
+
+	it("ignores liberal/foreign-language when only introductory kind is allowed", () => {
+		const spec = perLanguageMin({
+			id: "intro-lang",
+			label: "intro",
+			requiredPerLanguage: 4,
+			requiredLanguageCount: 1,
+			kinds: ["common-education/introductory/foreign-language"],
+		});
+		const pool = [lang("g1", "ドイツ語", 2), lang("g2", "ドイツ語", 2)];
+		const r = spec.evaluate({ pool });
+		expect(r.satisfied).toBe(false);
+	});
+});
+
+describe("perLanguageMin safety", () => {
+	it("throws when a non-language-bearing kind is passed", () => {
+		expect(() =>
+			perLanguageMin({
+				id: "bad",
+				label: "bad",
+				requiredPerLanguage: 1,
+				requiredLanguageCount: 1,
+				kinds: ["common-education/primary"],
+			}),
+		).toThrow();
+	});
+});

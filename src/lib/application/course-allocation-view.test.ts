@@ -198,6 +198,8 @@ describe("requirementDisplayName", () => {
 	it("returns human-readable labels for known requirement ids", () => {
 		expect(requirementDisplayName("primary-12")).toBe("初年次科目");
 		expect(requirementDisplayName("liberal")).toBe("教養科目");
+		expect(requirementDisplayName("introductory-group")).toBe("導入科目群");
+		expect(requirementDisplayName("liberal-group")).toBe("教養科目群");
 		expect(requirementDisplayName("seminar-12")).toBe("ゼミナール I・II");
 		expect(requirementDisplayName("seminar-34")).toBe("ゼミナール III・IV");
 		expect(requirementDisplayName("seminar-56")).toBe(
@@ -205,6 +207,7 @@ describe("requirementDisplayName", () => {
 		);
 		expect(requirementDisplayName("platform")).toBe("プラットフォーム科目");
 		expect(requirementDisplayName("elective-38")).toBe("選択科目");
+		expect(requirementDisplayName("elective-42")).toBe("選択科目");
 		expect(requirementDisplayName("total-124")).toBe("総修得単位");
 		expect(requirementDisplayName("thesis-eligibility")).toBe(
 			"卒業論文履修資格",

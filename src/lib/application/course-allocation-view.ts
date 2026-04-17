@@ -7,27 +7,71 @@ import {
 import type { Assessment } from "./assess-graduation.ts";
 
 /**
- * 各 kind が「本来どの要件に属するか（= natural home）」を示す対応表。
- * 読み替え判定に使う：pipeline が course を natural home 以外で消費していれば
- * それは「読み替え」「枠超過で移動」と表示できる。
+ * 各 kind に対する「本来の要件（natural home）」候補 id のリスト。先頭から
+ * 走査して、実際の `assessment.steps` に存在する id を natural home とする。
+ *
+ * ruleset（R2-R5 vs R6+）によって実際に走る要件 id が違うので、候補を並べて
+ * 「どちらの ruleset で resolve されたか」を after-the-fact に反映する形。
+ * 1 つの assessment には片方の ruleset しか入らないので、候補リストの中から
+ * 有効なのはせいぜい 1 つ。
  */
-const NATURAL_HOME_BY_KIND: ReadonlyMap<SubjectCategoryKind, string> = new Map([
-	["common-education/primary", "primary-12"],
-	["common-education/liberal/field", "liberal"],
-	["common-education/liberal/foreign-language", "liberal"],
-	["common-education/liberal/career", "liberal"],
-	["seminar/1-2", "seminar-12"],
-	["seminar/3-4/spring", "seminar-34"],
-	["seminar/3-4/fall", "seminar-34"],
-	["seminar/5-6-thesis", "seminar-56"],
-	["platform/basic-a", "platform"],
-	["platform/basic-b", "platform"],
-	["platform/foreign-language", "platform"],
-	["platform/advanced", "platform"],
-	["elective/own-course", "elective-38"],
-	["elective/other-course", "elective-38"],
-	["elective/other-faculty", "elective-38"],
+type NonEmptyReadonlyArray<T> = readonly [T, ...T[]];
+
+const NATURAL_HOME_CANDIDATES: ReadonlyMap<
+	SubjectCategoryKind,
+	NonEmptyReadonlyArray<string>
+> = new Map([
+	// R2-R5
+	["common-education/primary", ["primary-12"]],
+	["common-education/liberal/field", ["liberal"]],
+	["common-education/liberal/foreign-language", ["liberal"]],
+	["common-education/liberal/career", ["liberal"]],
+	// R6+ 導入
+	["common-education/introductory/core-learning", ["introductory-group"]],
+	["common-education/introductory/core-english", ["introductory-group"]],
+	["common-education/introductory/foreign-language", ["introductory-group"]],
+	["common-education/introductory/math-ai", ["introductory-group"]],
+	// R6+ 教養
+	["common-education/liberal-group/life", ["liberal-group"]],
+	["common-education/liberal-group/health-sports", ["liberal-group"]],
+	["common-education/liberal-group/career", ["liberal-group"]],
+	["common-education/liberal-group/arts", ["liberal-group"]],
+	["common-education/liberal-group/humanities-social", ["liberal-group"]],
+	["common-education/liberal-group/natural-science", ["liberal-group"]],
+	["common-education/liberal-group/complex", ["liberal-group"]],
+	// 両制度共通
+	["seminar/1-2", ["seminar-12"]],
+	["seminar/3-4/spring", ["seminar-34"]],
+	["seminar/3-4/fall", ["seminar-34"]],
+	["seminar/5-6-thesis", ["seminar-56"]],
+	// PF（R2-R5 / R6+ どちらも step id は "platform"）
+	["platform/basic-a", ["platform"]],
+	["platform/basic-b", ["platform"]],
+	["platform/foreign-language", ["platform"]],
+	["platform/advanced", ["platform"]],
+	["platform/faculty-common", ["platform"]],
+	["platform/humanities", ["platform"]],
+	["platform/global-studies", ["platform"]],
+	["platform/social-science", ["platform"]],
+	// 選択は ruleset で 38 / 42 に分かれる
+	["elective/own-course", ["elective-38", "elective-42"]],
+	["elective/other-course", ["elective-38", "elective-42"]],
+	["elective/other-faculty", ["elective-38", "elective-42"]],
 ] as const);
+
+const resolveNaturalHome = (
+	kind: SubjectCategoryKind,
+	stepIds: ReadonlySet<string>,
+): string | null => {
+	const candidates = NATURAL_HOME_CANDIDATES.get(kind);
+	if (candidates === undefined) return null;
+	for (const id of candidates) {
+		if (stepIds.has(id)) return id;
+	}
+	// どの候補も step に無い場合は最初の候補を返す（実際には ruleset 内に
+	// 必ず候補のどれかが存在するので到達しにくい）。tuple 型で候補非空を保証
+	return candidates[0];
+};
 
 export type CourseStatus =
 	| {
@@ -91,11 +135,19 @@ export const viewCourseAllocations = (
 	}
 
 	// elective は "observe" なので pipeline では consume されないが、
-	// contributingCourses に載ったら「選択で算入」として扱う
-	const electiveStep = assessment.steps.find((s) => s.id === "elective-38");
+	// contributingCourses に載ったら「選択で算入」として扱う。R2-R5 では
+	// "elective-38"、R6+ では "elective-42" にスイッチするので、どちらであっても
+	// 先頭一致する選択ステップを見つける
+	const electiveStep = assessment.steps.find((s) =>
+		s.id.startsWith("elective-"),
+	);
+	const electiveStepId = electiveStep?.id ?? null;
 	const electiveContributingIds = new Set<string>(
 		(electiveStep?.result.contributingCourses ?? []).map((c) => c.id as string),
 	);
+
+	// 現 assessment に存在する step id の集合（natural home 候補の resolve に使う）
+	const stepIds = new Set<string>(assessment.steps.map((s) => s.id));
 
 	// 除外された科目（上限超過で算入外）
 	const excludedByCourseId = new Map<string, string>(); // courseId -> reason
@@ -108,7 +160,7 @@ export const viewCourseAllocations = (
 	for (const course of allCourses) {
 		const id = course.id as string;
 		const kind = course.category.kind;
-		const naturalHome = NATURAL_HOME_BY_KIND.get(kind) ?? null;
+		const naturalHome = resolveNaturalHome(kind, stepIds);
 
 		if (!passedCourseIds.has(id)) {
 			if (isInProgress(course.grade)) {
@@ -139,13 +191,13 @@ export const viewCourseAllocations = (
 			continue;
 		}
 
-		if (electiveContributingIds.has(id)) {
+		if (electiveStepId !== null && electiveContributingIds.has(id)) {
 			result.set(id, {
 				course,
 				status: {
 					kind: "counted",
-					requirementId: "elective-38",
-					reallocated: naturalHome !== null && naturalHome !== "elective-38",
+					requirementId: electiveStepId,
+					reallocated: naturalHome !== null && naturalHome !== electiveStepId,
 					naturalHome,
 				},
 			});
@@ -174,10 +226,17 @@ export const viewCourseAllocations = (
 /** 要件 id から、画面表示用のラベルを引く。 */
 export const requirementDisplayName = (requirementId: string): string => {
 	switch (requirementId) {
+		// R2-R5
 		case "primary-12":
 			return "初年次科目";
 		case "liberal":
 			return "教養科目";
+		// R6+
+		case "introductory-group":
+			return "導入科目群";
+		case "liberal-group":
+			return "教養科目群";
+		// 両制度共通
 		case "seminar-12":
 			return "ゼミナール I・II";
 		case "seminar-34":
@@ -187,6 +246,7 @@ export const requirementDisplayName = (requirementId: string): string => {
 		case "platform":
 			return "プラットフォーム科目";
 		case "elective-38":
+		case "elective-42":
 			return "選択科目";
 		case "total-124":
 			return "総修得単位";

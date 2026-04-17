@@ -126,6 +126,78 @@ const HINTS: readonly SectionHint[] = [
 		top: "専門科目",
 		mid: "選択科目",
 	},
+
+	// ===== R6+（2024 年度以降）の追加セクション名 =====
+	// Mid 層
+	{ level: "mid", value: "導入科目群", top: "共通教育" },
+	{ level: "mid", value: "教養科目群", top: "共通教育" },
+	// Leaf（導入科目群配下）
+	{
+		level: "leaf",
+		value: "学びかた科目",
+		top: "共通教育",
+		mid: "導入科目群",
+	},
+	{
+		level: "leaf",
+		value: "国際コミュニケーション科目群",
+		top: "共通教育",
+		mid: "導入科目群",
+	},
+	{
+		level: "leaf",
+		value: "数理・データサイエンス・AI科目",
+		top: "共通教育",
+		mid: "導入科目群",
+	},
+	// Leaf（教養科目群配下 — 7 分野）
+	{ level: "leaf", value: "生活", top: "共通教育", mid: "教養科目群" },
+	{
+		level: "leaf",
+		value: "医療・健康・スポーツ",
+		top: "共通教育",
+		mid: "教養科目群",
+	},
+	{ level: "leaf", value: "キャリア形成", top: "共通教育", mid: "教養科目群" },
+	{ level: "leaf", value: "芸術", top: "共通教育", mid: "教養科目群" },
+	{
+		level: "leaf",
+		value: "人文・社会科学系領域",
+		top: "共通教育",
+		mid: "教養科目群",
+	},
+	{
+		level: "leaf",
+		value: "自然科学系領域",
+		top: "共通教育",
+		mid: "教養科目群",
+	},
+	{ level: "leaf", value: "複合領域", top: "共通教育", mid: "教養科目群" },
+	// Leaf（R6+ プラットフォーム配下 — 4 分区）
+	{
+		level: "leaf",
+		value: "学部共通科目",
+		top: "専門科目",
+		mid: "プラットフォーム科目",
+	},
+	{
+		level: "leaf",
+		value: "人文科学分野",
+		top: "専門科目",
+		mid: "プラットフォーム科目",
+	},
+	{
+		level: "leaf",
+		value: "グローバル研究分野",
+		top: "専門科目",
+		mid: "プラットフォーム科目",
+	},
+	{
+		level: "leaf",
+		value: "社会科学分野",
+		top: "専門科目",
+		mid: "プラットフォーム科目",
+	},
 ];
 
 const HINT_BY_KEY: ReadonlyMap<string, SectionHint> = new Map(
