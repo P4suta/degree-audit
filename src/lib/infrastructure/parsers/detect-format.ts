@@ -5,7 +5,7 @@ export type TranscriptFormat = "mhtml" | "text" | "unknown";
  *
  * - MHTML: multipart メッセージ（`MIME-Version:` / `Content-Type: multipart/related`
  *   / `From: ` 等で始まる）。BOM や先頭空白には寛容
- * - text: Kochi「Web 成績」コピペ。先頭 2KB に `学則科目名称` / `共通教育`
+ * - text: 大学の「Web 成績」コピペ。先頭 2KB に `学則科目名称` / `共通教育`
  *   / `専門科目` のいずれかを含む
  * - それ以外は unknown（UI 側で拒否）
  *
@@ -45,7 +45,7 @@ export const detectTranscriptFormat = (bytes: Uint8Array): TranscriptFormat => {
 	) {
 		return "mhtml";
 	}
-	// text: Kochi Web 成績コピペ
+	// text: 大学の Web 成績コピペ
 	for (const signal of TEXT_SIGNALS) {
 		if (cleaned.includes(signal)) return "text";
 	}

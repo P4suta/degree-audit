@@ -27,7 +27,7 @@ describe("default ruleset metadata", () => {
 	});
 
 	it("has the expected identifiers", () => {
-		expect(metadata.id).toBe("kochi-university/2020-2023");
+		expect(metadata.id).toBe("humanities/2020-2023");
 		expect(metadata.specificity).toBe(100);
 	});
 });

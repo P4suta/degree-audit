@@ -17,8 +17,8 @@ const MATRICULATION_MIN = 2024;
 const HUMANITIES_COURSE_KEY = matchKey("人文");
 
 export const metadata: RuleSetMetadata = {
-	id: "kochi-university/2024-humanities",
-	displayName: "高知大学 令和 6 年度（2024 年度）以降入学生・人文科学コース",
+	id: "humanities/2024-",
+	displayName: "令和 6 年度（2024 年度）以降入学生・人文科学コース",
 	sourceRevision: "履修案内 2026-04 抜粋（R6 人文科学コース）",
 	applicableTo: (profile) => {
 		if (profile.matriculationYear < MATRICULATION_MIN) return false;

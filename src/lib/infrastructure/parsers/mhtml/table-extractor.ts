@@ -66,7 +66,7 @@ const layoutFor = (headers: readonly string[]): HeaderLayout | undefined => {
 };
 
 /**
- * カテゴリ階層のスロット分類。高知大学の成績閲覧テーブルでは、各セクションの
+ * カテゴリ階層のスロット分類。対象大学の成績閲覧テーブルでは、各セクションの
  * header row（credit 列が空で最初のセルだけ値がある行）がカテゴリを 3 階層で
  * 運ぶ：
  *   section  : 共通教育 / 専門教育 / ゼミナール / 選択科目 ...

@@ -4,7 +4,7 @@ import { SubjectCategory } from "../../value-objects/subject-category.ts";
 import type { CategoryMap } from "../types.ts";
 
 /**
- * 高知大学「成績閲覧」MHTML で table-extractor が組み立てる階層ラベル
+ * 大学の「成績閲覧」MHTML で table-extractor が組み立てる階層ラベル
  *   "共通教育 / 初年次科目"
  *   "共通教育 / 教養科目 / 人文分野"
  *   "共通教育 / プラットフォーム科目 / 基礎科目Ａ群"

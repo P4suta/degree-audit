@@ -5,7 +5,7 @@ import type { RawCourse, TranscriptParser } from "../transcript-parser.ts";
 import { findSectionHint, type SectionHint } from "./section-inference.ts";
 
 /**
- * Kochi「Web 成績 / 成績閲覧」ページからコピペしたテキストをパースする。
+ * 大学の「Web 成績 / 成績閲覧」ページからコピペしたテキストをパースする。
  *
  * 設計メモ：
  *   - `\t` が保たれた素のコピペを前提とするが、OS やブラウザの都合で
@@ -217,7 +217,7 @@ const assertSomeCourses = (
 				code: ErrorCode.TextNoCoursesFound,
 				message: "Text parsed but no course rows were extracted",
 				userMessage:
-					"貼り付けられたテキストから科目の行を 1 件も読み取れませんでした。高知大学「Web 成績 / 成績閲覧」ページからコピーしたか、範囲に科目行が含まれているかご確認ください。",
+					"貼り付けられたテキストから科目の行を 1 件も読み取れませんでした。大学の「Web 成績 / 成績閲覧」ページからコピーしたか、範囲に科目行が含まれているかご確認ください。",
 			}),
 		);
 	}

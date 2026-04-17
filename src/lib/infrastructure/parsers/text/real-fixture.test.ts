@@ -6,7 +6,7 @@ import { parseTranscriptText } from "./text-parser.ts";
 const FIXTURE_PATH = "tests/fixtures/transcript-paste.txt";
 
 describe.skipIf(!existsSync(FIXTURE_PATH))(
-	"textParser on real Kochi Web 成績 paste fixture",
+	"textParser on real Web 成績 paste fixture",
 	() => {
 		const src = existsSync(FIXTURE_PATH)
 			? readFileSync(FIXTURE_PATH, "utf-8")

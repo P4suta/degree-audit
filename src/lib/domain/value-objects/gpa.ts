@@ -19,7 +19,7 @@ const roundTo1Decimal = (n: number): number => Math.round(n * 10) / 10;
 export const GradePoint = {
 	zero: brandGradePoint(0),
 	/**
-	 * Kochi University functional GPA formula:
+	 * 素点変換型 GPA の式:
 	 *   score >= 60 → GP = (score - 55) / 10   (60→0.5, 70→1.5, 80→2.5, 90→3.5, 100→4.5)
 	 *   score <= 59 → GP = 0
 	 * Rounded to 1 decimal place.

@@ -49,7 +49,7 @@
 			<span
 				class="ml-2 text-xs text-[color:var(--color-fg-subtle)] tabular-nums"
 			>
-				高知大学 v1
+				v1
 			</span>
 			<span
 				class="ml-auto inline-flex items-center gap-1 rounded-[var(--radius-micro)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] px-2 py-0.5 text-[11px] font-medium text-[color:var(--color-warning-fg)]"
@@ -69,7 +69,7 @@
 	>
 		<p>
 			<strong class="text-[color:var(--color-fg-muted)]"
-				>本ツールは個人が作成した非公式のツールで、高知大学とは関係ありません。</strong
+				>本ツールは個人が作成した非公式のツールで、特定の大学・教育機関とは関係ありません。</strong
 			>
 			判定は参考情報にすぎず、卒業・履修の最終確認は必ず
 			<strong class="text-[color:var(--color-fg-muted)]"

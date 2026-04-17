@@ -15,7 +15,7 @@ describe("resolveRuleSet", () => {
 		const resolved = resolveRuleSet(parsed.value, defaultRegistry);
 		expect(isOk(resolved)).toBe(true);
 		if (isOk(resolved)) {
-			expect(resolved.value.metadata.id).toBe("kochi-university/2020-2023");
+			expect(resolved.value.metadata.id).toBe("humanities/2020-2023");
 		}
 	});
 });

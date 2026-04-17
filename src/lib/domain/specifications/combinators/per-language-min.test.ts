@@ -53,7 +53,7 @@ describe("perLanguageMin without allowedLanguages", () => {
 	});
 });
 
-describe("perLanguageMin with allowedLanguages (Kochi requirement)", () => {
+describe("perLanguageMin with allowedLanguages", () => {
 	const spec = perLanguageMin({
 		id: "lang-allow",
 		label: "必修対象外国語",

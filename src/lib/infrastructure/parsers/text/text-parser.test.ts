@@ -157,7 +157,7 @@ describe("parseTranscriptText — noise and boundaries", () => {
 		const src = [
 			"Web成績 成績閲覧",
 			"",
-			"国立大学法人 高知大学",
+			"国立大学法人 サンプル大学",
 			"坂下 康信",
 			"これまでの成績",
 			"年度",

@@ -17,7 +17,7 @@ export interface PredicateCap {
  * 一方、特定の sub-kind / 述語グループに算入上限を設定できる。上限を超える科目は
  * 算入外として `actual` から除外し、diagnostics で明示する。
  *
- * 例: 高知大学「教養 合計 28単位」では次の 2 つの cap が掛かる
+ * 例: 「教養 合計 28単位」では次の 2 つの cap が掛かる
  *   - キャリア形成支援: kind `common-education/liberal/career` に 6 単位上限
  *   - スポーツ科学: `isSportsScience(course)` 述語に 4 単位上限
  * どちらの cap も独立に効き、満たされなければ `actual` に加算されない。

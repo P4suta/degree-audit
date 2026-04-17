@@ -18,9 +18,9 @@ import type {
  *   - `upstreamHandledKinds`：上流要件（初年次・教養・卒論ゼミ V-VI 等）で
  *     既にカウントされるべき kind は診断にも出さず無言でスキップ
  *   - `allowedKinds`：選択 38 に算入可能な kind ホワイトリスト
- *   - `otherFacultyCap`：他学部科目単独の上限（Kochi では 8 単位）
+ *   - `otherFacultyCap`：他学部科目単独の上限（規定上は 8 単位）
  *   - `frameKinds` + `frameCap`：他コース + 他学部 + PF 超過 の合算上限
- *     （Kochi では 16 単位枠）
+ *     （規定上は 16 単位枠）
  *
  * 割当順（priority）:
  *   allowedKinds に入る科目を以下の順で積む。

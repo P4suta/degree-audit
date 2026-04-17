@@ -45,7 +45,7 @@ describe("detectTranscriptFormat", () => {
 		expect(detectTranscriptFormat(new Uint8Array(0))).toBe("unknown");
 	});
 
-	it("returns unknown for plain text without Kochi-specific signals", () => {
+	it("returns unknown for plain text without transcript-specific signals", () => {
 		const bytes = enc.encode("hello world\nnot a transcript");
 		expect(detectTranscriptFormat(bytes)).toBe("unknown");
 	});

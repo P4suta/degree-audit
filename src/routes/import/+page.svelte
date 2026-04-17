@@ -158,7 +158,7 @@
 		成績を取り込む
 	</h2>
 	<p class="text-base text-[color:var(--color-fg-muted)] max-w-[640px]">
-		高知大学「Web 成績 / 成績閲覧」ページから <strong
+		大学の「Web 成績 / 成績閲覧」ページから <strong
 			class="font-semibold text-[color:var(--color-fg)]">コピペするだけ</strong
 		>で取り込めます。データはブラウザ内のメモリだけで処理され、外部には送信されません。
 	</p>
@@ -174,7 +174,7 @@
 				成績ページからコピペ
 			</h3>
 			<p class="text-sm text-[color:var(--color-fg-muted)]">
-				高知大学「Web 成績 / 成績閲覧」ページを開いて、以下の手順でコピーしてください。
+				大学の「Web 成績 / 成績閲覧」ページを開いて、以下の手順でコピーしてください。
 			</p>
 		</div>
 

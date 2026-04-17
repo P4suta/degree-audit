@@ -32,7 +32,7 @@ describe("createAutoParser", () => {
 		expect(text.parse).not.toHaveBeenCalled();
 	});
 
-	it("routes Kochi text paste to the text parser", async () => {
+	it("routes text paste to the text parser", async () => {
 		const mhtml = fakeParser("mhtml");
 		const text = fakeParser("text");
 		const auto = createAutoParser({ mhtml, text });

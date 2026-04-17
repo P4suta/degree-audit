@@ -7,7 +7,7 @@ import { parseMhtmlSource } from "./mhtml-parser.ts";
 const FIXTURE_PATH = "tests/fixtures/transcript.mhtml";
 
 describe.skipIf(!existsSync(FIXTURE_PATH))(
-	"mhtmlParser on real Kochi transcript fixture",
+	"mhtmlParser on real transcript fixture",
 	() => {
 		const source = existsSync(FIXTURE_PATH)
 			? readFileSync(FIXTURE_PATH, "utf-8")
