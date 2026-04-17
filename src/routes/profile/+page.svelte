@@ -8,20 +8,28 @@
 	import Button from "$lib/presentation/ui/Button.svelte";
 	import Card from "$lib/presentation/ui/Card.svelte";
 
-	const YEAR_HISTORY_LENGTH = 10;
+	// 令和元年度以前（2019 年度以前）のカリキュラムは要件データが無いため
+	// 選択肢から除外する。ここの定数を上げれば UI から古い学年が自動で消える
+	const MIN_SUPPORTED_YEAR = 2020;
 	const TYPICAL_SENIOR_OFFSET = 3;
 
 	const currentYear = new Date().getFullYear();
 	const yearOptions = Array.from(
-		{ length: YEAR_HISTORY_LENGTH },
+		{ length: currentYear - MIN_SUPPORTED_YEAR + 1 },
 		(_, i) => currentYear - i,
 	);
 
+	const clampedDefault = Math.max(
+		MIN_SUPPORTED_YEAR,
+		currentYear - TYPICAL_SENIOR_OFFSET,
+	);
 	const existing = profileStore.current;
 	let facultyId = $state(existing?.facultyId ?? "");
 	let courseId = $state(existing?.courseId ?? "");
 	let matriculationYear = $state(
-		existing?.matriculationYear ?? currentYear - TYPICAL_SENIOR_OFFSET,
+		existing !== null && existing.matriculationYear >= MIN_SUPPORTED_YEAR
+			? existing.matriculationYear
+			: clampedDefault,
 	);
 	interface FieldErrors {
 		facultyId?: string;
@@ -180,6 +188,9 @@
 					<option value={y}>{y} 年度</option>
 				{/each}
 			</select>
+			<p class="mt-1 text-xs text-[color:var(--color-fg-subtle)]">
+				現在、令和 2 年度（2020 年度）以降入学生に対応しています。
+			</p>
 			{#if fieldErrors.matriculationYear}
 				<p
 					id="profile-matriculation-year-error"
