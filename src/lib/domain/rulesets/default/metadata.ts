@@ -11,4 +11,7 @@ export const metadata: RuleSetMetadata = {
 		profile.matriculationYear >= MATRICULATION_MIN &&
 		profile.matriculationYear <= MATRICULATION_MAX,
 	specificity: 100,
+	// UI の列挙ヒント。applicableTo は courseId/facultyId を見ていないが、
+	// 対象スコープは 人文社会科学部・人文科学コース のみ（DESIGN.md / 免責に準拠）。
+	applicableScopes: [{ faculty: "人文社会科学部", course: "人文科学コース" }],
 };

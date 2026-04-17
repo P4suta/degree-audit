@@ -25,4 +25,5 @@ export const metadata: RuleSetMetadata = {
 		return matchKey(profile.courseId).includes(HUMANITIES_COURSE_KEY);
 	},
 	specificity: 110,
+	applicableScopes: [{ faculty: "人文社会科学部", course: "人文科学コース" }],
 };
