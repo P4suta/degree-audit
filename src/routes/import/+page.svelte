@@ -152,22 +152,13 @@
 </script>
 
 <h2 class="text-xl font-bold text-[color:var(--color-fg)]">
-	成績ファイルをインポート
+	成績を取り込む
 </h2>
 <p class="text-sm text-[color:var(--color-fg-muted)]">
-	以下のいずれかの方法で取り込めます。データはブラウザ内のメモリだけで処理され、
+	高知大学「Web 成績 / 成績閲覧」ページから <strong>コピペ</strong>
+	するだけで取り込めます。データはブラウザ内のメモリだけで処理され、
 	外部には送信されません。
 </p>
-
-<TranscriptDropZone onFile={handleFile} disabled={importing} />
-
-<div
-	class="flex items-center gap-3 text-xs text-[color:var(--color-fg-subtle)]"
->
-	<span class="h-px flex-1 bg-[color:var(--color-border)]"></span>
-	<span>または、成績ページからコピペで取り込む</span>
-	<span class="h-px flex-1 bg-[color:var(--color-border)]"></span>
-</div>
 
 <Card padding="lg">
 	<section aria-labelledby="paste-heading" class="space-y-4">
@@ -259,13 +250,29 @@
 </Card>
 
 {#if importing}
-	<p
-		class="text-sm text-[color:var(--color-fg-muted)]"
-		aria-live="polite"
-	>
+	<p class="text-sm text-[color:var(--color-fg-muted)]" aria-live="polite">
 		読み込み中…
 	</p>
 {/if}
+
+<details
+	class="rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-4"
+>
+	<summary
+		class="cursor-pointer text-sm font-medium text-[color:var(--color-fg-muted)]"
+	>
+		MHTML ファイルでも取り込めます（開発者向け）
+	</summary>
+	<div class="mt-3 space-y-3">
+		<p class="text-xs text-[color:var(--color-fg-subtle)]">
+			Chromium 系ブラウザで Web 成績画面を「名前を付けて保存（MHTML）」で
+			保存したファイルを、そのままドロップして取り込めます。通常はコピペ
+			入力で十分なので、こちらは開発・デバッグ用として残しています。
+		</p>
+		<TranscriptDropZone onFile={handleFile} disabled={importing} />
+	</div>
+</details>
+
 {#if skippedStore.count > 0}
 	<details
 		class="rounded-[var(--radius-card)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] p-4"
