@@ -53,37 +53,56 @@
 
 ## 開発
 
-### 必要なもの
+Bun バージョン・依存解決・型チェック・lint・テスト・ビルドは
+ルートの `Dockerfile` が唯一の真実のソースです。
+ローカル・Devcontainer・CI・Pages ビルドはすべて、この Dockerfile の
+target を切り替えて呼び出す構成になっています。
 
-- [Bun](https://bun.com) 最新版
+### Docker で動かす（推奨）
 
-### セットアップ
+必要なもの: Docker Engine / Docker Desktop / Rancher Desktop のいずれか。
+
+```sh
+docker compose up dev                    # dev サーバー (http://localhost:5173)
+docker compose run --rm check            # svelte-check + TypeScript
+docker compose run --rm lint             # Biome
+docker compose run --rm test             # Vitest
+docker compose run --rm coverage         # Vitest + coverage
+docker compose run --rm preview          # vite preview (http://localhost:4173)
+```
+
+ビルド成果物だけをホストに取り出すときは:
+
+```sh
+docker buildx build \
+  --target build-output \
+  --build-arg BASE_PATH="" \
+  --output type=local,dest=./build \
+  .
+```
+
+`node_modules` と `.svelte-kit` は compose 側の named volume に閉じ込めているため、
+ホスト側の `node_modules`（別 OS / 別 Bun バージョンでインストールされた残骸）と
+衝突しません。
+
+### Devcontainer
+
+`.devcontainer/devcontainer.json` を同梱しています。
+VS Code の "Reopen in Container" や JetBrains Gateway の Dev Containers から
+そのまま入れます。
+
+### ホストで直接動かす（任意）
+
+Docker なしで動かすこともできます。必要なもの: [Bun](https://bun.com)
+（バージョンは `Dockerfile` の `BUN_VERSION` と一致させてください）。
 
 ```sh
 bun install
-```
-
-### 開発サーバー
-
-```sh
-bun run dev
-```
-
-### 本番ビルド
-
-```sh
-bun run build
-```
-
-ビルド成果物は `build/` に出力され、任意の静的ホスティングにそのまま乗せられます。
-
-### テスト・型・Lint
-
-```sh
-bun run test        # Vitest
-bun run test:coverage  # カバレッジ付き
-bun run check       # svelte-check + TypeScript
-bun run lint        # Biome
+bun run dev            # 開発サーバー
+bun run build          # 本番ビルド (build/ に出力)
+bun run test:coverage  # テスト + カバレッジ
+bun run check          # 型チェック
+bun run lint           # Biome
 ```
 
 プロジェクトのテスト方針は `CLAUDE.md` と `DESIGN.md` を参照してください。

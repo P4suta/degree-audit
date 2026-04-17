@@ -1,0 +1,27 @@
+{
+	"name": "degree-audit",
+	"dockerComposeFile": ["../docker-compose.yml"],
+	"service": "dev",
+	"workspaceFolder": "/app",
+	"overrideCommand": true,
+	"remoteUser": "bun",
+	"forwardPorts": [5173, 4173],
+	"portsAttributes": {
+		"5173": { "label": "Vite dev server", "onAutoForward": "notify" },
+		"4173": { "label": "Vite preview", "onAutoForward": "silent" }
+	},
+	"postCreateCommand": "bun install --frozen-lockfile",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"svelte.svelte-vscode",
+				"biomejs.biome",
+				"bradlc.vscode-tailwindcss"
+			],
+			"settings": {
+				"files.associations": { "*.css": "tailwindcss" },
+				"editor.defaultFormatter": "biomejs.biome"
+			}
+		}
+	}
+}
