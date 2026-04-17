@@ -170,4 +170,61 @@ describe("elective", () => {
 		expect(r.actual).toBe(28);
 		expect(r.contributingCourses).toHaveLength(7);
 	});
+
+	it("prioritises 他学部 into the frame so tight-cap credits aren't starved", () => {
+		// pool 順で先頭に PF / 他コース が来ると、以前の実装は 他学部 を後回しにして
+		// フレーム cap で弾かれていた。新実装は 他学部 を先に入れる
+		const pool = [
+			course("pf1", 2, SubjectCategory.platformAdvanced()),
+			course("pf2", 2, SubjectCategory.platformAdvanced()),
+			course("pf3", 2, SubjectCategory.platformAdvanced()),
+			course("other1", 2, SubjectCategory.electiveOtherCourse()),
+			course("other2", 2, SubjectCategory.electiveOtherCourse()),
+			course("other3", 2, SubjectCategory.electiveOtherCourse()),
+			course("other4", 2, SubjectCategory.electiveOtherCourse()),
+			course("other5", 2, SubjectCategory.electiveOtherCourse()),
+			course("fac", 2, SubjectCategory.electiveOtherFaculty()),
+			course("own", 24, SubjectCategory.electiveOwnCourse()),
+		];
+		const r = spec.evaluate({ pool });
+		const facIds = r.contributingCourses
+			.filter((c) => c.category.kind === "elective/other-faculty")
+			.map((c) => c.id as string);
+		expect(facIds).toEqual(["fac"]);
+	});
+
+	it("populates excludedCourses with reasons when frame cap is exceeded", () => {
+		const pool = [
+			course("fac1", 2, SubjectCategory.electiveOtherFaculty()),
+			course("pf1", 2, SubjectCategory.platformAdvanced()),
+			course("pf2", 2, SubjectCategory.platformAdvanced()),
+			// other-course over the frame limit
+			...Array.from({ length: 10 }, (_, i) =>
+				course(`other${i}`, 2, SubjectCategory.electiveOtherCourse()),
+			),
+			course("own", 18, SubjectCategory.electiveOwnCourse()),
+		];
+		const r = spec.evaluate({ pool });
+		expect(r.excludedCourses?.length).toBeGreaterThan(0);
+		// 他学部(2) + 他コース までで 16 枠を埋め切り、PF と一部の他コースが溢れる
+		for (const e of r.excludedCourses ?? []) {
+			expect(e.reason).toContain("枠");
+		}
+	});
+
+	it("populates excludedCourses when other-faculty exceeds its own 8-credit cap", () => {
+		const pool = [
+			course("fac1", 2, SubjectCategory.electiveOtherFaculty()),
+			course("fac2", 2, SubjectCategory.electiveOtherFaculty()),
+			course("fac3", 2, SubjectCategory.electiveOtherFaculty()),
+			course("fac4", 2, SubjectCategory.electiveOtherFaculty()),
+			course("fac5", 2, SubjectCategory.electiveOtherFaculty()),
+			course("own", 40, SubjectCategory.electiveOwnCourse()),
+		];
+		const r = spec.evaluate({ pool });
+		const excludedByFacCap = (r.excludedCourses ?? []).filter((e) =>
+			e.reason.includes("他学部"),
+		);
+		expect(excludedByFacCap.length).toBe(1);
+	});
 });

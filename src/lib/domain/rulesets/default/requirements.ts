@@ -34,10 +34,14 @@ const primaryTotal = minCreditsInCategory({
 	kinds: ["common-education/primary"],
 });
 
-const primary12 = allOf({
+// Dashboard では primary の合計単位で進捗を見せ、subResults で名称必修の
+// 充足状況を示したいので requirementGroup を使う。allOf だと "N/N 要件" の
+// 不親切な表示になる
+const primary12 = requirementGroup({
 	id: "primary-12",
 	label: "初年次科目（6 科目 × 2単位 = 12単位）",
-	specs: [primaryNamed, primaryTotal],
+	primary: primaryTotal,
+	subSpecs: [primaryNamed],
 });
 
 const liberalTotal28 = minCreditsWithCaps({
@@ -129,10 +133,12 @@ const seminar34Total = minCreditsInCategory({
 	kinds: ["seminar/3-4/spring", "seminar/3-4/fall"],
 });
 
-const seminar34 = allOf({
+// 合計 4 単位が primary、spring/fall の学期別必修を subSpecs で表示
+const seminar34 = requirementGroup({
 	id: "seminar-34",
 	label: "ゼミナール III・IV 4単位（演習 I + 演習 II 各 2単位）",
-	specs: [seminar34Spring, seminar34Fall, seminar34Total],
+	primary: seminar34Total,
+	subSpecs: [seminar34Spring, seminar34Fall],
 });
 
 const seminar56 = minCreditsInCategory({

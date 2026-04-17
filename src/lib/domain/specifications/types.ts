@@ -1,5 +1,11 @@
 import type { Course } from "../entities/course.ts";
 
+export interface ExcludedCourse {
+	readonly course: Course;
+	/** 人間向けの除外理由（例「他学部 8 単位上限超過」）。UI にそのまま出す。 */
+	readonly reason: string;
+}
+
 export interface SpecResult {
 	readonly satisfied: boolean;
 	readonly required: number;
@@ -13,6 +19,11 @@ export interface SpecResult {
 	 * combinator は明示的に設定する。
 	 */
 	readonly unit?: string;
+	/**
+	 * 評価対象ではあったが上限等で実効から除外された科目。UI でユーザーに
+	 * 「この科目は枠超過で算入外」と見せるために保持する。
+	 */
+	readonly excludedCourses?: readonly ExcludedCourse[];
 }
 
 export interface EvalContext {
