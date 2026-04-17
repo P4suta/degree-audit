@@ -37,14 +37,19 @@
 		}
 	});
 
+	// サイズは WCAG / iOS HIG / Material の推奨に沿って：
+	//   sm=32px（副次操作・密度優先のセカンダリ）
+	//   md=44px（主要操作・iOS HIG の最小タップ推奨値）
+	//   lg=52px（CTA・「本気の同意」用。Disclaimer の同意ボタン等）
+	// min-h で下限を保証し、padding は line-height + min-h で決まる視覚高さの調整用。
 	const sizeClass = $derived.by(() => {
 		switch (size) {
 			case "sm":
-				return "px-3 py-1 text-xs";
+				return "min-h-[32px] px-3 py-1.5 text-[13px]";
 			case "md":
-				return "px-4 py-2 text-sm";
+				return "min-h-[44px] px-4 py-2.5 text-[15px]";
 			case "lg":
-				return "px-6 py-2.5 text-base";
+				return "min-h-[52px] px-6 py-3 text-base";
 		}
 	});
 
@@ -55,7 +60,7 @@
 
 <button
 	{type}
-	class="inline-flex items-center justify-center gap-1.5 border font-normal motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)] disabled:cursor-not-allowed disabled:opacity-50 {variantClass} {sizeClass} {radiusClass} {className}"
+	class="inline-flex touch-manipulation items-center justify-center gap-1.5 border font-normal motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)] disabled:cursor-not-allowed disabled:opacity-50 {variantClass} {sizeClass} {radiusClass} {className}"
 	{...rest}
 >
 	{@render children()}

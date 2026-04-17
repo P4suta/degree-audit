@@ -10,7 +10,7 @@
 		{#snippet actions()}
 			<button
 				type="button"
-				class="rounded p-1 hover:bg-[color:var(--color-danger-border)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-danger)]"
+				class="inline-flex min-h-[32px] min-w-[32px] touch-manipulation items-center justify-center rounded hover:bg-[color:var(--color-danger-border)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-danger)]"
 				aria-label={errorsStore.count > 1
 					? "このエラーを閉じて次のエラーを表示"
 					: "エラーを閉じる"}

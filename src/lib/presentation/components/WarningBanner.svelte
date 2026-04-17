@@ -52,7 +52,7 @@
 					{#snippet actions()}
 						<button
 							type="button"
-							class="rounded p-1 hover:bg-[color:var(--color-warning-border)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-warning)]"
+							class="inline-flex min-h-[32px] min-w-[32px] touch-manipulation items-center justify-center rounded hover:bg-[color:var(--color-warning-border)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-warning)]"
 							aria-label="警告を閉じる"
 							onclick={() => warningsStore.dismiss(warning.id)}
 						>
