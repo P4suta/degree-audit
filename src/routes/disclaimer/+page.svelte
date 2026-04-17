@@ -1,6 +1,15 @@
 <script lang="ts">
 	import { base } from "$app/paths";
+	import { safeGoto } from "$lib/presentation/navigation";
+	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
+	import Button from "$lib/presentation/ui/Button.svelte";
 	import Card from "$lib/presentation/ui/Card.svelte";
+
+	// このページから同意しても OK にする。モーダル経由と同じ扱い
+	const handleAcknowledge = () => {
+		disclaimerStore.acknowledge();
+		void safeGoto(`${base}/`);
+	};
 </script>
 
 <svelte:head>
@@ -140,3 +149,26 @@
 		</section>
 	</div>
 </Card>
+
+{#if !disclaimerStore.acknowledged}
+	<!--
+	  未同意で /disclaimer を開いた場合（モーダル内リンクから来た等）。
+	  ここから直接同意して利用を開始できる導線を出す。
+	  同意済みの場合は冗長なので出さない
+	-->
+	<div
+		class="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] p-6 text-center"
+	>
+		<p class="text-sm text-[color:var(--color-fg-muted)]">
+			上記の内容を確認のうえ、利用を開始できます。
+		</p>
+		<Button
+			variant="primary"
+			size="lg"
+			class="rounded-[var(--radius-pill)] px-8"
+			onclick={handleAcknowledge}
+		>
+			上記を確認のうえ、利用する
+		</Button>
+	</div>
+{/if}

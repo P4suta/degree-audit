@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { base } from "$app/paths";
+	import { page } from "$app/state";
 	import GraduationCap from "lucide-svelte/icons/graduation-cap";
 	import Disclaimer from "$lib/presentation/components/Disclaimer.svelte";
 	import ErrorBanner from "$lib/presentation/components/ErrorBanner.svelte";
@@ -8,21 +9,28 @@
 	import "./layout.css";
 
 	let { children } = $props();
+
+	// 免責事項専用ページ (/disclaimer) は「同意する前に全文を読みに来る」
+	// ための入口なので、モーダルで被せてしまうと読めなくなる。
+	// このページだけはモーダルを出さずコンテンツを見せる（同意ボタンは
+	// ページ内に別途設置している）
+	const onDisclaimerPage = $derived(page.route.id === "/disclaimer");
+	const showModal = $derived(
+		!disclaimerStore.acknowledged && !onDisclaimerPage,
+	);
 </script>
 
 <!--
   免責事項の同意モーダル。disclaimerStore.acknowledged が true になるまで
   本体コンテンツへアクセスできない（fixed inset-0 + z-50 で被さる）。
   卒業に関わる判定を提供する性質上、毎セッション確認を取る設計。
+  ただし /disclaimer ページ自体は免責文を読むための入口なので除外する。
 -->
-{#if !disclaimerStore.acknowledged}
+{#if showModal}
 	<Disclaimer />
 {/if}
 
-<div
-	class="min-h-screen antialiased"
-	aria-hidden={!disclaimerStore.acknowledged}
->
+<div class="min-h-screen antialiased" aria-hidden={showModal}>
 	<!-- DESIGN.md: translucent glass header（ライト版）。
 	     sticky + backdrop-filter で軽い浮遊感。罫線でコンテンツと区切る。 -->
 	<header
