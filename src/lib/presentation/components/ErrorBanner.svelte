@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { X } from "lucide-svelte";
+	import X from "lucide-svelte/icons/x";
 	import Alert from "../ui/Alert.svelte";
 	import { errorsStore } from "../stores/errors.svelte.ts";
 </script>
@@ -19,11 +19,14 @@
 				<X class="h-4 w-4" aria-hidden="true" />
 			</button>
 		{/snippet}
-		<p class="font-mono text-xs opacity-70">code: {current.code}</p>
 		{#if errorsStore.count > 1}
-			<p class="mt-1 text-xs">
+			<p class="text-xs">
 				他に {errorsStore.count - 1} 件のエラーがあります
 			</p>
 		{/if}
+		<details class="mt-1 text-xs opacity-60">
+			<summary class="cursor-pointer select-none">開発者向け情報</summary>
+			<p class="mt-1 font-mono">{current.code}</p>
+		</details>
 	</Alert>
 {/if}
