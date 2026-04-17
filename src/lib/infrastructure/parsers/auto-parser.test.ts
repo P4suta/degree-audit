@@ -1,0 +1,58 @@
+import { describe, expect, it, vi } from "vitest";
+import { ErrorCode } from "../../domain/errors/error-code.ts";
+import { hasCode } from "../../domain/errors/guards.ts";
+import { isErr, isOk, ok } from "../../domain/errors/result.ts";
+import { createAutoParser } from "./auto-parser.ts";
+import type { RawCourse, TranscriptParser } from "./transcript-parser.ts";
+
+const enc = new TextEncoder();
+
+const stubRaw = (name: string): RawCourse => ({
+	rawCategoryLabel: "stub",
+	name,
+	creditText: "2",
+	gradeText: "優",
+});
+
+const fakeParser = (label: string): TranscriptParser => ({
+	parse: vi.fn(async () => ok([stubRaw(label)])),
+});
+
+describe("createAutoParser", () => {
+	it("routes PDF bytes to the PDF parser", async () => {
+		const pdf = fakeParser("pdf");
+		const mhtml = fakeParser("mhtml");
+		const auto = createAutoParser({ pdf, mhtml });
+		const result = await auto.parse(enc.encode("%PDF-1.7\n..."));
+		expect(isOk(result)).toBe(true);
+		if (isOk(result)) expect(result.value[0]?.name).toBe("pdf");
+		expect(pdf.parse).toHaveBeenCalledTimes(1);
+		expect(mhtml.parse).not.toHaveBeenCalled();
+	});
+
+	it("routes MHTML bytes to the MHTML parser", async () => {
+		const pdf = fakeParser("pdf");
+		const mhtml = fakeParser("mhtml");
+		const auto = createAutoParser({ pdf, mhtml });
+		const result = await auto.parse(
+			enc.encode("MIME-Version: 1.0\r\nContent-Type: multipart/related\r\n"),
+		);
+		expect(isOk(result)).toBe(true);
+		if (isOk(result)) expect(result.value[0]?.name).toBe("mhtml");
+		expect(mhtml.parse).toHaveBeenCalledTimes(1);
+		expect(pdf.parse).not.toHaveBeenCalled();
+	});
+
+	it("returns UnsupportedFileFormat for plain text / unknown bytes", async () => {
+		const pdf = fakeParser("pdf");
+		const mhtml = fakeParser("mhtml");
+		const auto = createAutoParser({ pdf, mhtml });
+		const result = await auto.parse(enc.encode("hello world"));
+		expect(isErr(result)).toBe(true);
+		if (isErr(result)) {
+			expect(hasCode(result.error, ErrorCode.UnsupportedFileFormat)).toBe(true);
+		}
+		expect(pdf.parse).not.toHaveBeenCalled();
+		expect(mhtml.parse).not.toHaveBeenCalled();
+	});
+});

@@ -33,9 +33,7 @@ const defaultLoader: PdfDocumentLoader = {
 	},
 };
 
-const assertSize = (
-	bytes: Uint8Array,
-): Result<Uint8Array, DomainError> => {
+const assertSize = (bytes: Uint8Array): Result<Uint8Array, DomainError> => {
 	if (bytes.byteLength > MAX_PDF_BYTES) {
 		return err(
 			new DomainError({

@@ -9,7 +9,7 @@
 	import { isErr } from "$lib/domain/errors/result";
 	import { defaultRegistry } from "$lib/domain/rulesets/index";
 	import TranscriptDropZone from "$lib/presentation/components/TranscriptDropZone.svelte";
-	import { mhtmlParser } from "$lib/infrastructure/parsers/mhtml/mhtml-parser";
+	import { autoParser } from "$lib/infrastructure/parsers/auto-parser";
 	import { yieldToMain } from "$lib/infrastructure/parsers/mhtml/yield";
 	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
 	import { logger } from "$lib/presentation/stores/logger.svelte";
@@ -45,7 +45,7 @@
 			await yieldToMain();
 			const outcome = await importTranscript({
 				source,
-				parser: mhtmlParser,
+				parser: autoParser,
 				ruleSet: resolved.value,
 				profile,
 			});
@@ -75,7 +75,7 @@
 				code: ErrorCode.ImportFileReadFailed,
 				message: `Failed to read or import the dropped file '${file.name}'`,
 				userMessage:
-					"ファイルの読み込みまたは取り込みに失敗しました。別の MHTML を試すか、ブラウザを再起動してみてください。",
+					"ファイルの読み込みまたは取り込みに失敗しました。別の PDF / MHTML を試すか、ブラウザを再起動してみてください。",
 				context: { fileName: file.name, fileSize: file.size },
 				cause,
 			});
@@ -91,8 +91,9 @@
 	成績ファイルをインポート
 </h2>
 <p class="text-sm text-[color:var(--color-fg-muted)]">
-	高知大学「成績閲覧」画面の保存（MHTML）を取り込みます。
-	ファイルはブラウザ内だけで処理され、外部には送信されません。
+	高知大学「個別成績表」の <strong>PDF</strong>、または
+	「成績閲覧」画面の <strong>MHTML</strong> を取り込みます。
+	ファイルはブラウザ内のメモリだけで処理され、外部には送信されません。
 </p>
 
 <TranscriptDropZone onFile={handleFile} disabled={importing} />

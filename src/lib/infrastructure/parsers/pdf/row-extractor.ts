@@ -192,10 +192,17 @@ const applySectionMarker = (
 	switch (match.level) {
 		case "top":
 			return { top: match.value };
-		case "mid":
-			return { top: state.top, mid: match.value };
-		case "leaf":
-			return { top: state.top, mid: state.mid, leaf: match.value };
+		case "mid": {
+			const next: SectionState = { mid: match.value };
+			if (state.top !== undefined) next.top = state.top;
+			return next;
+		}
+		case "leaf": {
+			const next: SectionState = { leaf: match.value };
+			if (state.top !== undefined) next.top = state.top;
+			if (state.mid !== undefined) next.mid = state.mid;
+			return next;
+		}
 	}
 };
 

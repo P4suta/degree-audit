@@ -10,7 +10,7 @@
 
 	const {
 		onFile,
-		accept = ".mhtml,.mht,text/html",
+		accept = ".pdf,.mhtml,.mht,application/pdf,multipart/related,text/html",
 		disabled = false,
 	}: Props = $props();
 
@@ -61,7 +61,8 @@
 		aria-hidden="true"
 	/>
 	<p class="mt-3 text-sm text-[color:var(--color-fg)]">
-		成績閲覧画面を保存した MHTML ファイルをここにドロップ
+		個別成績表の <strong>PDF</strong>、または成績閲覧画面の
+		<strong>MHTML</strong> をここにドロップ
 	</p>
 	<p class="mt-1 text-xs text-[color:var(--color-fg-subtle)]">または</p>
 	<div class="mt-3">

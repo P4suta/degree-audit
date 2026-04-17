@@ -20,9 +20,7 @@ export interface RawCourse {
  * async にしているのは PDF パースが本質的に非同期（pdfjs-dist / Worker）なため。
  */
 export interface TranscriptParser {
-	parse(
-		bytes: Uint8Array,
-	): Promise<Result<readonly RawCourse[], DomainError>>;
+	parse(bytes: Uint8Array): Promise<Result<readonly RawCourse[], DomainError>>;
 }
 
 /** 文字列をパーサに渡すときのヘルパー（テスト便利用）。 */
