@@ -5,6 +5,7 @@ import { err, type Result } from "../../domain/errors/result.ts";
 import { createAutoParser } from "../parsers/auto-parser.ts";
 import { mhtmlParser } from "../parsers/mhtml/mhtml-parser.ts";
 import { pdfParser } from "../parsers/pdf/pdf-parser.ts";
+import { textParser } from "../parsers/text/text-parser.ts";
 import type {
 	RawCourse,
 	TranscriptParser,
@@ -155,8 +156,10 @@ export const workerPdfParser: TranscriptParser = {
  *   - PDF → Worker（UI ブロックしない）
  *   - MHTML → メインスレッド（DOMParser 依存のため。`yieldToMain` で
  *     レンダリングを一度譲る工夫は呼び出し側で済み）
+ *   - text（コピペ） → メインスレッド（軽量な文字列処理、<50ms 想定）
  */
 export const workerBackedAutoParser: TranscriptParser = createAutoParser({
 	pdf: workerPdfParser,
 	mhtml: mhtmlParser,
+	text: textParser,
 });

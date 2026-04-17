@@ -105,4 +105,25 @@ describe("pdfParser error paths", () => {
 		const result = await pdfParser.parse(huge);
 		expect(isErr(result)).toBe(true);
 	});
+
+	it("returns PdfNoCoursesFound when decoded PDF has no course rows", async () => {
+		const { createPdfParser } = await import("./pdf-parser.ts");
+		const emptyLoader = {
+			async load() {
+				return {
+					numPages: 1,
+					async getPage() {
+						return {
+							async getTextContent() {
+								return { items: [] };
+							},
+						};
+					},
+				};
+			},
+		};
+		const parser = createPdfParser(emptyLoader);
+		const result = await parser.parse(new Uint8Array([1, 2, 3]));
+		expect(isErr(result)).toBe(true);
+	});
 });

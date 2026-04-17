@@ -22,18 +22,21 @@ describe("createAutoParser", () => {
 	it("routes PDF bytes to the PDF parser", async () => {
 		const pdf = fakeParser("pdf");
 		const mhtml = fakeParser("mhtml");
-		const auto = createAutoParser({ pdf, mhtml });
+		const text = fakeParser("text");
+		const auto = createAutoParser({ pdf, mhtml, text });
 		const result = await auto.parse(enc.encode("%PDF-1.7\n..."));
 		expect(isOk(result)).toBe(true);
 		if (isOk(result)) expect(result.value[0]?.name).toBe("pdf");
 		expect(pdf.parse).toHaveBeenCalledTimes(1);
 		expect(mhtml.parse).not.toHaveBeenCalled();
+		expect(text.parse).not.toHaveBeenCalled();
 	});
 
 	it("routes MHTML bytes to the MHTML parser", async () => {
 		const pdf = fakeParser("pdf");
 		const mhtml = fakeParser("mhtml");
-		const auto = createAutoParser({ pdf, mhtml });
+		const text = fakeParser("text");
+		const auto = createAutoParser({ pdf, mhtml, text });
 		const result = await auto.parse(
 			enc.encode("MIME-Version: 1.0\r\nContent-Type: multipart/related\r\n"),
 		);
@@ -41,12 +44,29 @@ describe("createAutoParser", () => {
 		if (isOk(result)) expect(result.value[0]?.name).toBe("mhtml");
 		expect(mhtml.parse).toHaveBeenCalledTimes(1);
 		expect(pdf.parse).not.toHaveBeenCalled();
+		expect(text.parse).not.toHaveBeenCalled();
+	});
+
+	it("routes Kochi text paste to the text parser", async () => {
+		const pdf = fakeParser("pdf");
+		const mhtml = fakeParser("mhtml");
+		const text = fakeParser("text");
+		const auto = createAutoParser({ pdf, mhtml, text });
+		const result = await auto.parse(
+			enc.encode("共通教育\n初年次科目\n大学基礎論\t2\t86\t優\n"),
+		);
+		expect(isOk(result)).toBe(true);
+		if (isOk(result)) expect(result.value[0]?.name).toBe("text");
+		expect(text.parse).toHaveBeenCalledTimes(1);
+		expect(pdf.parse).not.toHaveBeenCalled();
+		expect(mhtml.parse).not.toHaveBeenCalled();
 	});
 
 	it("returns UnsupportedFileFormat for plain text / unknown bytes", async () => {
 		const pdf = fakeParser("pdf");
 		const mhtml = fakeParser("mhtml");
-		const auto = createAutoParser({ pdf, mhtml });
+		const text = fakeParser("text");
+		const auto = createAutoParser({ pdf, mhtml, text });
 		const result = await auto.parse(enc.encode("hello world"));
 		expect(isErr(result)).toBe(true);
 		if (isErr(result)) {
@@ -54,5 +74,6 @@ describe("createAutoParser", () => {
 		}
 		expect(pdf.parse).not.toHaveBeenCalled();
 		expect(mhtml.parse).not.toHaveBeenCalled();
+		expect(text.parse).not.toHaveBeenCalled();
 	});
 });

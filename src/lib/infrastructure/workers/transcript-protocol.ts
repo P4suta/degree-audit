@@ -33,9 +33,8 @@ export interface ParseResponse {
 }
 
 const serializeContext = (
-	context: Readonly<Record<string, unknown>> | undefined,
+	context: Readonly<Record<string, unknown>>,
 ): Readonly<Record<string, unknown>> | undefined => {
-	if (context === undefined) return undefined;
 	// context の値が structured-clone 不可能な可能性があるので、
 	// JSON 経由でプリミティブのみに落とす。元の形を壊すことはあるが
 	// Worker 越しでの可読性を優先。

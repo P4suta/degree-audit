@@ -22,7 +22,3 @@ export interface RawCourse {
 export interface TranscriptParser {
 	parse(bytes: Uint8Array): Promise<Result<readonly RawCourse[], DomainError>>;
 }
-
-/** 文字列をパーサに渡すときのヘルパー（テスト便利用）。 */
-export const encodeSource = (text: string): Uint8Array =>
-	new TextEncoder().encode(text);
