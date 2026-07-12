@@ -17,6 +17,9 @@ export default defineConfig({
 				"src/lib/**/index.ts",
 				"src/lib/**/fixtures.ts",
 				"src/lib/presentation/**",
+				// Vendored wasm-bindgen glue + the .wasm binary and its thin
+				// browser adapter: generated / browser-only, not unit-tested here.
+				"src/lib/wasm/**",
 			],
 			thresholds: {
 				"src/lib/domain/**": {
