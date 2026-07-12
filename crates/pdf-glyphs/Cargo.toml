@@ -15,4 +15,4 @@ publish = false
 # default-features = false drops chrono/rayon/time (and, in this version, keeps
 # getrandom/rand out entirely) so the crate builds cleanly for wasm32. The
 # `nom_parser` feature selects the pure-Rust nom-based content/object parser.
-lopdf = { version = "0.34", default-features = false, features = ["nom_parser"] }
+lopdf = { version = "0.35", default-features = false, features = ["nom_parser"] }
