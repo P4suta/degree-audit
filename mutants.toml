@@ -1,0 +1,12 @@
+# cargo-mutants configuration.
+# Mutation testing checks that the test suite actually *kills* injected faults —
+# a stronger signal than line coverage, and a natural fit for this repo's TDD.
+
+# Give tests headroom over the baseline timing before a mutant is called "timed out".
+timeout_multiplier = 3.0
+minimum_test_timeout = 60
+
+# Don't mutate test code or hand-written data tables that no test pins exhaustively.
+exclude_globs = [
+    "crates/*/tests/**",
+]

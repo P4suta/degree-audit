@@ -1,0 +1,18 @@
+# audit-app — orchestrates an audit from raw input.
+# Owns the driven port (`TranscriptSource`) and its boundary DTO (`RawCourse`), the
+# raw→Course mapper, rule-set resolution, and the import use case. Depends inward on
+# the domain; adapters (parsers) and drivers (CLI/WASM) depend on this.
+[package]
+name = "audit-app"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+audit-domain.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

@@ -1,0 +1,17 @@
+# audit-domain — what graduation is (pure computation).
+# Value objects, entities, the Requirement AST + interpreter, the allocation fold,
+# assessment, and the rule sets. Zero I/O dependencies; builds for wasm32 unchanged.
+[package]
+name = "audit-domain"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+audit-text.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

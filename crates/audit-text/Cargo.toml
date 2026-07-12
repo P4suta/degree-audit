@@ -1,0 +1,13 @@
+# audit-text — canonicalization of notational variance (what counts as "the same string").
+# Leaf of the dependency graph. A shared primitive used by both the domain and the
+# parse adapters. Target-agnostic (builds as-is for wasm32; pure Rust).
+[package]
+name = "audit-text"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+unicode-normalization.workspace = true

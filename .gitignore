@@ -29,3 +29,15 @@ test-results
 
 # Coverage
 /coverage
+
+# Rust
+/target
+# wasm-pack output (vendored copy lives in src/lib/wasm)
+/crates/audit-wasm/pkg
+# cargo-mutants run output
+/mutants.out
+/mutants.out.old
+
+# Real transcripts (PII: name, student ID, birthdate, university name — never commit)
+*.local.pdf
+/crates/**/tests/fixtures/real/

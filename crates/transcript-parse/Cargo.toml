@@ -1,0 +1,12 @@
+[package]
+name = "transcript-parse"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+pdf-glyphs = { workspace = true }
+audit-app = { workspace = true }
+audit-text = { workspace = true }
+audit-domain = { workspace = true }
