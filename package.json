@@ -28,7 +28,7 @@
 		"@tailwindcss/vite": "^4.2.2",
 		"@vitest/coverage-istanbul": "4.1.10",
 		"fast-check": "4.9.0",
-		"happy-dom": "20.9.0",
+		"happy-dom": "20.10.6",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
 		"tailwindcss": "^4.2.2",
