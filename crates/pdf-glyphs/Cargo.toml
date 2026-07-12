@@ -1,0 +1,18 @@
+# pdf-glyphs — positioned text-fragment extraction from "Microsoft Print To PDF"
+# transcripts. Pure Rust, wasm32-compatible: it parses the PDF container with
+# `lopdf` (nom parser, no getrandom/rayon/time), interprets the text-showing
+# operators of each page's content stream, and maps CID codes to Unicode via the
+# font's /ToUnicode CMap. Column/row clustering lives in a later crate.
+[package]
+name = "pdf-glyphs"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+# default-features = false drops chrono/rayon/time (and, in this version, keeps
+# getrandom/rand out entirely) so the crate builds cleanly for wasm32. The
+# `nom_parser` feature selects the pure-Rust nom-based content/object parser.
+lopdf = { version = "0.34", default-features = false, features = ["nom_parser"] }

@@ -12,7 +12,10 @@
 			"!**/.svelte-kit",
 			"!**/build",
 			"!**/coverage",
-			"!**/*.svelte"
+			"!**/*.svelte",
+			"!target",
+			"!crates",
+			"!src/lib/wasm/degree_audit*"
 		]
 	},
 	"formatter": {

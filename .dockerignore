@@ -22,3 +22,12 @@ Thumbs.db
 Dockerfile
 .dockerignore
 docker-compose.yml
+
+# Rust workspace: the web build only needs the vendored wasm in src/lib/wasm
+target
+crates
+Cargo.toml
+Cargo.lock
+mutants.toml
+mutants.out
+mutants.out.old
