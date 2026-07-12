@@ -50,3 +50,30 @@ jobs:
           push: false
           cache-from: type=gha,scope=degree-audit
           cache-to: type=gha,mode=max,scope=degree-audit
+
+  rust:
+    name: rust fmt / clippy / test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Format
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Test
+        # The real-PDF oracle tests are gated on a local PII file that is absent
+        # in CI, so they no-op here; everything else runs.
+        run: cargo test --workspace
