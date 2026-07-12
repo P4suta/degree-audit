@@ -17,8 +17,25 @@
 	import { skippedStore } from "$lib/presentation/stores/skipped.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
 	import { warningsStore } from "$lib/presentation/stores/warnings.svelte";
+	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import Button from "$lib/presentation/ui/Button.svelte";
 	import Card from "$lib/presentation/ui/Card.svelte";
+
+	const PDF_MAGIC = [0x25, 0x50, 0x44, 0x46]; // "%PDF"
+
+	const isPdfBytes = (name: string, bytes: Uint8Array): boolean =>
+		name.toLowerCase().endsWith(".pdf") ||
+		PDF_MAGIC.every((b, i) => bytes[i] === b);
+
+	const notifyUnknown = (count: number) => {
+		if (count > 0) {
+			warningsStore.set(
+				"import:unknown-categories",
+				`${count} 件の科目が区分未判定（unknown）のまま取り込まれました。卒業要件の判定からは除外されます。`,
+				{ autoDismissMs: 10_000 },
+			);
+		}
+	};
 
 	let importing = $state(false);
 	let pasteText = $state("");
@@ -29,22 +46,60 @@
 		}
 	});
 
+	// Official PDF path: runs the Rust/WASM core end-to-end in the browser. The
+	// profile is read from the PDF header, so this works even without a prior
+	// /profile step.
+	const importFromPdf = async (source: Uint8Array) => {
+		await yieldToMain();
+		const { importPdf } = await import("$lib/wasm");
+		const bundle = await importPdf(source);
+		profileStore.set(bundle.profile);
+		transcriptStore.set(bundle.record);
+		skippedStore.clear();
+		assessmentStore.set(bundle.assessment);
+		notifyUnknown(bundle.unknownCategoryCount);
+		if (bundle.skipped > 0) {
+			warningsStore.set(
+				"import:skipped",
+				`${bundle.skipped} 行を取り込めませんでした（PDF の一部行の解釈に失敗）。`,
+				{ autoDismissMs: 10_000 },
+			);
+		}
+		logger.info("Transcript imported from PDF (WASM)", {
+			courses: bundle.record.courses.length,
+			skipped: bundle.skipped,
+			unknownCategories: bundle.unknownCategoryCount,
+		});
+		void safeGoto(`${base}/dashboard`);
+	};
+
 	const handleFile = async (file: File) => {
 		errorsStore.clear();
 		warningsStore.dismiss("import:unknown-categories");
+		warningsStore.dismiss("import:skipped");
 		skippedStore.clear();
-		const profile = profileStore.current;
-		if (profile === null) return;
-		const resolved = resolveRuleSet(profile, defaultRegistry);
-		if (isErr(resolved)) {
-			errorsStore.push(resolved.error);
-			return;
-		}
+		assessmentStore.clear();
 		importing = true;
 		try {
 			const source = new Uint8Array(await file.arrayBuffer());
-			// 同期パース開始前にフレームを 1 つ譲ることで、「読み込み中…」の
-			// 表示が確実に描画される。PDF は pdfjs-dist 側がさらに非同期で走る。
+
+			if (isPdfBytes(file.name, source)) {
+				await importFromPdf(source);
+				return;
+			}
+
+			// MHTML / plain-text still go through the TypeScript engine, which
+			// needs a resolved profile.
+			const profile = profileStore.current;
+			if (profile === null) {
+				void safeGoto(`${base}/profile`);
+				return;
+			}
+			const resolved = resolveRuleSet(profile, defaultRegistry);
+			if (isErr(resolved)) {
+				errorsStore.push(resolved.error);
+				return;
+			}
 			await yieldToMain();
 			const outcome = await importTranscript({
 				source,
@@ -59,18 +114,11 @@
 			}
 			transcriptStore.set(outcome.value.record);
 			skippedStore.set(outcome.value.skipped);
-			const unknownCount = outcome.value.unknownCategoryCount;
-			if (unknownCount > 0) {
-				warningsStore.set(
-					"import:unknown-categories",
-					`${unknownCount} 件の科目が区分未判定（unknown）のまま取り込まれました。卒業要件の判定からは除外されます。区分ルール（category-map）の拡張が必要かもしれません。`,
-					{ autoDismissMs: 10_000 },
-				);
-			}
+			notifyUnknown(outcome.value.unknownCategoryCount);
 			logger.info("Transcript imported", {
 				courses: outcome.value.record.courses.length,
 				skipped: outcome.value.skipped.length,
-				unknownCategories: unknownCount,
+				unknownCategories: outcome.value.unknownCategoryCount,
 			});
 			void safeGoto(`${base}/dashboard`);
 		} catch (cause) {
@@ -95,6 +143,7 @@
 		errorsStore.clear();
 		warningsStore.dismiss("import:unknown-categories");
 		skippedStore.clear();
+		assessmentStore.clear();
 		const profile = profileStore.current;
 		if (profile === null) return;
 		const resolved = resolveRuleSet(profile, defaultRegistry);
@@ -160,11 +209,29 @@
 		成績を取り込む
 	</h2>
 	<p class="text-base text-[color:var(--color-fg-muted)] max-w-[640px]">
-		大学の「Web 成績 / 成績閲覧」ページから <strong
-			class="font-semibold text-[color:var(--color-fg)]">コピペするだけ</strong
+		発行された <strong class="font-semibold text-[color:var(--color-fg)]"
+			>PDF 成績表をドロップ</strong
+		>、または「Web 成績」ページから <strong
+			class="font-semibold text-[color:var(--color-fg)]">コピペ</strong
 		>で取り込めます。データはブラウザ内のメモリだけで処理され、外部には送信されません。
 	</p>
 </header>
+
+<Card padding="lg">
+	<section aria-labelledby="pdf-heading" class="space-y-4">
+		<div class="space-y-2">
+			<h3 id="pdf-heading" class="text-h2 text-[color:var(--color-fg)]">
+				公式の PDF 成績表をドロップ
+			</h3>
+			<p class="text-sm text-[color:var(--color-fg-muted)]">
+				大学が発行する「個別成績表（PDF）」をそのままドロップするだけ。学部・コース・入学年度は
+				PDF から自動で読み取ります。判定は Rust / WebAssembly
+				エンジンがブラウザ内で実行し、データは外部に送信されません。
+			</p>
+		</div>
+		<TranscriptDropZone onFile={handleFile} disabled={importing} />
+	</section>
+</Card>
 
 <Card padding="lg">
 	<section aria-labelledby="paste-heading" class="space-y-5">
