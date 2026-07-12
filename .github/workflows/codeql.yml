@@ -37,14 +37,18 @@ jobs:
             build-mode: none
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-          queries: security-extended
+          # Default query suite (matches the prior default setup). The
+          # security-extended suite adds supply-chain queries such as
+          # "unpinned action tag" that conflict with Dependabot's version-tag
+          # updates and would block every workflow PR under the branch ruleset's
+          # conversation-resolution rule.
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
