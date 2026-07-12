@@ -21,13 +21,13 @@
 		"deps:audit": "bun audit --audit-level=moderate"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.12",
+		"@biomejs/biome": "2.5.3",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.57.0",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"@tailwindcss/vite": "^4.2.2",
-		"@vitest/coverage-istanbul": "4.1.4",
-		"fast-check": "4.6.0",
+		"@vitest/coverage-istanbul": "4.1.10",
+		"fast-check": "4.9.0",
 		"happy-dom": "20.9.0",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
