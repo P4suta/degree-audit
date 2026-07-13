@@ -4,14 +4,13 @@
  * DESIGN.md に沿った Apple 風のデザイントークン。
  *
  * 方針：
- *   - ライトテーマ単一（dark mode は廃止）
+ *   - ライト / ダーク両対応。ダークは同名トークンの値だけを
+ *     `@media (prefers-color-scheme: dark)` で差し替える（`-dark` サフィックス
+ *     は作らない）。テキスト色は不透明インク（solid hex）で持ち、暗い地でも
+ *     消えないようにする。
  *   - アクセントは Apple Blue 1 色のみ。インタラクティブ要素専用
  *   - システムフォント（Web フォント無読み込み）
  *   - 影は極力使わず、境界 / 背景色差で区切る
- *
- * 既存クラスとの互換のため、旧トークン名（--color-accent / --color-fg 等）
- * をそのまま使い続ける。v1 デザインの oklch 値だけを Apple 風の実数に
- * 置き換える形。
  */
 
 @theme {
@@ -31,10 +30,10 @@
 	--color-border-strong: rgba(0, 0, 0, 0.16);
 	--color-divider: rgba(0, 0, 0, 0.06);
 
-	/* --- text --- */
+	/* --- text (solid ink so it survives the dark field) --- */
 	--color-fg: #1d1d1f;
-	--color-fg-muted: rgba(29, 29, 31, 0.72);
-	--color-fg-subtle: rgba(29, 29, 31, 0.48);
+	--color-fg-muted: #616163;
+	--color-fg-subtle: #8b8b8d;
 
 	/* --- accent: Apple Blue (唯一のインタラクティブ色) --- */
 	--color-accent: #0071e3;
@@ -87,12 +86,67 @@
 }
 
 /*
+ * ─── Dark theme ───────────────────────────────────────────────────
+ * Same token names, different values — every component reads the vars, so the
+ * whole UI flips with no `-dark` classes. Text is solid ink (not opacity) so it
+ * stays legible on the dark field; the accent brightens and its on-fill text
+ * (accent-fg) flips dark. --color-danger stays a fill dark enough for white
+ * button text; --color-danger-fg is the lighter text ink for panels. AA (4.5:1)
+ * for every text/accent/semantic pair is locked by design-tokens.test.ts.
+ */
+@media (prefers-color-scheme: dark) {
+	:root {
+		/* surfaces */
+		--color-background: #0b0b0c;
+		--color-surface: #1c1c1e;
+		--color-surface-alt: #242426;
+		--color-surface-muted: #161618;
+		--color-surface-raised: #2c2c2e;
+		--color-surface-glass: rgba(28, 28, 30, 0.72);
+		--color-overlay-backdrop: rgba(0, 0, 0, 0.6);
+
+		/* borders */
+		--color-border: rgba(255, 255, 255, 0.12);
+		--color-border-strong: rgba(255, 255, 255, 0.24);
+		--color-divider: rgba(255, 255, 255, 0.08);
+
+		/* text */
+		--color-fg: #f5f5f7;
+		--color-fg-muted: #a1a1a6;
+		--color-fg-subtle: #6e6e73;
+
+		/* accent (brighter on the dark field; on-fill text flips dark) */
+		--color-accent: #3d9bff;
+		--color-accent-hover: #57a8ff;
+		--color-accent-link: #6cb4ff;
+		--color-accent-fg: #0b0b0c;
+		--color-accent-ring: rgba(61, 155, 255, 0.35);
+
+		/* semantic */
+		--color-success: #5ad07f;
+		--color-success-fg: #5ad07f;
+		--color-success-bg: #102a1a;
+		--color-success-border: #1f5236;
+
+		--color-warning: #f5c451;
+		--color-warning-fg: #f5c451;
+		--color-warning-bg: #2c2410;
+		--color-warning-border: #5a4a1f;
+
+		--color-danger: #d13b47;
+		--color-danger-fg: #ff8a8a;
+		--color-danger-bg: #2c1416;
+		--color-danger-border: #5a2529;
+	}
+}
+
+/*
  * ページ基礎
  */
 html {
 	background-color: var(--color-background);
 	color: var(--color-fg);
-	color-scheme: light;
+	color-scheme: light dark;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-rendering: optimizeLegibility;
