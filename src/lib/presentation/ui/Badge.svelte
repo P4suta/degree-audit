@@ -13,8 +13,10 @@
 		children: Snippet;
 		variant?: Variant;
 		class?: string;
-		/** 角丸を pill にする（デフォルトは micro 4px） */
+		/** 角丸を pill にする（デフォルトは chip 4px） */
 		pill?: boolean;
+		/** 先頭に variant 色の状態ドットを出す（レポート行の行頭ステータス用）。 */
+		dot?: boolean;
 	}
 
 	const {
@@ -22,6 +24,7 @@
 		variant = "neutral",
 		class: className = "",
 		pill = false,
+		dot = false,
 	}: Props = $props();
 
 	const variantClass = $derived.by(() => {
@@ -40,12 +43,18 @@
 	});
 
 	const radiusClass = $derived(
-		pill ? "rounded-[var(--radius-pill)]" : "rounded-[var(--radius-micro)]",
+		pill ? "rounded-[var(--radius-pill)]" : "rounded-[var(--radius-chip)]",
 	);
 </script>
 
 <span
-	class="inline-flex items-center gap-1 border px-2 py-0.5 text-caption font-medium leading-none {variantClass} {radiusClass} {className}"
+	class="inline-flex items-center gap-1.5 border px-2 py-0.5 text-caption font-medium leading-none {variantClass} {radiusClass} {className}"
 >
+	{#if dot}
+		<span
+			class="h-1.5 w-1.5 shrink-0 rounded-[var(--radius-pill)] bg-current"
+			aria-hidden="true"
+		></span>
+	{/if}
 	{@render children()}
 </span>

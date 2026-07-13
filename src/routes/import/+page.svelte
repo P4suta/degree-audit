@@ -11,7 +11,6 @@
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
 	import { warningsStore } from "$lib/presentation/stores/warnings.svelte";
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
-	import Card from "$lib/presentation/ui/Card.svelte";
 
 	const PDF_MAGIC = [0x25, 0x50, 0x44, 0x46]; // "%PDF"
 
@@ -32,11 +31,16 @@
 	let importing = $state(false);
 
 	// Official PDF path: runs the Rust/WASM core end-to-end in the browser. The
-	// profile is read from the PDF header, so this works without a prior /profile
+	// profile is read from the PDF header, so this works without a prior profile
 	// step.
 	const importFromPdf = async (source: Uint8Array) => {
 		await yieldToMain();
-		const { importPdf } = await import("$lib/wasm");
+		// NOTE: must target the facade file explicitly (`/index`), not the
+		// directory. wasm-pack drops a `package.json` (`"main":"degree_audit.js"`)
+		// into src/lib/wasm/, so a bare `$lib/wasm` import resolves to the raw WASM
+		// glue instead of this worker-backed facade — calling its `importPdf` on the
+		// main thread before init throws `__wbindgen_malloc of undefined`.
+		const { importPdf } = await import("$lib/wasm/index");
 		const bundle = await importPdf(source);
 		profileStore.set(bundle.profile);
 		transcriptStore.set(bundle.record);
@@ -101,36 +105,11 @@
 	<title>成績を取り込む — 卒業要件判定ツール</title>
 </svelte:head>
 
-<header class="space-y-3">
-	<h2 class="text-display text-[color:var(--color-fg)]">
-		成績を取り込む
-	</h2>
-	<p class="text-body text-[color:var(--color-fg-muted)] max-w-readable">
-		大学が発行する <strong class="font-semibold text-[color:var(--color-fg)]"
-			>PDF 成績表をドロップ</strong
-		>するだけで取り込めます。学部・コース・入学年度は PDF
-		から自動で読み取ります。データはブラウザ内のメモリだけで処理され、外部には送信されません。
-	</p>
-</header>
+<!-- ドロップゾーン自身が用途を説明するので、見出しは文書アウトライン用に
+     sr-only で置くだけ。画面上は入力に集中させる。ドロップゾーンはビューポート
+     いっぱいに広げ、コンテンツを上下左右中央に置く。 -->
+<h2 class="sr-only">成績の取り込み</h2>
 
-<Card padding="lg">
-	<section aria-labelledby="pdf-heading" class="space-y-4">
-		<div class="space-y-2">
-			<h3 id="pdf-heading" class="text-h2 text-[color:var(--color-fg)]">
-				公式の PDF 成績表をドロップ
-			</h3>
-			<p class="text-small text-[color:var(--color-fg-muted)]">
-				大学が発行する「個別成績表（PDF）」をそのままドロップするだけ。学部・コース・入学年度は
-				PDF から自動で読み取ります。判定は Rust / WebAssembly
-				エンジンがブラウザ内で実行し、データは外部に送信されません。
-			</p>
-		</div>
-		<TranscriptDropZone onFile={handleFile} disabled={importing} />
-	</section>
-</Card>
-
-{#if importing}
-	<p class="text-small text-[color:var(--color-fg-muted)]" aria-live="polite">
-		読み込み中…
-	</p>
-{/if}
+<div class="flex min-h-fill flex-col">
+	<TranscriptDropZone onFile={handleFile} busy={importing} class="flex-1" />
+</div>

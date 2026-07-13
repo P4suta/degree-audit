@@ -64,7 +64,7 @@
 	oncancel={(e) => e.preventDefault()}
 >
 	<div
-		class="disclaimer-overlay flex items-stretch justify-center bg-[color:var(--color-overlay-backdrop)] backdrop-blur-md motion-safe:animate-[fadeIn_0.2s_ease-out] sm:items-center sm:px-4 sm:py-6"
+		class="disclaimer-overlay flex items-stretch justify-center bg-[color:var(--color-overlay-backdrop)] backdrop-blur-md motion-safe:animate-fade-in sm:items-center sm:px-4 sm:py-6"
 	>
 		<div
 			class="flex w-full flex-col bg-[color:var(--color-surface)] sm:max-h-modal sm:max-w-modal sm:rounded-[var(--radius-card)] sm:border sm:border-[color:var(--color-border)] sm:shadow-[var(--shadow-lifted)]"
@@ -105,7 +105,7 @@
 				</p>
 
 				<p
-					class="rounded-[var(--radius-md)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] p-3 text-[color:var(--color-warning-fg)]"
+					class="rounded-[var(--radius-control)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] p-3 text-[color:var(--color-warning-fg)]"
 				>
 					<strong>本ツールの判定結果は参考情報にすぎません。</strong>
 					卒業・履修に関わる最終的な判断は、必ず<strong>最新の履修案内</strong>、<strong

@@ -79,13 +79,29 @@ font-family:
 --color-surface:    #ffffff   /* カード背景 */
 --color-surface-alt:#fbfbfd   /* 微かに差別化したいとき（codeブロックなど） */
 
---color-fg:         #1d1d1f                  /* 第 1 テキスト */
---color-fg-muted:   rgba(29, 29, 31, 0.72)   /* 第 2 テキスト */
---color-fg-subtle:  rgba(29, 29, 31, 0.48)   /* 第 3 テキスト・disabled */
+--color-fg:         #1d1d1f   /* 第 1 テキスト（不透明インク） */
+--color-fg-muted:   #616163   /* 第 2 テキスト */
+--color-fg-subtle:  #68686d   /* 第 3 テキスト・placeholder */
+```
 
---color-border:         rgba(0, 0, 0, 0.08)  /* 極薄境界 */
---color-border-strong:  rgba(0, 0, 0, 0.16)  /* 必要なときだけ */
---color-divider:        rgba(0, 0, 0, 0.06)
+### overlays（スレートインクの semantic opacity）
+
+境界・区切り・hover 面・skeleton は**純黒 rgba を使わず**、わずかに冷たいスレート
+インク（`rgb(29 31 39 / α)`、ダークは `rgb(233 236 244 / α)`）の semantic opacity
+1 系統から取る。near-white の地に載せても濁らず「柔らかい構造」として読める。
+
+```
+--color-overlay-subtle:  α .04   /* skeleton・最薄 hover */
+--color-overlay-muted:   α .06   /* divider */
+--color-overlay-light:   α .09   /* border（標準） */
+--color-overlay-medium:  α .12   /* hover 面 */
+--color-overlay-strong:  α .16   /* border-strong */
+--color-overlay-backdrop:        /* modal 背面の dim */
+
+/* border / divider は overlay の役割別名。ダークでも同じ参照で反転する */
+--color-border:        var(--color-overlay-light)
+--color-border-strong: var(--color-overlay-strong)
+--color-divider:       var(--color-overlay-muted)
 ```
 
 ### アクセント（Apple Blue 単色）
@@ -153,16 +169,17 @@ font-family:
 
 ### radius
 
+要素サイズ基準の **4 段**。役割につき 1 値、値の重複を持たない（中間ステップを増やさない）。
+
 ```
---radius-micro:  4px   /* チップ / タグ */
---radius-sm:     6px   /* inputs */
---radius-md:     8px   /* ボタン・カード（標準） */
---radius-lg:    12px   /* 大きいカード・モーダル */
---radius-pill: 9999px  /* pill CTA・タブ */
+--radius-chip:     4px   /* chip / tag / grade pill */
+--radius-control:  8px   /* button / input / select */
+--radius-card:    12px   /* card / cell / dropzone / modal */
+--radius-pill:  9999px   /* pill CTA・status pill・progress track */
 ```
 
-- 12px を超える角丸は基本使わない（`--radius-pill` を使う場面以外）
-- カードの推奨は `--radius-md`（8px）〜 `--radius-lg`（12px）
+- 12px を超える角丸は使わない（`--radius-pill` を使う場面以外）
+- 生の `rounded` / `rounded-sm/md/lg/[…]` は使わず、必ず `rounded-[var(--radius-*)]`
 
 ### 影
 
@@ -184,6 +201,32 @@ font-family:
 - セクション間: 32 〜 56px
 - カード間: 16 〜 24px
 
+## 3.5 モーション
+
+1 系統 3 レジスタ。生の `cubic-bezier` / `@keyframes` はコンポーネントに書かず、
+`@theme` のトークン（`--ease-*` / `--animate-*`）経由でのみ使う。
+
+- **state**（hover / focus / press）: `motion-safe:transition-colors` /
+  `-transform`。イージングは `--ease-standard`（`cubic-bezier(.4,0,.2,1)`）。
+- **movement / enter**: `--ease-spring`。セクション入場は `animate-rise-in`
+  （opacity + 6px 上げ）、フェードは `animate-fade-in`、スピナーは `animate-spinner`。
+- `prefers-reduced-motion: reduce` で全アニメを実質停止（`layout.css` が一括で
+  duration を 0.01ms 化）。`motion-safe:` を付けて二重に尊重する。
+
+## 3.6 アイコン
+
+Iconify の **Material Icons Round**（`ic` セット）を `unplugin-icons` で**ビルド時
+インライン**する（オフライン・tree-shake・ランタイム fetch ゼロ）。
+
+```svelte
+import School from "~icons/ic/round-school";
+<School class="h-5 w-5 text-[color:var(--color-accent)]" aria-hidden="true" />
+```
+
+- fill ベースなので `currentColor` が効く。色は `text-[color:var(--color-*)]` で。
+- サイズは `h-4 w-4`（本文脇）/ `h-5 w-5`（ヘッダー・chevron）を基本に。
+- 意味を持たない装飾アイコンは `aria-hidden="true"`。
+
 ## 4. コンポーネント
 
 ### Button
@@ -204,8 +247,8 @@ bg: transparent       fg: fg-muted    border: none                         (ghos
 ```
 bg: --color-surface
 border: 1px solid --color-border
-radius: --radius-md (8px)
-padding: 16 〜 24px
+radius: --radius-card (12px)
+padding: 16 〜 32px
 shadow: なし or --shadow-card
 ```
 
@@ -217,13 +260,14 @@ shadow: なし or --shadow-card
 bg: --color-{semantic}-bg
 fg: --color-{semantic}-fg
 border: 1px solid --color-{semantic}-border
-radius: --radius-micro (4px)  OR  9999px
-font: 12px, weight 500
+radius: --radius-chip (4px)  OR  9999px (pill)
+font: 12px (caption), weight 500
 padding: 2px 8px
 ```
 
-- 色は success / warning / danger / neutral の 4 種のみ。accent（青）はバッジには使わない
-  （バッジ = 非インタラクティブ、accent = インタラクティブのルール）
+- 色は success / warning / danger / neutral / accent の 5 種。`accent` バリアントは
+  情報ラベル（リンク/ボタンに化けない）用に控えめに扱う
+- `dot` 指定で先頭に variant 色の状態ドットを出す。レポート行やヒーローの状態表示に使う
 
 ### Alert
 
@@ -243,11 +287,30 @@ radius: --radius-md
 細い 4px のバー。背景は `--color-divider`、fill は `--color-accent`（満たされていれば `--color-success-fg`）。
 
 ```
-track: height 4px, bg --color-divider, radius 9999px
+track: height 4px (sm) / 8px (hero), bg --color-divider, radius 9999px
 fill:  bg --color-accent (unsatisfied) / --color-success-fg (satisfied)
+       履修中層は accent の薄い斜線ストライプを下敷きに重ねる
        motion-safe で transition
-label: 上に「あと N 単位」を `--color-fg-muted` で表示
 ```
+
+`size="hero"` でヒーロー用の太バー（8px）。`size="sm"`（既定）は行内・レポート行用。
+
+### StatMeter（ヒーロー）
+
+大見出し（verdict / 要件名）＋ `Progress size="hero"` ＋ 数値リードアウト
+（`X / Y 単位`）＋ 補助スロット（`lead` / `meta`）を 1 かたまりにする。カードで
+囲わず、余白と階層で前に出す。Dashboard と要件詳細のヒーローで共用。
+
+### RequirementRow（レポート行）
+
+罫線区切りリストの 1 行（`<a>`）。行頭に状態ドット badge・要件名・右端に現在値と
+chevron、2 行目に slim progress と「あと N / 履修中 +N」ヒント。hover は
+`--color-overlay-subtle` 面、focus は inset リング。均一カードグリッドの代わりに使う。
+
+### Disclosure（段階開示）
+
+native `<details>/<summary>` に薄く化粧しただけ。展開・キーボード・SR 通知は
+ブラウザ標準に委ねる。主要情報の下に「上級の詳細」を畳んで壁を作らないために使う。
 
 ### ナビゲーション
 
@@ -268,9 +331,9 @@ Apple のダークガラス（`rgba(0,0,0,0.8)`）ではなく、**ライトガ�
 input:
   bg: #ffffff
   border: 1px solid --color-border
-  radius: --radius-sm (6px)
+  radius: --radius-control (8px)
   padding: 8px 12px
-  font: 15px
+  font: 16px (iOS auto-zoom 回避)
 
 input:focus:
   border-color: --color-accent
@@ -308,27 +371,26 @@ input[aria-invalid="true"]:
 
 ### `/import` 成績取り込み
 
-- **Display** 見出し「成績を取り込む」
-- 本文（fg-muted）で短い説明
-- PDF 成績表のドロップゾーン Card を単独で配置（学部・コース・入学年度は PDF から自動取得）
+- **Display** 見出し「成績を取り込む」＋ 1 文の説明（重複させない）
+- ドロップゾーンを**主サーフェス**として単独配置（Card で二重に囲わない）。空状態・
+  ドラッグ中・取り込み中（スピナー + `aria-busy`）を 1 つの面で表現
+- 下に 3 ステップの安心導線（PDF → 判定 → 結果）と privacy 注記を caption で
 
-### `/dashboard`
+### `/dashboard`（レポート型）
 
-- Summary ブロックを画面上部に大きめに（40px Display + 判定の可否 Badge）
-- 要件カードを 2-3 列グリッドに
-- 各カードは: Heading 3 / Progress / 「あと N 単位」 / Badge
+- **ヒーロー**: `StatMeter` で verdict 見出し（Display）＋太い全体メーター（完了/
+  履修中/残の 3 層）＋`総 X / 124` ＋メタ（不足要件 N 件・卒論資格 badge・履修中）
+- **要件**: 均一カードグリッドにしない。`RequirementRow` を**罫線区切りの整列リスト**
+  に並べる（行頭ドット・要件名・slim progress・`actual/required`・chevron）。
+  `総修得単位`・`卒論資格` は末尾に「全体」小見出しで区別
 
-### `/requirements/[id]`
+### `/requirements/[id]`（段階開示）
 
-- 戻るリンク（accent-link）
-- 主見出し（Heading 1）
-- Progress Card（大きめ、現在値 + 残り）
-- Diagnostics、subResults、貢献科目、読み替え、算入外、要件超過 のセクション
-
-### `/profile`
-
-- Heading 1 + 短い説明
-- 単一カード内にフォームを配置
+- 戻るリンク（arrow-back アイコン + accent-link）
+- **ヒーロー**: `StatMeter`（要件名 Display + 状態 badge + 大メーター + 現在値）。
+  診断は disc 箇条書きにせず静かな注記に
+- 主要（内訳・貢献科目・履修中）は常時表示。**上級の配分情報（読み替え・算入外・
+  要件超過）は `Disclosure`「配分の詳細」に畳む**（壁を作らない）
 
 ## 7. アクセシビリティ
 
@@ -336,7 +398,30 @@ input[aria-invalid="true"]:
 - `aria-live="polite"` を非同期ステータス（読み込み中、警告）に
 - `aria-invalid`, `aria-describedby` をフォームエラーに
 - `prefers-reduced-motion: reduce` を尊重（全アニメーション実質停止）
-- コントラスト比：body text の `rgba(29, 29, 31, 0.72)` on `#f5f5f7` で WCAG AA クリア
+- タップターゲットは `min-h-tap`（44px）を下限に
+- コントラスト比：全テキスト/アクセント/セマンティック対の AA (4.5:1) を
+  `design-tokens.test.ts` が light/dark 両方で機械検証し、E2E axe が実要素で再確認
+
+## 7.5 パフォーマンス / Lighthouse
+
+「合理的な範囲で」4 カテゴリを高く保つ。派手さのための重い仕掛けは足さない。
+実測（`/import`, Edge headless）: **モバイル 99 / デスクトップ 100**、A11y・
+Best Practices・SEO は各 100（LCP 0.4〜1.7s・TBT 0ms・CLS 0）。
+
+- **Performance**: 完全な静的プリレンダリング（SSG, adapter-static）。**アプリ CSS
+  (~41KB) を `inlineStyleThreshold` で `<head>` にインライン化**し、レンダー
+  ブロッキングな `<link rel=stylesheet>` の往復を排除（残る link は
+  `disabled media="(max-width:0)"` の非ブロッキング参照）。`precompress` で .br/.gz も
+  出力。Web フォント無読み込み（システムフォント）。アイコンはビルド時インライン
+  SVG（fetch ゼロ）。WASM は Web Worker + 動的 import で初期バンドル外・メイン
+  スレッド非ブロック。画像なし。
+  - 唯一の diagnostic は同意ダイアログ `showModal()` の forced reflow（CJK 整形の
+    同期レイアウト、二重 rAF で遅延済み・スコア対象メトリクスには非影響）。
+- **SEO**: `<html lang="ja">`・ページ毎の `<title>`・`app.html` に meta description。
+  リンクはクロール可能な `<a href>`。
+- **Best Practices**: `theme-color` を light/dark 双方に。`viewport-fit=cover` で
+  safe-area 対応。コンソールエラー/非推奨 API を出さない。外部リソース依存なし。
+- **Accessibility**: §7 の通り（axe を CI で light/dark 両テーマ緑にゲート）。
 
 ## 8. 将来の拡張
 

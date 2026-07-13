@@ -1,16 +1,20 @@
 @import "tailwindcss";
 
 /*
- * DESIGN.md に沿った Apple 風のデザイントークン。
+ * DESIGN.md に沿ったデザイントークン（「Porcelain & Ocean」）。
  *
  * 方針：
+ *   - near-white の冷たい地・スレート系インク 1 色・オーシャンブルー 1 アクセント。
  *   - ライト / ダーク両対応。ダークは同名トークンの値だけを
  *     `@media (prefers-color-scheme: dark)` で差し替える（`-dark` サフィックス
  *     は作らない）。テキスト色は不透明インク（solid hex）で持ち、暗い地でも
  *     消えないようにする。
- *   - アクセントは Apple Blue 1 色のみ。インタラクティブ要素専用
- *   - システムフォント（Web フォント無読み込み）
- *   - 影は極力使わず、境界 / 背景色差で区切る
+ *   - アクセントは Apple Blue 1 色のみ。インタラクティブ要素専用。
+ *   - システムフォント（Web フォント無読み込み）。
+ *   - 構造（境界・区切り・hover 面・skeleton）はスレートインクの semantic
+ *     opacity（overlay-*）で表す。純黒 rgba は使わない（地を濁らせないため）。
+ *   - 影は極力使わず、境界 / 背景色差で区切る。
+ *   - モーションは 1 系統 3 レジスタ（state / movement / enter）。
  */
 
 @theme {
@@ -22,13 +26,24 @@
 	--color-surface-raised: #ffffff;
 	/* Light-glass sticky header (translucent over the page, blurred). */
 	--color-surface-glass: rgba(255, 255, 255, 0.72);
-	/* Dimming behind a modal (the consent dialog). */
-	--color-overlay-backdrop: rgba(0, 0, 0, 0.45);
 
-	/* --- borders --- */
-	--color-border: rgba(0, 0, 0, 0.08);
-	--color-border-strong: rgba(0, 0, 0, 0.16);
-	--color-divider: rgba(0, 0, 0, 0.06);
+	/* --- overlays (スレートインクの semantic opacity) ---
+	 * 境界・区切り・hover 面・skeleton はすべてこの 1 系統から取る。純黒ではなく
+	 * わずかに冷たいスレート味なので、near-white の地に載せても濁らず「柔らかい
+	 * 構造」として読める。border/divider はこれらの別名（下）。
+	 *   subtle=skeleton/最薄hover, muted=divider, light=border,
+	 *   medium=hover面, strong=border-strong, backdrop=modal 背面。 */
+	--color-overlay-subtle: rgb(29 31 39 / 0.04);
+	--color-overlay-muted: rgb(29 31 39 / 0.06);
+	--color-overlay-light: rgb(29 31 39 / 0.09);
+	--color-overlay-medium: rgb(29 31 39 / 0.12);
+	--color-overlay-strong: rgb(29 31 39 / 0.16);
+	--color-overlay-backdrop: rgb(20 22 31 / 0.4);
+
+	/* --- borders（overlay の別名。役割名で呼べるように） --- */
+	--color-border: var(--color-overlay-light);
+	--color-border-strong: var(--color-overlay-strong);
+	--color-divider: var(--color-overlay-muted);
 
 	/* --- text (solid ink so it survives the dark field; all clear WCAG AA) --- */
 	--color-fg: #1d1d1f;
@@ -58,19 +73,26 @@
 	--color-danger-bg: #fde8e8;
 	--color-danger-border: #f4b8b8;
 
-	/* --- radius --- */
-	--radius-micro: 4px;
-	--radius-sm: 6px;
-	--radius-md: 8px;
-	--radius-card: 12px;
-	--radius-control: 6px;
-	--radius-lg: 12px;
-	--radius-pill: 9999px;
+	/* --- radius（要素サイズ基準の 4 段。役割につき 1 値、重複を持たない） --- */
+	--radius-chip: 4px; /* chip / tag / grade pill */
+	--radius-control: 8px; /* button / input / select */
+	--radius-card: 12px; /* card / cell / dropzone / modal */
+	--radius-pill: 9999px; /* pill CTA・status pill・progress track */
 
-	/* --- shadows（基本使わない。使うときはこの 2 種のみ） --- */
+	/* --- shadows（基本使わない。使うときはこの 3 種のみ） --- */
 	--shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06);
 	--shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.08);
 	--shadow-lifted: 0 3px 30px rgba(0, 0, 0, 0.22);
+
+	/* --- motion（1 系統 3 レジスタ） ---
+	 * standard = state（hover/focus/press）、spring = movement/enter。
+	 * keyframe は @theme の --animate-* トークン経由でのみ使う（コンポーネントに
+	 * 生の cubic-bezier / keyframe を置かない）。reduced-motion で実質停止する。 */
+	--ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+	--ease-spring: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+	--animate-fade-in: fade-in 240ms var(--ease-standard);
+	--animate-rise-in: rise-in 320ms var(--ease-spring);
+	--animate-spinner: spinner 0.8s linear infinite;
 
 	/* --- font stack --- */
 	--font-sans:
@@ -103,12 +125,19 @@
 		--color-surface-muted: #161618;
 		--color-surface-raised: #2c2c2e;
 		--color-surface-glass: rgba(28, 28, 30, 0.72);
-		--color-overlay-backdrop: rgba(0, 0, 0, 0.6);
 
-		/* borders */
-		--color-border: rgba(255, 255, 255, 0.12);
-		--color-border-strong: rgba(255, 255, 255, 0.24);
-		--color-divider: rgba(255, 255, 255, 0.08);
+		/* overlays（暗地では light-tinted に反転） */
+		--color-overlay-subtle: rgb(233 236 244 / 0.05);
+		--color-overlay-muted: rgb(233 236 244 / 0.08);
+		--color-overlay-light: rgb(233 236 244 / 0.12);
+		--color-overlay-medium: rgb(233 236 244 / 0.16);
+		--color-overlay-strong: rgb(233 236 244 / 0.24);
+		--color-overlay-backdrop: rgb(0 0 0 / 0.6);
+
+		/* borders（overlay の別名。ダークでも同じ参照で反転する） */
+		--color-border: var(--color-overlay-light);
+		--color-border-strong: var(--color-overlay-strong);
+		--color-divider: var(--color-overlay-muted);
 
 		/* text */
 		--color-fg: #f5f5f7;
@@ -321,6 +350,15 @@ kbd {
 	/* Desktop consent-dialog card height, leaving a viewport gutter. */
 	max-height: calc(100dvh - 48px);
 }
+@utility min-h-fill {
+	/* 取り込み画面のドロップゾーンを「画面いっぱい・上下中央」にするための高さ。
+	   ビューポートから sticky ヘッダー(56px) と main の上下 padding をおおよそ
+	   差し引く。厳密なピクセル合わせより、常に画面を大きく占めることを優先。 */
+	min-height: calc(100dvh - 11rem);
+	@media (min-width: 640px) {
+		min-height: calc(100dvh - 13rem);
+	}
+}
 
 /*
  * ─── Consent dialog (native <dialog>.showModal) ───────────────────
@@ -355,6 +393,37 @@ dialog.disclaimer-dialog::backdrop {
 	}
 	to {
 		opacity: 1;
+	}
+}
+
+/*
+ * ─── Motion keyframes ─────────────────────────────────────────────
+ * @theme の --animate-* トークンが参照するキーフレーム。コンポーネントは
+ * `animate-fade-in` / `animate-rise-in` / `animate-spinner` ユーティリティ
+ * だけを使い、生の keyframe/easing を書かない。上の reduced-motion ブロックが
+ * これらも実質停止させる（duration 0.01ms）。
+ */
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+@keyframes rise-in {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+@keyframes spinner {
+	to {
+		transform: rotate(360deg);
 	}
 }
 

@@ -4,6 +4,7 @@
 	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
 	import Button from "$lib/presentation/ui/Button.svelte";
 	import Card from "$lib/presentation/ui/Card.svelte";
+	import ArrowBack from "~icons/ic/round-arrow-back";
 
 	// このページから同意しても OK にする。モーダル経由と同じ扱い
 	const handleAcknowledge = () => {
@@ -18,9 +19,10 @@
 
 <a
 	href={`${base}/dashboard`}
-	class="inline-flex min-h-tap touch-manipulation items-center text-small text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
+	class="inline-flex min-h-tap touch-manipulation items-center gap-1 text-small text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
 >
-	&larr; Dashboard へ戻る
+	<ArrowBack class="h-4 w-4" aria-hidden="true" />
+	判定結果へ戻る
 </a>
 
 <header class="space-y-3">
@@ -98,7 +100,7 @@
 				5. 最終判断は必ず公式情報で
 			</h3>
 			<div
-				class="rounded-[var(--radius-md)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] p-4 text-[color:var(--color-warning-fg)]"
+				class="rounded-[var(--radius-control)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] p-4 text-[color:var(--color-warning-fg)]"
 			>
 				<p>
 					本ツールの判定結果は、履修計画を立てる際の

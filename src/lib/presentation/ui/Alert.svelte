@@ -1,8 +1,8 @@
 <script lang="ts">
-	import AlertTriangle from "lucide-svelte/icons/alert-triangle";
-	import CircleAlert from "lucide-svelte/icons/circle-alert";
-	import Info from "lucide-svelte/icons/info";
 	import type { Snippet } from "svelte";
+	import AlertTriangle from "~icons/ic/round-warning";
+	import CircleAlert from "~icons/ic/round-error-outline";
+	import Info from "~icons/ic/round-info";
 
 	type Variant = "info" | "warning" | "danger";
 
@@ -52,7 +52,7 @@
 <div
 	{role}
 	aria-live={ariaLive}
-	class="flex items-start gap-3 rounded-[var(--radius-md)] border border-l-[3px] border-[color:var(--color-border)] px-4 py-3 {variantClass} {className}"
+	class="flex items-start gap-3 rounded-[var(--radius-control)] border border-l-[3px] border-[color:var(--color-border)] px-4 py-3 {variantClass} {className}"
 >
 	<Icon class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
 	<div class="flex-1 space-y-1">

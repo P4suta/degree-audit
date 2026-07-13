@@ -5,8 +5,8 @@
 	import type { Course } from "$lib/domain/entities/course";
 	import CourseList from "$lib/presentation/components/CourseList.svelte";
 	import Badge from "$lib/presentation/ui/Badge.svelte";
-	import Card from "$lib/presentation/ui/Card.svelte";
-	import Progress from "$lib/presentation/ui/Progress.svelte";
+	import Disclosure from "$lib/presentation/ui/Disclosure.svelte";
+	import StatMeter from "$lib/presentation/ui/StatMeter.svelte";
 	import {
 		requirementDisplayName,
 		viewCourseAllocations,
@@ -14,6 +14,7 @@
 	import { resolveProgressState } from "$lib/presentation/ui/progress-layout";
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
+	import ArrowBack from "~icons/ic/round-arrow-back";
 
 	const requirementId = $derived(page.params["id"] ?? "");
 	const assessment = $derived(assessmentStore.current);
@@ -185,21 +186,24 @@
 
 <a
 	href={`${base}/dashboard`}
-	class="inline-flex min-h-tap touch-manipulation items-center text-small text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
+	class="inline-flex min-h-tap touch-manipulation items-center gap-1 text-small text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
 >
-	&larr; Dashboard へ戻る
+	<ArrowBack class="h-4 w-4" aria-hidden="true" />
+	判定結果へ戻る
 </a>
 
 {#if assessment === null}
-	<div class="space-y-3" aria-busy="true" aria-label="要件データを読み込み中">
+	<div class="space-y-6" aria-busy="true" aria-label="要件データを読み込み中">
+		<div class="space-y-3">
+			<div
+				class="h-9 w-1/3 motion-safe:animate-pulse rounded-[var(--radius-control)] bg-[color:var(--color-overlay-subtle)]"
+			></div>
+			<div
+				class="h-2 w-full motion-safe:animate-pulse rounded-[var(--radius-pill)] bg-[color:var(--color-overlay-subtle)]"
+			></div>
+		</div>
 		<div
-			class="h-6 w-1/3 motion-safe:animate-pulse rounded bg-[color:var(--color-surface-muted)]"
-		></div>
-		<div
-			class="h-32 w-full motion-safe:animate-pulse rounded-[var(--radius-card)] bg-[color:var(--color-surface-muted)]"
-		></div>
-		<div
-			class="h-24 w-full motion-safe:animate-pulse rounded-[var(--radius-card)] bg-[color:var(--color-surface-muted)]"
+			class="h-40 w-full motion-safe:animate-pulse rounded-[var(--radius-card)] bg-[color:var(--color-overlay-subtle)]"
 		></div>
 	</div>
 {:else if result() === null}
@@ -209,94 +213,77 @@
 {:else}
 	{@const r = result()}
 	{#if r !== null}
-		<h2 class="text-display text-[color:var(--color-fg)]">
-			{label()}
-		</h2>
 		{@const tr = tentativeResult()}
 		{@const state = resolveProgressState({
 			satisfied: r.satisfied,
 			tentativeSatisfied: tr?.satisfied,
 		})}
-		{@const inProgressDelta = tr === null ? 0 : Math.max(0, tr.actual - r.actual)}
-		<Card padding="lg">
-			<div class="space-y-3">
-				<Progress
-					label={label()}
-					actual={r.actual}
-					required={r.required}
-					satisfied={r.satisfied}
-					tentativeActual={tr?.actual}
-					tentativeSatisfied={tr?.satisfied}
-					unit={r.unit ?? "単位"}
-				/>
-				<div
-					class="flex items-center gap-2 text-small text-[color:var(--color-fg)]"
-				>
-					<span class="tabular-nums">
-						{r.actual} / {r.required} {r.unit ?? "単位"}
-					</span>
+		{@const unit = r.unit ?? "単位"}
+		<!-- ヒーロー: 要件名 + 状態 + 大メーター + 現在値。診断は静かな注記に -->
+		<section class="space-y-3">
+			<StatMeter
+				title={label()}
+				actual={r.actual}
+				required={r.required}
+				satisfied={r.satisfied}
+				tentativeActual={tr?.actual}
+				tentativeSatisfied={tr?.satisfied}
+				{unit}
+			>
+				{#snippet lead()}
 					{#if state === "satisfied"}
-						<Badge variant="success">充足</Badge>
+						<Badge variant="success" dot pill>充足</Badge>
 					{:else if state === "in-progress"}
-						<Badge variant="accent" pill>履修中</Badge>
+						<Badge variant="accent" dot pill>履修中で充足予定</Badge>
 					{:else}
-						<Badge variant="warning">不足</Badge>
+						<Badge variant="warning" dot pill>不足</Badge>
 					{/if}
-					{#if state === "in-progress"}
-						<span class="text-[color:var(--color-accent-link)] font-semibold">
-							履修中 {inProgressDelta} {r.unit ?? "単位"} で充足予定
-						</span>
-					{:else if state === "unmet" && r.required - r.actual > 0}
-						<span class="text-[color:var(--color-warning-fg)] font-semibold">
-							あと {r.required - r.actual} {r.unit ?? "単位"}
-						</span>
-					{/if}
+				{/snippet}
+			</StatMeter>
+			{#if state === "unmet" && tr !== null && tr.actual > r.actual}
+				<p class="text-small text-[color:var(--color-fg-muted)]">
+					履修中込み：
+					<span class="tabular-nums text-[color:var(--color-fg)]">
+						{tr.actual} / {tr.required} {unit}
+					</span>
+				</p>
+			{/if}
+			{#if r.diagnostics.length > 0}
+				<div class="space-y-1">
+					{#each r.diagnostics as d (d)}
+						<p class="text-small text-[color:var(--color-fg-muted)]">{d}</p>
+					{/each}
 				</div>
-				{#if state === "unmet" && tr !== null && tr.actual > r.actual}
-					<p class="text-caption text-[color:var(--color-fg-muted)]">
-						履修中込み：
-						<span class="tabular-nums text-[color:var(--color-fg)]">
-							{tr.actual} / {tr.required} {tr.unit ?? "単位"}
-						</span>
-					</p>
-				{/if}
-				{#if r.diagnostics.length > 0}
-					<ul
-						class="list-inside list-disc text-small text-[color:var(--color-fg-muted)]"
-					>
-						{#each r.diagnostics as d (d)}
-							<li>{d}</li>
-						{/each}
-					</ul>
-				{/if}
-			</div>
-		</Card>
+			{/if}
+		</section>
 
 		{#if r.subResults.length > 0}
 			<section class="space-y-2">
 				<h3 class="text-h3 text-[color:var(--color-fg)]">内訳</h3>
-				<ul class="space-y-2">
+				<ul
+					class="overflow-hidden rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] divide-y divide-[color:var(--color-divider)]"
+				>
 					{#each r.subResults as sub, i (`${sub.required}-${i}`)}
-						<li>
-							<Card padding="md">
-								<div class="flex items-center justify-between gap-3 text-small">
-									<Badge variant={sub.satisfied ? "success" : "warning"}>
-										{sub.satisfied ? "✓" : "✗"}
-									</Badge>
-									<span class="flex-1 text-[color:var(--color-fg)]">
-										{sub.actual} / {sub.required} {sub.unit ?? "単位"}
-									</span>
+						<li class="space-y-1.5 px-4 py-3 sm:px-5">
+							<div
+								class="flex items-center justify-between gap-3 text-small text-[color:var(--color-fg)]"
+							>
+								<span class="tabular-nums">
+									{sub.actual} / {sub.required} {sub.unit ?? "単位"}
+								</span>
+								<Badge variant={sub.satisfied ? "success" : "warning"} dot>
+									{sub.satisfied ? "充足" : "不足"}
+								</Badge>
+							</div>
+							{#if sub.diagnostics.length > 0}
+								<div class="space-y-0.5">
+									{#each sub.diagnostics as d (d)}
+										<p class="text-caption text-[color:var(--color-fg-muted)]">
+											{d}
+										</p>
+									{/each}
 								</div>
-								{#if sub.diagnostics.length > 0}
-									<ul
-										class="mt-2 list-inside list-disc text-caption text-[color:var(--color-fg-muted)]"
-									>
-										{#each sub.diagnostics as d (d)}
-											<li>{d}</li>
-										{/each}
-									</ul>
-								{/if}
-							</Card>
+							{/if}
 						</li>
 					{/each}
 				</ul>
@@ -304,13 +291,16 @@
 		{/if}
 
 		<section class="space-y-2">
-			<h3 class="text-h3 text-[color:var(--color-fg)]">貢献科目</h3>
+			<h3 class="text-h3 text-[color:var(--color-fg)]">
+				貢献科目
+				<span class="text-[color:var(--color-fg-subtle)] tabular-nums">
+					({contributingAnnotated.length})
+				</span>
+			</h3>
 			{#if contributingAnnotated.length === 0}
-				<Card padding="md" variant="flat">
-					<p class="text-small text-[color:var(--color-fg-subtle)]">
-						この要件に貢献している科目はまだありません。
-					</p>
-				</Card>
+				<p class="text-small text-[color:var(--color-fg-subtle)]">
+					この要件に貢献している科目はまだありません。
+				</p>
 			{:else}
 				<CourseList
 					courses={contributingAnnotated.map((e) => e.course)}
@@ -329,10 +319,11 @@
 
 		{#if isPipelineStep && inProgressForThisReq.length > 0}
 			<section class="space-y-2">
-				<h3
-					class="text-h3 text-[color:var(--color-fg)]"
-				>
+				<h3 class="text-h3 text-[color:var(--color-fg)]">
 					履修中（評価待ち）
+					<span class="text-[color:var(--color-fg-subtle)] tabular-nums">
+						({inProgressForThisReq.length})
+					</span>
 				</h3>
 				<p class="text-small text-[color:var(--color-fg-muted)]">
 					現時点では算入されていませんが、合格すればこの要件に算入される候補です。
@@ -347,13 +338,14 @@
 			</section>
 		{:else if !isPipelineStep && allInProgressCourses.length > 0}
 			<section class="space-y-2">
-				<h3
-					class="text-h3 text-[color:var(--color-fg)]"
-				>
+				<h3 class="text-h3 text-[color:var(--color-fg)]">
 					履修中（評価待ち）
+					<span class="text-[color:var(--color-fg-subtle)] tabular-nums">
+						({allInProgressCourses.length})
+					</span>
 				</h3>
 				<p class="text-small text-[color:var(--color-fg-muted)]">
-					現時点の合計には含まれていません。すべて合格した場合の tentative 判定は下のヒント欄で確認できます。
+					現時点の合計には含まれていません。すべて合格した場合の tentative 判定は上のヒントで確認できます。
 				</p>
 				<CourseList
 					courses={allInProgressCourses}
@@ -365,76 +357,81 @@
 			</section>
 		{/if}
 
-		{#if reallocatedOut.length > 0}
-			{@const countedCount = reallocatedOut.filter((e) => e.counted).length}
-			{@const excludedCount = reallocatedOut.length - countedCount}
-			<section class="space-y-2">
-				<h3 class="text-h3 text-[color:var(--color-fg)]">
-					ここから読み替え（超過分の行き先）
-				</h3>
-				<p class="text-small text-[color:var(--color-fg-muted)]">
-					この要件の必要単位を超えた分は選択科目へ読み替え候補になります。
-					うち <strong>{countedCount} 件</strong> が実際に算入され、
-					{#if excludedCount > 0}
-						<strong>{excludedCount} 件</strong> は上限超過で算入外でした。
-					{:else}
-						算入外はありません。
-					{/if}
-				</p>
-				<CourseList
-					courses={reallocatedOut.map((e) => e.course)}
-					annotations={reallocatedOut.map((e) => ({
-						course: e.course,
-						badge: e.counted
-							? {
-									variant: "accent" as const,
-									label: `→ ${requirementDisplayName(e.destination)} で算入`,
-								}
-							: {
-									variant: "warning" as const,
-									label: `→ ${requirementDisplayName(e.destination)}（${
-										e.reason ?? "上限超過"
-									}）`,
-								},
-					}))}
-				/>
-			</section>
-		{/if}
+		<!-- 上級の配分情報は壁にせず、段階開示に畳む -->
+		{#if reallocatedOut.length > 0 || (r.excludedCourses && r.excludedCourses.length > 0) || unusedOverflow.length > 0}
+			<Disclosure title="配分の詳細（読み替え・算入外・超過）">
+				{#if reallocatedOut.length > 0}
+					{@const countedCount = reallocatedOut.filter((e) => e.counted).length}
+					{@const excludedCount = reallocatedOut.length - countedCount}
+					<section class="space-y-2">
+						<h3 class="text-h3 text-[color:var(--color-fg)]">
+							ここから読み替え（超過分の行き先）
+						</h3>
+						<p class="text-small text-[color:var(--color-fg-muted)]">
+							この要件の必要単位を超えた分は選択科目へ読み替え候補になります。
+							うち <strong>{countedCount} 件</strong> が実際に算入され、
+							{#if excludedCount > 0}
+								<strong>{excludedCount} 件</strong> は上限超過で算入外でした。
+							{:else}
+								算入外はありません。
+							{/if}
+						</p>
+						<CourseList
+							courses={reallocatedOut.map((e) => e.course)}
+							annotations={reallocatedOut.map((e) => ({
+								course: e.course,
+								badge: e.counted
+									? {
+											variant: "accent" as const,
+											label: `→ ${requirementDisplayName(e.destination)} で算入`,
+										}
+									: {
+											variant: "warning" as const,
+											label: `→ ${requirementDisplayName(e.destination)}（${
+												e.reason ?? "上限超過"
+											}）`,
+										},
+							}))}
+						/>
+					</section>
+				{/if}
 
-		{#if r.excludedCourses && r.excludedCourses.length > 0}
-			<section class="space-y-2">
-				<h3 class="text-h3 text-[color:var(--color-fg)]">
-					算入外（上限超過）
-				</h3>
-				<p class="text-small text-[color:var(--color-fg-muted)]">
-					上限に達したため、この要件には算入できなかった科目です。
-				</p>
-				<CourseList
-					courses={r.excludedCourses.map((e) => e.course)}
-					annotations={r.excludedCourses.map((e) => ({
-						course: e.course,
-						badge: { variant: "warning" as const, label: e.reason },
-					}))}
-				/>
-			</section>
-		{/if}
+				{#if r.excludedCourses && r.excludedCourses.length > 0}
+					<section class="space-y-2">
+						<h3 class="text-h3 text-[color:var(--color-fg)]">
+							算入外（上限超過）
+						</h3>
+						<p class="text-small text-[color:var(--color-fg-muted)]">
+							上限に達したため、この要件には算入できなかった科目です。
+						</p>
+						<CourseList
+							courses={r.excludedCourses.map((e) => e.course)}
+							annotations={r.excludedCourses.map((e) => ({
+								course: e.course,
+								badge: { variant: "warning" as const, label: e.reason },
+							}))}
+						/>
+					</section>
+				{/if}
 
-		{#if unusedOverflow.length > 0}
-			<section class="space-y-2">
-				<h3 class="text-h3 text-[color:var(--color-fg)]">
-					要件超過（卒業単位には使われず）
-				</h3>
-				<p class="text-small text-[color:var(--color-fg-muted)]">
-					この要件の必要単位を超えて取得した科目のうち、他の要件にも読み替えられなかったものです。
-				</p>
-				<CourseList
-					courses={unusedOverflow}
-					annotations={unusedOverflow.map((c) => ({
-						course: c,
-						badge: { variant: "neutral" as const, label: "要件超過" },
-					}))}
-				/>
-			</section>
+				{#if unusedOverflow.length > 0}
+					<section class="space-y-2">
+						<h3 class="text-h3 text-[color:var(--color-fg)]">
+							要件超過（卒業単位には使われず）
+						</h3>
+						<p class="text-small text-[color:var(--color-fg-muted)]">
+							この要件の必要単位を超えて取得した科目のうち、他の要件にも読み替えられなかったものです。
+						</p>
+						<CourseList
+							courses={unusedOverflow}
+							annotations={unusedOverflow.map((c) => ({
+								course: c,
+								badge: { variant: "neutral" as const, label: "要件超過" },
+							}))}
+						/>
+					</section>
+				{/if}
+			</Disclosure>
 		{/if}
 	{/if}
 {/if}

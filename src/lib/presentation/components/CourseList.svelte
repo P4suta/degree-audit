@@ -65,7 +65,7 @@
 				</div>
 				<div class="flex items-center gap-3 self-end sm:self-auto">
 					<span
-						class="shrink-0 rounded-[var(--radius-micro)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] px-2 py-0.5 text-caption font-mono text-[color:var(--color-fg-muted)]"
+						class="shrink-0 rounded-[var(--radius-chip)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] px-2 py-0.5 text-caption font-mono text-[color:var(--color-fg-muted)]"
 					>
 						{course.grade}
 					</span>

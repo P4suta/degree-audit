@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { base } from "$app/paths";
 	import { page } from "$app/state";
-	import GraduationCap from "lucide-svelte/icons/graduation-cap";
 	import Disclaimer from "$lib/presentation/components/Disclaimer.svelte";
 	import ErrorBanner from "$lib/presentation/components/ErrorBanner.svelte";
 	import WarningBanner from "$lib/presentation/components/WarningBanner.svelte";
+	import Badge from "$lib/presentation/ui/Badge.svelte";
+	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
+	import { Credit } from "$lib/domain/value-objects/credit";
+	import GraduationCap from "~icons/ic/round-school";
 	import "./layout.css";
 
 	let { children } = $props();
@@ -18,13 +21,32 @@
 	const showModal = $derived(
 		!disclaimerStore.acknowledged && !onDisclaimerPage,
 	);
+
+	// ヘッダーに常駐する「成果物」表示。gyakubiki の plan pill に相当し、判定が
+	// 済んでいれば chrome 側に verdict を出す。判定前は何も出さない。
+	const assessment = $derived(assessmentStore.current);
+	const verdict = $derived.by(() => {
+		if (assessment === null) return null;
+		if (assessment.graduatable)
+			return { tone: "success", text: "要件充足" } as const;
+		// 履修中（卒論など）込みで卒業可なら「充足予定」を出す。
+		if (assessment.tentative?.graduatable)
+			return { tone: "accent", text: "充足予定" } as const;
+		const remaining = Math.max(
+			0,
+			assessment.totalCreditsRequired - Credit.toNumber(assessment.totalCredits),
+		);
+		return {
+			tone: "warning",
+			text: remaining > 0 ? `あと ${remaining} 単位` : "要件未充足",
+		} as const;
+	});
 </script>
 
 <!--
   免責事項の同意モーダル。disclaimerStore.acknowledged が true になるまで
-  本体コンテンツへアクセスできない（fixed inset-0 + z-50 で被さる）。
-  卒業に関わる判定を提供する性質上、毎セッション確認を取る設計。
-  ただし /disclaimer ページ自体は免責文を読むための入口なので除外する。
+  本体コンテンツへアクセスできない。卒業に関わる判定を提供する性質上、毎
+  セッション確認を取る設計。ただし /disclaimer ページ自体は除外する。
 -->
 {#if showModal}
 	<Disclaimer />
@@ -35,71 +57,59 @@
 	     通常は視覚的に隠し (sr-only)、フォーカス時のみ表示する。 -->
 	<a
 		href="#main-content"
-		class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-nav focus:rounded-[var(--radius-md)] focus:border focus:border-[color:var(--color-border)] focus:bg-[color:var(--color-surface)] focus:px-4 focus:py-2 focus:text-body focus:text-[color:var(--color-accent-link)] focus:shadow-[var(--shadow-card)]"
+		class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-nav focus:rounded-[var(--radius-control)] focus:border focus:border-[color:var(--color-border)] focus:bg-[color:var(--color-surface)] focus:px-4 focus:py-2 focus:text-body focus:text-[color:var(--color-accent-link)] focus:shadow-[var(--shadow-card)]"
 	>
 		本文へスキップ
 	</a>
-	<!-- DESIGN.md: translucent glass header（ライト版）。
-	     sticky + backdrop-filter で軽い浮遊感。罫線でコンテンツと区切る。
-	     高さは iOS HIG の nav bar を踏まえて 56px。 -->
+	<!-- ライトガラスの sticky ヘッダー。backdrop-filter で軽い浮遊感、hairline
+	     でコンテンツと区切る。高さは iOS HIG の nav bar を踏まえて 56px。 -->
 	<header
-		class="sticky top-0 z-nav border-b border-[color:var(--color-border)] bg-[color:var(--color-surface-glass)] backdrop-blur-xl backdrop-saturate-150"
+		class="sticky top-0 z-nav border-b border-[color:var(--color-border)] bg-[color:var(--color-surface-glass)] backdrop-blur-xl backdrop-saturate-[1.8]"
 	>
 		<div class="container-page flex h-14 items-center gap-2">
 			<GraduationCap
-				class="h-5 w-5 text-[color:var(--color-accent)]"
+				class="h-5 w-5 shrink-0 text-[color:var(--color-accent)]"
 				aria-hidden="true"
 			/>
 			<h1
-				class="text-body-emph text-[color:var(--color-fg)] tracking-[-0.01em]"
+				class="min-w-0 truncate text-body-emph text-[color:var(--color-fg)] tracking-[-0.01em]"
 			>
 				卒業要件判定ツール
 			</h1>
 			<span
-				class="ml-2 text-caption text-[color:var(--color-fg-subtle)] tabular-nums"
-			>
-				v1
-			</span>
-			<span
-				class="ml-auto inline-flex items-center gap-1 rounded-[var(--radius-micro)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] px-2 py-0.5 text-micro font-medium text-[color:var(--color-warning-fg)]"
+				class="shrink-0 rounded-[var(--radius-chip)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] px-1.5 py-0.5 text-micro font-medium text-[color:var(--color-fg-subtle)]"
 				title="個人開発の非公式ツールです"
 			>
 				非公式
 			</span>
+			<div class="ml-auto shrink-0 flex items-center pl-1" aria-live="polite">
+				{#if verdict}
+					<Badge variant={verdict.tone} pill dot>
+						{verdict.text}
+					</Badge>
+				{/if}
+			</div>
 		</div>
 	</header>
 	<main
 		id="main-content"
-		class="container-page space-y-6 py-8 sm:space-y-8 sm:py-12 lg:py-14"
+		class="container-page space-y-8 py-8 sm:space-y-10 sm:py-12 lg:py-14"
 	>
 		<ErrorBanner />
 		<WarningBanner />
 		{@render children()}
 	</main>
 	<footer
-		class="container-page space-y-2 pt-6 text-small text-[color:var(--color-fg-subtle)]"
+		class="container-page pt-8 text-caption text-[color:var(--color-fg-subtle)]"
 		style="padding-bottom: max(2rem, env(safe-area-inset-bottom));"
 	>
 		<p>
-			<strong class="text-[color:var(--color-fg-muted)]"
-				>本ツールは個人が作成した非公式のツールで、特定の大学・教育機関とは関係ありません。</strong
-			>
-			判定は参考情報にすぎず、卒業・履修の最終確認は必ず
-			<strong class="text-[color:var(--color-fg-muted)]"
-				>最新の履修案内・所属学部の教務担当・指導教員</strong
-			>
-			にご相談ください。詳細は
+			個人開発の非公式ツールです。判定は参考情報にすぎません。詳しくは
 			<a
 				href={`${base}/disclaimer`}
 				class="text-[color:var(--color-accent-link)] underline hover:no-underline"
-			>免責事項</a
-			>
-			をご覧ください。
-		</p>
-		<p>
-			入力した学生プロフィールと成績データは、このタブ内のメモリにのみ保持されます。
-			ブラウザには保存されず、外部への送信もありません。タブを閉じる・リロードする・
-			別ページに遷移するとすべて消去されます。
+				>免責事項</a
+			>。
 		</p>
 	</footer>
 </div>

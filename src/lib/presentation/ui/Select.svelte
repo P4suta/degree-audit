@@ -1,6 +1,6 @@
 <script lang="ts" generics="TValue extends string | number">
-	import ChevronDown from "lucide-svelte/icons/chevron-down";
 	import type { Snippet } from "svelte";
+	import ChevronDown from "~icons/ic/round-expand-more";
 	import type { HTMLSelectAttributes } from "svelte/elements";
 
 	// appearance-none で OS デフォルトの矢印を消し、<ChevronDown> を重ね描き。

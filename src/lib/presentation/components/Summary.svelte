@@ -3,6 +3,7 @@
 	import type { Assessment } from "$lib/application/assess-graduation";
 	import { Credit } from "$lib/domain/value-objects/credit";
 	import Badge from "../ui/Badge.svelte";
+	import StatMeter from "../ui/StatMeter.svelte";
 
 	interface Props {
 		readonly assessment: Assessment;
@@ -28,60 +29,72 @@
 	const showTentativeHopeful = $derived(
 		!assessment.graduatable && tentative !== undefined && tentative.graduatable,
 	);
+
+	const verdictTitle = $derived.by(() => {
+		if (assessment.graduatable) return "卒業要件を満たしています";
+		// 履修中（卒論など）がすべて通れば充足するなら、それを前面に出す。
+		// 「未充足」より「充足予定」の方が実態に近く役に立つ。
+		if (tentative?.graduatable) return "履修中を含めれば卒業要件を満たせます";
+		if (totalRemaining > 0) return `卒業要件まであと ${totalRemaining} 単位`;
+		return "卒業要件は未充足です";
+	});
 </script>
 
-<!--
-  Apple 流の hero: 背景なしで大きい見出しを前面に。カードで囲わない。
--->
-<section class="space-y-4" aria-label="卒業判定サマリ">
-	<h2 class="text-display text-[color:var(--color-fg)]">
-		{#if assessment.graduatable}
-			卒業要件を満たしています
-		{:else}
-			卒業要件まであと{totalRemaining > 0 ? ` ${totalRemaining} 単位` : ""}
-		{/if}
-	</h2>
-	<p class="text-caption text-[color:var(--color-fg-subtle)]">
-		※ この判定は参考情報です。最終確認は<strong
-			class="font-medium text-[color:var(--color-fg-muted)]"
-			>最新の履修案内・所属学部の教務担当・指導教員</strong
-		>で必ず行ってください（<a
-			href={`${base}/disclaimer`}
-			class="text-[color:var(--color-accent-link)] underline hover:no-underline"
-			>免責事項</a
-		>）。
-	</p>
-	<p class="text-body text-[color:var(--color-fg-muted)]">
-		総修得単位
-		<span class="font-semibold tabular-nums text-[color:var(--color-fg)]">
-			{totalNumber}
-		</span>
-		/ {assessment.totalCreditsRequired} 単位
-		{#if unmetStepCount > 0}
-			・不足中の要件
-			<span class="font-semibold tabular-nums text-[color:var(--color-fg)]">
-				{unmetStepCount}
-			</span> 件
-		{:else if assessment.graduatable}
-			・すべての要件を充足
-		{/if}
-	</p>
-	<div class="flex flex-wrap items-center gap-x-2 gap-y-2 text-small">
-		<span class="text-[color:var(--color-fg-muted)]">卒論履修資格</span>
-		<Badge
-			variant={assessment.thesisEligibility.satisfied ? "success" : "warning"}
-		>
-			{assessment.thesisEligibility.satisfied ? "資格あり" : "未達"}
-		</Badge>
-		{#if inProgressCount > 0}
-			<span class="w-full text-[color:var(--color-fg-muted)] sm:ml-2 sm:w-auto">
-				履修中
+<section aria-label="卒業判定サマリ" class="space-y-4">
+	<StatMeter
+		title={verdictTitle}
+		actual={totalNumber}
+		required={assessment.totalCreditsRequired}
+		satisfied={assessment.total.satisfied}
+		tentativeActual={tentative?.total.actual}
+		tentativeSatisfied={tentative?.total.satisfied}
+		showHint={false}
+	>
+		{#snippet lead()}
+			<p class="text-caption text-[color:var(--color-fg-subtle)]">
+				※ この判定は参考情報です。最終確認は<strong
+					class="font-medium text-[color:var(--color-fg-muted)]"
+					>最新の履修案内・所属学部の教務担当・指導教員</strong
+				>で必ず行ってください（<a
+					href={`${base}/disclaimer`}
+					class="text-[color:var(--color-accent-link)] underline hover:no-underline"
+					>免責事項</a
+				>）。
+			</p>
+		{/snippet}
+		{#snippet meta()}
+			{#if unmetStepCount > 0}
+				<span class="text-[color:var(--color-fg-muted)]">
+					不足要件
+					<span class="font-semibold tabular-nums text-[color:var(--color-fg)]">
+						{unmetStepCount}
+					</span> 件
+				</span>
+			{:else if assessment.graduatable}
+				<span class="text-[color:var(--color-fg-muted)]">すべての要件を充足</span>
+			{/if}
+			<span class="inline-flex items-center gap-1.5">
+				<span class="text-[color:var(--color-fg-muted)]">卒論資格</span>
+				<Badge
+					variant={assessment.thesisEligibility.satisfied
+						? "success"
+						: "warning"}
+					dot
+				>
+					{assessment.thesisEligibility.satisfied ? "資格あり" : "未達"}
+				</Badge>
 			</span>
-			<Badge variant="accent">
-				{inProgressCount} 科目 / {inProgressNumber} 単位
-			</Badge>
-		{/if}
-	</div>
+			{#if inProgressCount > 0}
+				<span class="inline-flex items-center gap-1.5">
+					<span class="text-[color:var(--color-fg-muted)]">履修中</span>
+					<Badge variant="accent">
+						{inProgressCount} 科目 / {inProgressNumber} 単位
+					</Badge>
+				</span>
+			{/if}
+		{/snippet}
+	</StatMeter>
+
 	{#if showTentativeHopeful}
 		<p
 			class="rounded-[var(--radius-card)] border border-[color:var(--color-accent-ring)] bg-[color:var(--color-accent-ring)]/40 px-4 py-3 text-small text-[color:var(--color-fg)]"
