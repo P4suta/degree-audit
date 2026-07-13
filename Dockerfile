@@ -1,10 +1,7 @@
 # syntax=docker/dockerfile:1.7
-# 単一の真実のソース:
-# - Bun バージョン
-# - 依存インストール
-# - check / lint / test / build すべての target を持つ
-# ローカル (docker compose), devcontainer, CI, Pages ビルドは
-# この Dockerfile を target 切替で呼び出すだけ。
+# Single source of truth for the Bun version, dependency install, and the
+# check / lint / test / build targets. Local (docker compose), devcontainer,
+# CI and Pages builds all invoke this Dockerfile by switching the target.
 
 # Keep in sync with .mise.toml `bun` so the Docker and mise/just paths use the
 # same Bun.
@@ -21,6 +18,9 @@ RUN --mount=type=cache,target=/root/.bun/install/cache \
 
 FROM deps AS source
 COPY . .
+# Compile the Paraglide messages (gitignored output) from the local plugin so
+# every downstream target resolves $lib/paraglide without a network fetch.
+RUN bun run paraglide:compile
 RUN bun run prepare
 
 FROM source AS check
@@ -37,8 +37,8 @@ ARG BASE_PATH=""
 ENV BASE_PATH=${BASE_PATH}
 RUN bun run build
 
-# build 成果物だけを持つ export 用 stage。
+# Export-only stage carrying just the build artifacts. Pull the SvelteKit static
+# output to the host with:
 # `docker buildx build --target build-output --output type=local,dest=./build .`
-# でホストの ./build に SvelteKit static 出力を取り出せる。
 FROM scratch AS build-output
 COPY --from=build /app/build /
