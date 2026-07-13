@@ -1,0 +1,48 @@
+name: Fuzz
+
+# Coverage-guided fuzzing of the PDF parsers, which run on untrusted transcript
+# bytes. Weekly + on demand; never gates a PR (libFuzzer is Linux/nightly only).
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    name: fuzz ${{ matrix.crate }}/${{ matrix.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - crate: pdf-glyphs
+            target: fuzz_extract
+          - crate: transcript-parse
+            target: fuzz_parse
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install nightly Rust
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Install cargo-fuzz
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-fuzz
+
+      - name: Fuzz (2 min)
+        run: cargo fuzz run ${{ matrix.target }} -- -max_total_time=120
+        working-directory: crates/${{ matrix.crate }}
+
+      - name: Upload crash artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: fuzz-crash-${{ matrix.target }}
+          path: crates/${{ matrix.crate }}/fuzz/artifacts
+          if-no-files-found: ignore

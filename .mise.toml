@@ -37,3 +37,5 @@ actionlint = "1.7.12"
 "cargo:cargo-nextest" = "0.9.140"
 # Mutation testing (weekly + PR-diff, advisory). Pinned here for local/CI parity.
 "cargo:cargo-mutants" = "27.1.0"
+# Coverage-guided fuzzing of the PDF parsers (nightly-only; CI runs it weekly).
+"cargo:cargo-fuzz" = "0.13.2"
