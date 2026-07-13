@@ -1,0 +1,39 @@
+# Dev tool versions — the single source of truth for the toolchain. `mise install`
+# sets them up locally, and `jdx/mise-action` installs the same file in CI, so
+# local and CI run byte-identical tool versions (no drift). The Rust toolchain
+# itself is pinned separately by rust-toolchain.toml.
+#
+# Note: Docker (Dockerfile / docker-compose) remains the source of truth for the
+# *SvelteKit web build*; mise/just add a Docker-free entry point for the Rust,
+# WASM, and cross-cutting checks. Keep `bun` here in sync with the Dockerfile's
+# BUN_VERSION so both paths use the same Bun.
+#
+# Versions are pinned exactly for reproducibility — bump them deliberately.
+# https://mise.jdx.dev/
+
+[settings]
+# Fetch cargo-backend tools (cargo-nextest, cargo-mutants) as prebuilt binaries
+# via binstall instead of compiling from source — fast and reproducible.
+cargo.binstall = true
+
+[tools]
+bun = "1.3.14"
+node = "26.4.0"
+just = "1.54.0"
+lefthook = "2.1.9"
+typos = "1.48.0"
+actionlint = "1.7.12"
+# Prebuilt-binary fetcher used by the cargo backend below.
+"aqua:cargo-bins/cargo-binstall" = "1.15.9"
+
+# WASM bundler. The bare `wasm-pack` registry name was dropped from mise; the
+# aqua backend is the maintained source.
+"aqua:rustwasm/wasm-pack" = "0.13.1"
+
+# Rust coverage + test runner (prebuilt). cargo-llvm-cov via aqua; cargo-nextest
+# via the cargo backend + binstall (its GitHub release tag layout trips mise's
+# attestation check, so we don't use the github backend).
+"aqua:taiki-e/cargo-llvm-cov" = "0.8.7"
+"cargo:cargo-nextest" = "0.9.140"
+# Mutation testing (weekly + PR-diff, advisory). Pinned here for local/CI parity.
+"cargo:cargo-mutants" = "27.1.0"
