@@ -56,7 +56,7 @@
 	<Disclaimer />
 {/if}
 
-<div class="min-h-screen antialiased" aria-hidden={showModal}>
+<div class="min-h-screen antialiased" inert={showModal}>
 	<!-- Skip link for keyboard/screen-reader users: first focus jumps to the
 	     content. Visually hidden (sr-only) normally, shown only on focus. -->
 	<a
