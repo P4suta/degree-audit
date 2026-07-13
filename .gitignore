@@ -32,11 +32,18 @@ test-results
 
 # Rust
 /target
-# wasm-pack output (vendored copy lives in src/lib/wasm)
-/crates/audit-wasm/pkg
 # cargo-mutants run output
 /mutants.out
 /mutants.out.old
+
+# Generated wasm-bindgen glue — rebuilt by `just wasm-build` and in CI, never
+# vendored (no source/wasm drift). The hand-written index.ts / diagnostics.ts /
+# env.d.ts in the same directory stay tracked.
+/crates/audit-wasm/pkg
+/src/lib/wasm/degree_audit.js
+/src/lib/wasm/degree_audit.d.ts
+/src/lib/wasm/degree_audit_bg.wasm
+/src/lib/wasm/degree_audit_bg.wasm.d.ts
 
 # Real transcripts (PII: name, student ID, birthdate, university name — never commit)
 *.local.pdf
