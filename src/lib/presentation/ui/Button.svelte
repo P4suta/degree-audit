@@ -45,11 +45,11 @@
 	const sizeClass = $derived.by(() => {
 		switch (size) {
 			case "sm":
-				return "min-h-[32px] px-3 py-1.5 text-[13px]";
+				return "min-h-8 px-3 py-1.5 text-small";
 			case "md":
-				return "min-h-[44px] px-4 py-2.5 text-[15px]";
+				return "min-h-tap px-4 py-2.5 text-body";
 			case "lg":
-				return "min-h-[52px] px-6 py-3 text-base";
+				return "min-h-13 px-6 py-3 text-body";
 		}
 	});
 

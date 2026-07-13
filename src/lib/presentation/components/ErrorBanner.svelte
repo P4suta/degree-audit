@@ -10,7 +10,7 @@
 		{#snippet actions()}
 			<button
 				type="button"
-				class="inline-flex min-h-[32px] min-w-[32px] touch-manipulation items-center justify-center rounded hover:bg-[color:var(--color-danger-border)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-danger)]"
+				class="inline-flex min-h-8 min-w-8 touch-manipulation items-center justify-center rounded hover:bg-[color:var(--color-danger-border)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-danger)]"
 				aria-label={errorsStore.count > 1
 					? "このエラーを閉じて次のエラーを表示"
 					: "エラーを閉じる"}
@@ -20,11 +20,11 @@
 			</button>
 		{/snippet}
 		{#if errorsStore.count > 1}
-			<p class="text-xs">
+			<p class="text-caption">
 				他に {errorsStore.count - 1} 件のエラーがあります
 			</p>
 		{/if}
-		<details class="mt-1 text-xs opacity-60">
+		<details class="mt-1 text-caption opacity-60">
 			<summary class="cursor-pointer select-none">開発者向け情報</summary>
 			<p class="mt-1 font-mono">{current.code}</p>
 		</details>

@@ -57,9 +57,9 @@
 	<Icon class="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
 	<div class="flex-1 space-y-1">
 		{#if title}
-			<p class="text-sm font-semibold">{title}</p>
+			<p class="text-small font-semibold">{title}</p>
 		{/if}
-		<div class="text-sm">
+		<div class="text-small">
 			{@render children()}
 		</div>
 	</div>
