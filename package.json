@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"wasm:build": "wasm-pack build crates/audit-wasm --target web --out-dir pkg --out-name degree_audit && cp crates/audit-wasm/pkg/degree_audit.js crates/audit-wasm/pkg/degree_audit.d.ts crates/audit-wasm/pkg/degree_audit_bg.wasm crates/audit-wasm/pkg/degree_audit_bg.wasm.d.ts src/lib/wasm/",
+		"wasm:build": "wasm-pack build crates/audit-wasm --target web --out-dir ../../src/lib/wasm --out-name degree_audit",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
