@@ -33,7 +33,7 @@
 		satisfied,
 		tentativeActual,
 		tentativeSatisfied,
-		unit = "単位",
+		unit = m.unit_credit(),
 		lead,
 		meta,
 		showHint = true,

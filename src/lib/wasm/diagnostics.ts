@@ -1,15 +1,15 @@
 /**
- * TypeScript rendering of the Rust core's structured diagnostics.
+ * Renders the Rust core's structured diagnostics into localized prose.
  *
- * The WASM core returns diagnostics as machine-readable tagged objects (a
- * presentation-agnostic design); this mirrors `crates/cli/src/diagnostic.rs`,
- * turning them into the Japanese strings the existing UI expects. This is the
- * "structured facts → prose" adapter that lets the domain stay pure.
+ * The WASM core returns diagnostics as machine-readable tagged objects; this is
+ * the "structured facts → localized prose" adapter, resolving keys (kind, field,
+ * unit) through the i18n catalog. Embedded domain content — language and named-
+ * subject strings — is passed through as the core provides it.
  */
 
 import type { FieldCategory } from "$lib/domain/value-objects/field-category";
 import type { SubjectCategoryKind } from "$lib/domain/value-objects/subject-category";
-import { fieldLabel, kindLabel } from "$lib/presentation/i18n/labels";
+import { fieldLabel, kindLabel, unitLabel } from "$lib/presentation/i18n/labels";
 import * as m from "$lib/paraglide/messages";
 
 /** A structured diagnostic as emitted by the Rust `Diagnostic` enum (tag = "type"). */
@@ -45,7 +45,7 @@ export const formatDiagnostic = (d: Diagnostic): string => {
 			return m.diag_progress({
 				actual: d.actual,
 				required: d.required,
-				unit: d.unit,
+				unit: unitLabel(d.unit),
 			});
 		case "total":
 			return m.diag_total({ actual: d.actual, required: d.required });

@@ -102,3 +102,23 @@ const FIELD_LABELS: Readonly<Record<FieldCategory, () => string>> = {
 
 export const fieldLabel = (field: FieldCategory): string =>
 	FIELD_LABELS[field]();
+
+/**
+ * Localized counting-unit label. The wire carries a key (`field`/`language`/
+ * `subject`/`requirement`); the default credit unit is omitted, so `undefined`
+ * maps to credits.
+ */
+export const unitLabel = (unit: string | undefined): string => {
+	switch (unit) {
+		case "field":
+			return m.unit_field();
+		case "language":
+			return m.unit_language();
+		case "subject":
+			return m.unit_subject();
+		case "requirement":
+			return m.unit_requirement();
+		default:
+			return m.unit_credit();
+	}
+};

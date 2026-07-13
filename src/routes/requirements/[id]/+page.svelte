@@ -8,7 +8,7 @@
 	import Disclosure from "$lib/presentation/ui/Disclosure.svelte";
 	import StatMeter from "$lib/presentation/ui/StatMeter.svelte";
 	import { viewCourseAllocations } from "$lib/application/course-allocation-view";
-	import { requirementLabel } from "$lib/presentation/i18n/labels";
+	import { requirementLabel, unitLabel } from "$lib/presentation/i18n/labels";
 	import { resolveProgressState } from "$lib/presentation/ui/progress-layout";
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
@@ -215,7 +215,7 @@
 			satisfied: r.satisfied,
 			tentativeSatisfied: tr?.satisfied,
 		})}
-		{@const unit = r.unit ?? "単位"}
+		{@const unit = unitLabel(r.unit)}
 		<!-- Hero: requirement name + status + large meter + current value. Diagnostics as a quiet note. -->
 		<section class="space-y-3">
 			<StatMeter
@@ -268,7 +268,7 @@
 								class="flex items-center justify-between gap-3 text-small text-[color:var(--color-fg)]"
 							>
 								<span class="tabular-nums">
-									{sub.actual} / {sub.required} {sub.unit ?? "単位"}
+									{sub.actual} / {sub.required} {unitLabel(sub.unit)}
 								</span>
 								<Badge variant={sub.satisfied ? "success" : "warning"} dot>
 									{sub.satisfied ? m.badge_satisfied() : m.badge_unmet()}

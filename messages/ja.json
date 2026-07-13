@@ -51,6 +51,12 @@
 	"field_bio_medical": "生命医療",
 	"field_natural": "自然",
 
+	"unit_credit": "単位",
+	"unit_field": "分野",
+	"unit_language": "言語",
+	"unit_subject": "科目",
+	"unit_requirement": "要件",
+
 	"diag_progress": "{actual} / {required} {unit}",
 	"diag_total": "合計 {actual} / {required} 単位",
 	"diag_kind_credits": "{kind}: {credits} 単位",

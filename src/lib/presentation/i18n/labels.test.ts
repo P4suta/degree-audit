@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fieldLabel, kindLabel, requirementLabel } from "./labels.ts";
+import { fieldLabel, kindLabel, requirementLabel, unitLabel } from "./labels.ts";
 
 describe("requirementLabel", () => {
 	it("maps known requirement ids to localized labels", () => {
@@ -27,5 +27,18 @@ describe("fieldLabel", () => {
 	it("maps a field category to its localized label", () => {
 		expect(fieldLabel("humanities")).toBe("人文");
 		expect(fieldLabel("bio-medical")).toBe("生命医療");
+	});
+});
+
+describe("unitLabel", () => {
+	it("maps unit keys to localized labels", () => {
+		expect(unitLabel("field")).toBe("分野");
+		expect(unitLabel("language")).toBe("言語");
+		expect(unitLabel("subject")).toBe("科目");
+		expect(unitLabel("requirement")).toBe("要件");
+	});
+
+	it("defaults to credits when the unit is omitted", () => {
+		expect(unitLabel(undefined)).toBe("単位");
 	});
 });

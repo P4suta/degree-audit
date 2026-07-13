@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from "$app/paths";
 	import type { SpecResult } from "$lib/application/assessment-types";
+	import { unitLabel } from "$lib/presentation/i18n/labels";
 	import * as m from "$lib/paraglide/messages";
 	import Badge from "../ui/Badge.svelte";
 	import { resolveProgressState } from "../ui/progress-layout.ts";
@@ -18,7 +19,7 @@
 
 	const { id, label, result, tentativeResult, maxRequired }: Props = $props();
 
-	const unit = $derived(result.unit ?? "単位");
+	const unit = $derived(unitLabel(result.unit));
 	const remaining = $derived(Math.max(0, result.required - result.actual));
 	const state = $derived(
 		resolveProgressState({
