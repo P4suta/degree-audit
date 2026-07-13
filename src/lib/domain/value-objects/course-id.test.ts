@@ -5,12 +5,11 @@ import { CourseId } from "./course-id.ts";
 
 describe("CourseId", () => {
 	it("of wraps a non-empty string", () => {
-		const id = CourseId.of("K81001");
-		expect(CourseId.toString(id)).toBe("K81001");
+		expect(CourseId.of("K81001") as string).toBe("K81001");
 	});
 
 	it("of trims whitespace", () => {
-		expect(CourseId.toString(CourseId.of("  ABC  "))).toBe("ABC");
+		expect(CourseId.of("  ABC  ") as string).toBe("ABC");
 	});
 
 	it("of rejects empty / whitespace-only strings with CourseIdEmpty", () => {
@@ -25,9 +24,5 @@ describe("CourseId", () => {
 				}
 			}
 		}
-	});
-
-	it("toString is an identity projection to string", () => {
-		expect(CourseId.toString(CourseId.of("x"))).toBe("x");
 	});
 });

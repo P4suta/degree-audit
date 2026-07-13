@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Grade, isInProgress, isPassing, parseGrade } from "./grade.ts";
+import { Grade, isInProgress, isPassing } from "./grade.ts";
 
 describe("Grade", () => {
 	it("has all 10 literal values", () => {
@@ -57,57 +57,5 @@ describe("isInProgress", () => {
 		Grade.Unknown,
 	])("%s is not in-progress", (g) => {
 		expect(isInProgress(g)).toBe(false);
-	});
-});
-
-describe("parseGrade", () => {
-	it.each([
-		["秀", Grade.Shu],
-		["優", Grade.Yu],
-		["良", Grade.Ryo],
-		["可", Grade.Ka],
-		["不可", Grade.Fuka],
-		["認定", Grade.Nintei],
-		["取消", Grade.Torikeshi],
-		["履修取消", Grade.Torikeshi],
-		["放棄", Grade.Hoki],
-		["履修放棄", Grade.Hoki],
-		["履修中", Grade.Risyuchu],
-		["履修", Grade.Risyuchu],
-		["履", Grade.Risyuchu],
-	])("maps %s to %s", (raw, expected) => {
-		expect(parseGrade(raw)).toBe(expected);
-	});
-
-	it.each([
-		["A+", Grade.Shu],
-		["a+", Grade.Shu],
-		["AP", Grade.Shu],
-		["A", Grade.Yu],
-		["B", Grade.Ryo],
-		["C", Grade.Ka],
-		["F", Grade.Fuka],
-		["D", Grade.Fuka],
-		["P", Grade.Nintei],
-		["Pass", Grade.Nintei],
-		["W", Grade.Torikeshi],
-		["enrolled", Grade.Risyuchu],
-		["In Progress", Grade.Risyuchu],
-	])("maps English alias %s to %s", (raw, expected) => {
-		expect(parseGrade(raw)).toBe(expected);
-	});
-
-	it("trims whitespace", () => {
-		expect(parseGrade("  秀  ")).toBe(Grade.Shu);
-	});
-
-	it("returns Unknown for empty string", () => {
-		expect(parseGrade("")).toBe(Grade.Unknown);
-		expect(parseGrade("   ")).toBe(Grade.Unknown);
-	});
-
-	it("returns Unknown for unrecognised values", () => {
-		expect(parseGrade("???")).toBe(Grade.Unknown);
-		expect(parseGrade("EXCELLENT")).toBe(Grade.Unknown);
 	});
 });

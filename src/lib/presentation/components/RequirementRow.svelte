@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { base } from "$app/paths";
-	import type { SpecResult } from "$lib/domain/specifications/types";
+	import type { SpecResult } from "$lib/application/assessment-types";
 	import Badge from "../ui/Badge.svelte";
 	import { resolveProgressState } from "../ui/progress-layout.ts";
 	import ChevronRight from "~icons/ic/round-chevron-right";

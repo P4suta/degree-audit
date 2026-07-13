@@ -4,7 +4,7 @@ import {
 	kindDisplayName,
 	type SubjectCategoryKind,
 } from "../domain/value-objects/subject-category.ts";
-import type { Assessment } from "./assess-graduation.ts";
+import type { Assessment } from "./assessment-types.ts";
 
 /**
  * Natural-home requirement-id candidates per kind. Scanned in order; the first

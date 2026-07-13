@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { base } from "$app/paths";
-	import type { Assessment } from "$lib/application/assess-graduation";
+	import type { Assessment } from "$lib/application/assessment-types";
 	import { Credit } from "$lib/domain/value-objects/credit";
 	import Badge from "../ui/Badge.svelte";
 	import StatMeter from "../ui/StatMeter.svelte";

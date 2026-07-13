@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
 	canonicalize,
 	DEFAULT_MAX_INLINE_LENGTH,
-	matchKey,
 	sanitizeLine,
 } from "./normalize.ts";
 
@@ -53,25 +52,5 @@ describe("sanitizeLine", () => {
 
 	it("returns empty string for blank input", () => {
 		expect(sanitizeLine("   \t \n ")).toBe("");
-	});
-});
-
-describe("matchKey", () => {
-	it("produces the same key for width variants of the same text", () => {
-		expect(matchKey("基礎Ａ")).toBe(matchKey("基礎A"));
-		expect(matchKey("ゼミナールⅤ・Ⅵ")).toBe(matchKey("ゼミナールV・VI"));
-	});
-
-	it("strips decorative markers", () => {
-		expect(matchKey("政治学概論 ★")).toBe("政治学概論");
-		expect(matchKey("大学政策論入門※")).toBe("大学政策論入門");
-	});
-
-	it("lowercases alphabetic characters", () => {
-		expect(matchKey("PF")).toBe("pf");
-	});
-
-	it("removes all whitespace (not just trims)", () => {
-		expect(matchKey("共通 教育 / 初年次")).toBe("共通教育/初年次");
 	});
 });

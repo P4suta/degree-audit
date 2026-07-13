@@ -10,7 +10,7 @@
  * Japanese strings the existing presentation expects. Nothing downstream changes.
  */
 
-import type { Assessment } from "$lib/application/assess-graduation";
+import type { Assessment } from "$lib/application/assessment-types";
 import type { AcademicRecord } from "$lib/domain/entities/academic-record";
 import type { StudentProfile } from "$lib/domain/entities/student-profile";
 

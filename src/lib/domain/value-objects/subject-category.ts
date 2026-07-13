@@ -87,103 +87,16 @@ export type SubjectCategory =
 
 export const SubjectCategory = {
 	primary: (): SubjectCategory => ({ kind: "common-education/primary" }),
-	liberalField: (field: FieldCategory): SubjectCategory => ({
-		kind: "common-education/liberal/field",
-		field,
-	}),
-	liberalForeignLanguage: (language: string): SubjectCategory => ({
-		kind: "common-education/liberal/foreign-language",
-		language,
-	}),
 	liberalCareer: (): SubjectCategory => ({
 		kind: "common-education/liberal/career",
 	}),
-	// R6+ introductory course groups
-	introCoreLearning: (): SubjectCategory => ({
-		kind: "common-education/introductory/core-learning",
-	}),
-	introCoreEnglish: (): SubjectCategory => ({
-		kind: "common-education/introductory/core-english",
-	}),
-	introForeignLanguage: (language: string): SubjectCategory => ({
-		kind: "common-education/introductory/foreign-language",
-		language,
-	}),
-	introMathAi: (): SubjectCategory => ({
-		kind: "common-education/introductory/math-ai",
-	}),
-	// R6+ liberal course group: 7 fields
-	liberalGroupLife: (): SubjectCategory => ({
-		kind: "common-education/liberal-group/life",
-	}),
-	liberalGroupHealthSports: (): SubjectCategory => ({
-		kind: "common-education/liberal-group/health-sports",
-	}),
-	liberalGroupCareer: (): SubjectCategory => ({
-		kind: "common-education/liberal-group/career",
-	}),
-	liberalGroupArts: (): SubjectCategory => ({
-		kind: "common-education/liberal-group/arts",
-	}),
-	liberalGroupHumanitiesSocial: (): SubjectCategory => ({
-		kind: "common-education/liberal-group/humanities-social",
-	}),
-	liberalGroupNaturalScience: (): SubjectCategory => ({
-		kind: "common-education/liberal-group/natural-science",
-	}),
-	liberalGroupComplex: (): SubjectCategory => ({
-		kind: "common-education/liberal-group/complex",
-	}),
-	seminar12: (): SubjectCategory => ({ kind: "seminar/1-2" }),
-	seminar34Spring: (): SubjectCategory => ({ kind: "seminar/3-4/spring" }),
-	seminar34Fall: (): SubjectCategory => ({ kind: "seminar/3-4/fall" }),
 	seminar56Thesis: (): SubjectCategory => ({ kind: "seminar/5-6-thesis" }),
-	platformBasicA: (): SubjectCategory => ({ kind: "platform/basic-a" }),
-	platformBasicB: (): SubjectCategory => ({ kind: "platform/basic-b" }),
-	platformForeignLanguage: (): SubjectCategory => ({
-		kind: "platform/foreign-language",
-	}),
-	platformAdvanced: (): SubjectCategory => ({ kind: "platform/advanced" }),
-	// R6+ platform
-	platformFacultyCommon: (): SubjectCategory => ({
-		kind: "platform/faculty-common",
-	}),
-	platformHumanities: (): SubjectCategory => ({ kind: "platform/humanities" }),
-	platformGlobalStudies: (): SubjectCategory => ({
-		kind: "platform/global-studies",
-	}),
-	platformSocialScience: (): SubjectCategory => ({
-		kind: "platform/social-science",
-	}),
 	electiveOwnCourse: (): SubjectCategory => ({ kind: "elective/own-course" }),
-	electiveOtherCourse: (): SubjectCategory => ({
-		kind: "elective/other-course",
-	}),
 	electiveOtherFaculty: (): SubjectCategory => ({
 		kind: "elective/other-faculty",
 	}),
 	unknown: (raw: string): SubjectCategory => ({ kind: "unknown", raw }),
 } as const;
-
-export const isKind = <K extends SubjectCategoryKind>(
-	category: SubjectCategory,
-	kind: K,
-): category is Extract<SubjectCategory, { kind: K }> => category.kind === kind;
-
-export const isCommonEducation = (c: SubjectCategory): boolean =>
-	c.kind.startsWith("common-education/");
-
-export const isSeminar = (c: SubjectCategory): boolean =>
-	c.kind.startsWith("seminar/");
-
-export const isPlatform = (c: SubjectCategory): boolean =>
-	c.kind.startsWith("platform/");
-
-export const isElective = (c: SubjectCategory): boolean =>
-	c.kind.startsWith("elective/");
-
-export const isLiberal = (c: SubjectCategory): boolean =>
-	c.kind.startsWith("common-education/liberal");
 
 /**
  * Display names for categories: the single source of truth so diagnostics and

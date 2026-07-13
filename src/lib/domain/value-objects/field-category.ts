@@ -7,13 +7,6 @@ export const FieldCategory = {
 
 export type FieldCategory = (typeof FieldCategory)[keyof typeof FieldCategory];
 
-export const FIELD_CATEGORIES: readonly FieldCategory[] = [
-	FieldCategory.Humanities,
-	FieldCategory.Social,
-	FieldCategory.BioMedical,
-	FieldCategory.Natural,
-] as const;
-
 export const FIELD_CATEGORY_LABELS: Readonly<Record<FieldCategory, string>> = {
 	humanities: "人文",
 	social: "社会",

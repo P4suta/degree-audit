@@ -1,4 +1,4 @@
-import type { Assessment } from "$lib/application/assess-graduation";
+import type { Assessment } from "$lib/application/assessment-types";
 
 /**
  * Exposes the current graduation assessment.
