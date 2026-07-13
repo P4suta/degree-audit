@@ -48,11 +48,11 @@ e2e:
 cov:
     cargo llvm-cov nextest --workspace --exclude audit-wasm --summary-only
 
-# Fuzz targets live out-of-workspace under crates/*/fuzz (added in a later phase).
-# e.g. `just fuzz pdf-glyphs fuzz_extract_glyphs`.
+# Fuzz targets live out-of-workspace under crates/*/fuzz.
+# e.g. `just fuzz pdf-glyphs fuzz_extract` / `just fuzz transcript-parse fuzz_parse`.
 # Continuous fuzzing (nightly + cargo-fuzz).
 fuzz CRATE TARGET *ARGS:
-    cd crates/{{CRATE}}/fuzz && cargo +nightly fuzz run {{TARGET}} -- -max_total_time=60 {{ARGS}}
+    cd crates/{{CRATE}} && cargo +nightly fuzz run {{TARGET}} -- -max_total_time=60 {{ARGS}}
 
 # Scope lives in mutants.toml. Pass `--in-diff <file>` for a changed-lines run.
 # Mutation testing (weekly in CI, slow): do the tests kill injected bugs?

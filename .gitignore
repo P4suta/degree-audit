@@ -37,6 +37,10 @@ playwright-report
 # cargo-mutants run output
 /mutants.out
 /mutants.out.old
+# cargo-fuzz build output + run corpora/crashes (targets + Cargo.toml are tracked)
+/crates/*/fuzz/target
+/crates/*/fuzz/corpus
+/crates/*/fuzz/artifacts
 
 # Generated wasm-bindgen glue — rebuilt by `just wasm-build` and in CI, never
 # vendored (no source/wasm drift). The hand-written index.ts / diagnostics.ts /

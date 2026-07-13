@@ -27,3 +27,5 @@ console_error_panic_hook = "0.1"
 [dev-dependencies]
 # Boundary tests exercise the #[wasm_bindgen] surface under node (see tests/).
 wasm-bindgen-test = "0.3"
+# JSON.stringify for inspecting the JsValue wire shape in the boundary tests.
+js-sys = "0.3"
