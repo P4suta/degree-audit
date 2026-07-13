@@ -23,6 +23,7 @@ mod header;
 
 use audit_app::{RawCourse, TranscriptSource};
 use audit_domain::error::{DomainError, ErrorCode};
+use pdf_glyphs::Fragment;
 
 use course::{Section, apply_header, parse_course_row, to_raw_course};
 
@@ -40,14 +41,65 @@ fn extraction_error(err: pdf_glyphs::ExtractError) -> DomainError {
     )
 }
 
-/// Parse a 個別成績表 PDF into raw course rows.
+/// The standard "header fields unreadable" domain error.
+fn missing_header_error() -> DomainError {
+    DomainError::new(
+        ErrorCode::UnsupportedFileFormat,
+        "could not locate faculty / course / matriculation year in the PDF header",
+        "PDF のヘッダーから学部・コース・入学年を読み取れませんでした。",
+    )
+}
+
+/// The full contents of a 個別成績表 PDF, recovered from a **single** text
+/// extraction. Both the identifying header and the course rows come from the same
+/// fragment set, so callers that need both never pay to decode the PDF twice.
+#[derive(Debug, Clone)]
+pub struct PdfContents {
+    /// The identifying header, or `None` when its fields could not be located.
+    pub header: Option<TranscriptHeader>,
+    /// The reconstructed course rows.
+    pub courses: Vec<RawCourse>,
+}
+
+impl PdfContents {
+    /// Split into `(header, courses)`, failing with the standard header error when
+    /// the header could not be read.
+    pub fn require_header(self) -> Result<(TranscriptHeader, Vec<RawCourse>), DomainError> {
+        match self.header {
+            Some(header) => Ok((header, self.courses)),
+            None => Err(missing_header_error()),
+        }
+    }
+}
+
+/// Recover the header band and course table from a single extraction pass.
+pub fn parse_pdf_contents(bytes: &[u8]) -> Result<PdfContents, DomainError> {
+    let fragments = pdf_glyphs::extract(bytes).map_err(extraction_error)?;
+    Ok(PdfContents {
+        header: header_from_fragments(&fragments),
+        courses: courses_from_fragments(&fragments),
+    })
+}
+
+/// Extract the header fields from the page-1 header band of `fragments`.
+fn header_from_fragments(fragments: &[Fragment]) -> Option<TranscriptHeader> {
+    let pieces: Vec<geometry::Piece> = fragments
+        .iter()
+        .filter(|f| f.page == 1 && f.y >= HEADER_BAND_Y)
+        .map(|f| geometry::Piece {
+            text: f.text.clone(),
+        })
+        .collect();
+    header::extract_header(&pieces)
+}
+
+/// Reconstruct the two-column course table from `fragments` into raw rows.
 ///
 /// Category headers are consumed by the section state machine and never emitted;
 /// every other well-formed course row becomes a [`RawCourse`] carrying the current
 /// section breadcrumb in `raw_category_label`.
-pub fn parse_pdf(bytes: &[u8]) -> Result<Vec<RawCourse>, DomainError> {
-    let fragments = pdf_glyphs::extract(bytes).map_err(extraction_error)?;
-    let rows = geometry::reconstruct_rows(&fragments);
+fn courses_from_fragments(fragments: &[Fragment]) -> Vec<RawCourse> {
+    let rows = geometry::reconstruct_rows(fragments);
 
     let mut section = Section::default();
     let mut courses = Vec::new();
@@ -59,27 +111,20 @@ pub fn parse_pdf(bytes: &[u8]) -> Result<Vec<RawCourse>, DomainError> {
             courses.push(to_raw_course(parsed, &section));
         }
     }
-    Ok(courses)
+    courses
+}
+
+/// Parse a 個別成績表 PDF into raw course rows.
+pub fn parse_pdf(bytes: &[u8]) -> Result<Vec<RawCourse>, DomainError> {
+    let fragments = pdf_glyphs::extract(bytes).map_err(extraction_error)?;
+    Ok(courses_from_fragments(&fragments))
 }
 
 /// Parse the identifying header (faculty / course / matriculation year) from a
 /// 個別成績表 PDF.
 pub fn parse_header(bytes: &[u8]) -> Result<TranscriptHeader, DomainError> {
     let fragments = pdf_glyphs::extract(bytes).map_err(extraction_error)?;
-    let pieces: Vec<geometry::Piece> = fragments
-        .iter()
-        .filter(|f| f.page == 1 && f.y >= HEADER_BAND_Y)
-        .map(|f| geometry::Piece {
-            text: f.text.clone(),
-        })
-        .collect();
-    header::extract_header(&pieces).ok_or_else(|| {
-        DomainError::new(
-            ErrorCode::UnsupportedFileFormat,
-            "could not locate faculty / course / matriculation year in the PDF header",
-            "PDF のヘッダーから学部・コース・入学年を読み取れませんでした。",
-        )
-    })
+    header_from_fragments(&fragments).ok_or_else(missing_header_error)
 }
 
 /// The PDF transcript adapter: the driven [`TranscriptSource`] port over

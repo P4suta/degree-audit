@@ -15,5 +15,16 @@ path = "src/main.rs"
 audit-domain.workspace = true
 audit-app.workspace = true
 transcript-parse.workspace = true
-clap = { version = "4", features = ["derive"] }
+clap = { version = "4", features = ["derive", "wrap_help"] }
 serde_json.workspace = true
+
+# Presentation stack (native CLI only — the core stays free of these).
+anstyle.workspace = true
+anstream.workspace = true
+indicatif.workspace = true
+miette.workspace = true
+inquire.workspace = true
+clap_complete.workspace = true
+clap_mangen.workspace = true
+terminal_size.workspace = true
+unicode-width.workspace = true
