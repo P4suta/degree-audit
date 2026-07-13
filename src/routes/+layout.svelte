@@ -31,6 +31,14 @@
 {/if}
 
 <div class="min-h-screen antialiased" aria-hidden={showModal}>
+	<!-- キーボード/スクリーンリーダー利用者向け: 最初のフォーカスで本文へ飛べる。
+	     通常は視覚的に隠し (sr-only)、フォーカス時のみ表示する。 -->
+	<a
+		href="#main-content"
+		class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-nav focus:rounded-[var(--radius-md)] focus:border focus:border-[color:var(--color-border)] focus:bg-[color:var(--color-surface)] focus:px-4 focus:py-2 focus:text-body focus:text-[color:var(--color-accent-link)] focus:shadow-[var(--shadow-card)]"
+	>
+		本文へスキップ
+	</a>
 	<!-- DESIGN.md: translucent glass header（ライト版）。
 	     sticky + backdrop-filter で軽い浮遊感。罫線でコンテンツと区切る。
 	     高さは iOS HIG の nav bar を踏まえて 56px。 -->
@@ -60,7 +68,10 @@
 			</span>
 		</div>
 	</header>
-	<main class="container-page space-y-6 py-8 sm:space-y-8 sm:py-12 lg:py-14">
+	<main
+		id="main-content"
+		class="container-page space-y-6 py-8 sm:space-y-8 sm:py-12 lg:py-14"
+	>
 		<ErrorBanner />
 		<WarningBanner />
 		{@render children()}
