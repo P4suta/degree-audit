@@ -84,6 +84,25 @@ jobs:
         # in CI, so they no-op here; everything else runs.
         run: cargo test --workspace
 
+  wasm:
+    name: WASM boundary tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Set up tools (mise)
+        uses: jdx/mise-action@v2
+
+      # Exercises the #[wasm_bindgen] surface under node — the JsValue shapes
+      # (camelCase keys, error propagation) the front-end relies on.
+      - name: wasm boundary tests (node)
+        run: wasm-pack test --node crates/audit-wasm
+
   e2e:
     name: E2E (Playwright + axe)
     runs-on: ubuntu-latest

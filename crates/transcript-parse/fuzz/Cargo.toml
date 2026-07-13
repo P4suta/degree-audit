@@ -1,0 +1,26 @@
+# Out-of-workspace fuzz crate (own [workspace]) so cargo-fuzz's nightly + ASan
+# build never touches the main workspace. Run with
+# `just fuzz transcript-parse fuzz_parse`.
+[package]
+name = "transcript-parse-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.transcript-parse]
+path = ".."
+
+[[bin]]
+name = "fuzz_parse"
+path = "fuzz_targets/fuzz_parse.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]
