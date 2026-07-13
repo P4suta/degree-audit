@@ -56,7 +56,6 @@ const SVELTE_FILES = [
 	"routes/dashboard/+page.svelte",
 	"routes/disclaimer/+page.svelte",
 	"routes/import/+page.svelte",
-	"routes/profile/+page.svelte",
 	"routes/requirements/[id]/+page.svelte",
 ];
 
