@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { kindDisplayName, SubjectCategory } from "./subject-category.ts";
+import { SubjectCategory } from "./subject-category.ts";
 
 describe("SubjectCategory factories", () => {
 	it("produce bare kind objects", () => {
@@ -25,13 +25,5 @@ describe("SubjectCategory factories", () => {
 			kind: "unknown",
 			raw: "謎の区分",
 		});
-	});
-});
-
-describe("kindDisplayName", () => {
-	it("maps a kind to its Japanese display name", () => {
-		expect(kindDisplayName("common-education/primary")).toBe("初年次科目");
-		expect(kindDisplayName("elective/other-faculty")).toBe("他学部専門");
-		expect(kindDisplayName("unknown")).toBe("区分未判定");
 	});
 });

@@ -7,6 +7,8 @@
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import { profileStore } from "$lib/presentation/stores/profile.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
+	import { requirementLabel } from "$lib/presentation/i18n/labels";
+	import * as m from "$lib/paraglide/messages";
 
 	// プロフィールも成績も PDF から同時に得られるので、どちらか欠けていれば
 	// 取り込みへ戻す（独立した /profile ステップは存在しない）。
@@ -37,11 +39,11 @@
 </script>
 
 <svelte:head>
-	<title>判定結果 — 卒業要件判定ツール</title>
+	<title>{m.title_dashboard()} — {m.app_title()}</title>
 </svelte:head>
 
 {#if assessment === null}
-	<div class="space-y-8" aria-busy="true" aria-label="成績データを読み込み中">
+	<div class="space-y-8" aria-busy="true" aria-label={m.dashboard_loading()}>
 		<div class="space-y-3">
 			<div
 				class="h-10 w-2/3 motion-safe:animate-pulse rounded-[var(--radius-control)] bg-[color:var(--color-overlay-subtle)]"
@@ -63,14 +65,16 @@
 {:else}
 	<Summary {assessment} />
 	<section class="space-y-4">
-		<h3 class="text-h2 text-[color:var(--color-fg)]">要件ごとの充足状況</h3>
+		<h3 class="text-h2 text-[color:var(--color-fg)]">
+			{m.dashboard_requirements_heading()}
+		</h3>
 		<div
 			class="overflow-hidden rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] divide-y divide-[color:var(--color-divider)]"
 		>
 			{#each assessment.steps as step (step.id)}
 				<RequirementRow
 					id={step.id}
-					label={step.label}
+					label={requirementLabel(step.id)}
 					result={step.result}
 					tentativeResult={tentativeStepResult(step.id)}
 					{maxRequired}
@@ -82,19 +86,19 @@
 				<span
 					class="text-caption font-medium text-[color:var(--color-fg-subtle)]"
 				>
-					全体
+					{m.dashboard_section_overall()}
 				</span>
 			</div>
 			<RequirementRow
 				id="total-124"
-				label="総修得単位"
+				label={requirementLabel("total-124")}
 				result={assessment.total}
 				tentativeResult={assessment.tentative?.total}
 				{maxRequired}
 			/>
 			<RequirementRow
 				id="thesis-eligibility"
-				label="卒業論文履修資格"
+				label={requirementLabel("thesis-eligibility")}
 				result={assessment.thesisEligibility}
 				tentativeResult={assessment.tentative?.thesisEligibility}
 				{maxRequired}

@@ -7,13 +7,12 @@
 	import Badge from "$lib/presentation/ui/Badge.svelte";
 	import Disclosure from "$lib/presentation/ui/Disclosure.svelte";
 	import StatMeter from "$lib/presentation/ui/StatMeter.svelte";
-	import {
-		requirementDisplayName,
-		viewCourseAllocations,
-	} from "$lib/application/course-allocation-view";
+	import { viewCourseAllocations } from "$lib/application/course-allocation-view";
+	import { requirementLabel } from "$lib/presentation/i18n/labels";
 	import { resolveProgressState } from "$lib/presentation/ui/progress-layout";
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
+	import * as m from "$lib/paraglide/messages";
 	import ArrowBack from "~icons/ic/round-arrow-back";
 
 	const requirementId = $derived(page.params["id"] ?? "");
@@ -30,11 +29,7 @@
 			return assessment.thesisEligibility;
 		return step?.result ?? null;
 	});
-	const label = $derived(() => {
-		if (requirementId === "total-124") return "総修得単位";
-		if (requirementId === "thesis-eligibility") return "卒業論文履修資格";
-		return step?.label ?? requirementId;
-	});
+	const label = $derived(() => requirementLabel(requirementId));
 
 	// tentative: 履修中をすべて合格した場合の同じ要件の評価。
 	// current と値が違えば「→ 履修中込みで N」と progress の下に出す
@@ -175,8 +170,8 @@
 	const resolvedLabel = $derived(label());
 	const pageTitle = $derived(
 		resolvedLabel !== "" && resolvedLabel !== requirementId
-			? `${resolvedLabel} — 卒業要件判定ツール`
-			: "要件詳細 — 卒業要件判定ツール",
+			? `${resolvedLabel} — ${m.app_title()}`
+			: `${m.title_requirement_detail()} — ${m.app_title()}`,
 	);
 </script>
 
@@ -189,11 +184,11 @@
 	class="inline-flex min-h-tap touch-manipulation items-center gap-1 text-small text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
 >
 	<ArrowBack class="h-4 w-4" aria-hidden="true" />
-	判定結果へ戻る
+	{m.back_to_dashboard()}
 </a>
 
 {#if assessment === null}
-	<div class="space-y-6" aria-busy="true" aria-label="要件データを読み込み中">
+	<div class="space-y-6" aria-busy="true" aria-label={m.requirement_loading()}>
 		<div class="space-y-3">
 			<div
 				class="h-9 w-1/3 motion-safe:animate-pulse rounded-[var(--radius-control)] bg-[color:var(--color-overlay-subtle)]"
@@ -208,7 +203,7 @@
 	</div>
 {:else if result() === null}
 	<p class="text-small text-[color:var(--color-fg-muted)]">
-		この要件は見つかりませんでした。
+		{m.requirement_not_found()}
 	</p>
 {:else}
 	{@const r = result()}
@@ -232,17 +227,17 @@
 			>
 				{#snippet lead()}
 					{#if state === "satisfied"}
-						<Badge variant="success" dot pill>充足</Badge>
+						<Badge variant="success" dot pill>{m.badge_satisfied()}</Badge>
 					{:else if state === "in-progress"}
-						<Badge variant="accent" dot pill>履修中で充足予定</Badge>
+						<Badge variant="accent" dot pill>{m.badge_in_progress_projected()}</Badge>
 					{:else}
-						<Badge variant="warning" dot pill>不足</Badge>
+						<Badge variant="warning" dot pill>{m.badge_unmet()}</Badge>
 					{/if}
 				{/snippet}
 			</StatMeter>
 			{#if state === "unmet" && tr !== null && tr.actual > r.actual}
 				<p class="text-small text-[color:var(--color-fg-muted)]">
-					履修中込み：
+					{m.requirement_tentative_prefix()}
 					<span class="tabular-nums text-[color:var(--color-fg)]">
 						{tr.actual} / {tr.required} {unit}
 					</span>
@@ -259,7 +254,9 @@
 
 		{#if r.subResults.length > 0}
 			<section class="space-y-2">
-				<h3 class="text-h3 text-[color:var(--color-fg)]">内訳</h3>
+				<h3 class="text-h3 text-[color:var(--color-fg)]">
+					{m.requirement_breakdown_heading()}
+				</h3>
 				<ul
 					class="overflow-hidden rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] divide-y divide-[color:var(--color-divider)]"
 				>
@@ -272,7 +269,7 @@
 									{sub.actual} / {sub.required} {sub.unit ?? "単位"}
 								</span>
 								<Badge variant={sub.satisfied ? "success" : "warning"} dot>
-									{sub.satisfied ? "充足" : "不足"}
+									{sub.satisfied ? m.badge_satisfied() : m.badge_unmet()}
 								</Badge>
 							</div>
 							{#if sub.diagnostics.length > 0}
@@ -292,14 +289,14 @@
 
 		<section class="space-y-2">
 			<h3 class="text-h3 text-[color:var(--color-fg)]">
-				貢献科目
+				{m.requirement_contributing_heading()}
 				<span class="text-[color:var(--color-fg-subtle)] tabular-nums">
 					({contributingAnnotated.length})
 				</span>
 			</h3>
 			{#if contributingAnnotated.length === 0}
 				<p class="text-small text-[color:var(--color-fg-subtle)]">
-					この要件に貢献している科目はまだありません。
+					{m.requirement_contributing_empty()}
 				</p>
 			{:else}
 				<CourseList
@@ -309,7 +306,9 @@
 						badge: e.reallocated
 							? {
 									variant: "accent" as const,
-									label: `本来：${requirementDisplayName(e.naturalHome ?? "")}`,
+									label: m.badge_natural_home({
+										name: requirementLabel(e.naturalHome ?? ""),
+									}),
 								}
 							: null,
 					}))}
@@ -320,38 +319,38 @@
 		{#if isPipelineStep && inProgressForThisReq.length > 0}
 			<section class="space-y-2">
 				<h3 class="text-h3 text-[color:var(--color-fg)]">
-					履修中（評価待ち）
+					{m.requirement_in_progress_heading()}
 					<span class="text-[color:var(--color-fg-subtle)] tabular-nums">
 						({inProgressForThisReq.length})
 					</span>
 				</h3>
 				<p class="text-small text-[color:var(--color-fg-muted)]">
-					現時点では算入されていませんが、合格すればこの要件に算入される候補です。
+					{m.requirement_in_progress_note()}
 				</p>
 				<CourseList
 					courses={inProgressForThisReq}
 					annotations={inProgressForThisReq.map((c) => ({
 						course: c,
-						badge: { variant: "accent" as const, label: "履修中" },
+						badge: { variant: "accent" as const, label: m.badge_in_progress() },
 					}))}
 				/>
 			</section>
 		{:else if !isPipelineStep && allInProgressCourses.length > 0}
 			<section class="space-y-2">
 				<h3 class="text-h3 text-[color:var(--color-fg)]">
-					履修中（評価待ち）
+					{m.requirement_in_progress_heading()}
 					<span class="text-[color:var(--color-fg-subtle)] tabular-nums">
 						({allInProgressCourses.length})
 					</span>
 				</h3>
 				<p class="text-small text-[color:var(--color-fg-muted)]">
-					現時点の合計には含まれていません。すべて合格した場合の tentative 判定は上のヒントで確認できます。
+					{m.requirement_in_progress_note_overall()}
 				</p>
 				<CourseList
 					courses={allInProgressCourses}
 					annotations={allInProgressCourses.map((c) => ({
 						course: c,
-						badge: { variant: "accent" as const, label: "履修中" },
+						badge: { variant: "accent" as const, label: m.badge_in_progress() },
 					}))}
 				/>
 			</section>
@@ -359,21 +358,23 @@
 
 		<!-- 上級の配分情報は壁にせず、段階開示に畳む -->
 		{#if reallocatedOut.length > 0 || (r.excludedCourses && r.excludedCourses.length > 0) || unusedOverflow.length > 0}
-			<Disclosure title="配分の詳細（読み替え・算入外・超過）">
+			<Disclosure title={m.requirement_allocation_disclosure()}>
 				{#if reallocatedOut.length > 0}
 					{@const countedCount = reallocatedOut.filter((e) => e.counted).length}
 					{@const excludedCount = reallocatedOut.length - countedCount}
 					<section class="space-y-2">
 						<h3 class="text-h3 text-[color:var(--color-fg)]">
-							ここから読み替え（超過分の行き先）
+							{m.requirement_reallocated_heading()}
 						</h3>
 						<p class="text-small text-[color:var(--color-fg-muted)]">
-							この要件の必要単位を超えた分は選択科目へ読み替え候補になります。
-							うち <strong>{countedCount} 件</strong> が実際に算入され、
+							{m.requirement_reallocated_note_lead()}
+							<strong>{m.count_items({ count: countedCount })}</strong>
+							{m.requirement_reallocated_counted_mid()}
 							{#if excludedCount > 0}
-								<strong>{excludedCount} 件</strong> は上限超過で算入外でした。
+								<strong>{m.count_items({ count: excludedCount })}</strong>
+								{m.requirement_reallocated_excluded_suffix()}
 							{:else}
-								算入外はありません。
+								{m.requirement_reallocated_no_excluded()}
 							{/if}
 						</p>
 						<CourseList
@@ -383,13 +384,16 @@
 								badge: e.counted
 									? {
 											variant: "accent" as const,
-											label: `→ ${requirementDisplayName(e.destination)} で算入`,
+											label: m.badge_reallocated_to({
+												name: requirementLabel(e.destination),
+											}),
 										}
 									: {
 											variant: "warning" as const,
-											label: `→ ${requirementDisplayName(e.destination)}（${
-												e.reason ?? "上限超過"
-											}）`,
+											label: m.badge_reallocated_excluded({
+												name: requirementLabel(e.destination),
+												reason: e.reason ?? m.reason_cap_exceeded(),
+											}),
 										},
 							}))}
 						/>
@@ -399,10 +403,10 @@
 				{#if r.excludedCourses && r.excludedCourses.length > 0}
 					<section class="space-y-2">
 						<h3 class="text-h3 text-[color:var(--color-fg)]">
-							算入外（上限超過）
+							{m.requirement_excluded_heading()}
 						</h3>
 						<p class="text-small text-[color:var(--color-fg-muted)]">
-							上限に達したため、この要件には算入できなかった科目です。
+							{m.requirement_excluded_note()}
 						</p>
 						<CourseList
 							courses={r.excludedCourses.map((e) => e.course)}
@@ -417,16 +421,16 @@
 				{#if unusedOverflow.length > 0}
 					<section class="space-y-2">
 						<h3 class="text-h3 text-[color:var(--color-fg)]">
-							要件超過（卒業単位には使われず）
+							{m.requirement_overflow_heading()}
 						</h3>
 						<p class="text-small text-[color:var(--color-fg-muted)]">
-							この要件の必要単位を超えて取得した科目のうち、他の要件にも読み替えられなかったものです。
+							{m.requirement_overflow_note()}
 						</p>
 						<CourseList
 							courses={unusedOverflow}
 							annotations={unusedOverflow.map((c) => ({
 								course: c,
-								badge: { variant: "neutral" as const, label: "要件超過" },
+								badge: { variant: "neutral" as const, label: m.badge_overflow() },
 							}))}
 						/>
 					</section>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from "$lib/paraglide/messages";
 	import {
 		computeProgressLayout,
 		resolveProgressState,
@@ -53,7 +54,12 @@
 	);
 	const ariaValueText = $derived(
 		layout.hasInProgress
-			? `${actual} / ${required} ${unit}（履修中 ${inProgressDelta} ${unit}）`
+			? m.aria_progress_in_progress({
+					actual,
+					required,
+					unit,
+					delta: inProgressDelta,
+				})
 			: `${actual} / ${required} ${unit}`,
 	);
 </script>
@@ -100,14 +106,14 @@
 				class="text-caption text-[color:var(--color-accent-link)]"
 				aria-live="polite"
 			>
-				履修中 {inProgressDelta} {unit} で充足予定
+				{m.progress_in_progress_hint({ delta: inProgressDelta, unit })}
 			</p>
 		{:else if state === "unmet" && remaining > 0}
 			<p
 				class="text-caption text-[color:var(--color-warning-fg)]"
 				aria-live="polite"
 			>
-				あと {remaining} {unit}
+				{m.progress_remaining({ remaining, unit })}
 			</p>
 		{/if}
 	{/if}

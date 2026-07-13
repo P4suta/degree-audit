@@ -9,11 +9,7 @@ import type {
 	SpecResult,
 	StepOutcome,
 } from "./assessment-types.ts";
-import {
-	courseKindDisplayName,
-	requirementDisplayName,
-	viewCourseAllocations,
-} from "./course-allocation-view.ts";
+import { viewCourseAllocations } from "./course-allocation-view.ts";
 
 const result = (over: Partial<SpecResult> = {}): SpecResult => ({
 	satisfied: true,
@@ -178,36 +174,5 @@ describe("viewCourseAllocations — courses not counted", () => {
 		const s = viewCourseAllocations(a, [c], new Set()).get(idOf(c))?.status;
 		expect(s?.kind).toBe("in-progress");
 		if (s?.kind === "in-progress") expect(s.naturalHome).toBe("seminar-56");
-	});
-});
-
-describe("requirementDisplayName", () => {
-	it("returns human-readable labels for known requirement ids", () => {
-		expect(requirementDisplayName("primary-12")).toBe("初年次科目");
-		expect(requirementDisplayName("liberal")).toBe("教養科目");
-		expect(requirementDisplayName("introductory-group")).toBe("導入科目群");
-		expect(requirementDisplayName("liberal-group")).toBe("教養科目群");
-		expect(requirementDisplayName("seminar-12")).toBe("ゼミナール I・II");
-		expect(requirementDisplayName("seminar-34")).toBe("ゼミナール III・IV");
-		expect(requirementDisplayName("seminar-56")).toBe(
-			"卒業論文・ゼミナール V・VI",
-		);
-		expect(requirementDisplayName("platform")).toBe("プラットフォーム科目");
-		expect(requirementDisplayName("elective-38")).toBe("選択科目");
-		expect(requirementDisplayName("elective-42")).toBe("選択科目");
-		expect(requirementDisplayName("total-124")).toBe("総修得単位");
-		expect(requirementDisplayName("thesis-eligibility")).toBe(
-			"卒業論文履修資格",
-		);
-	});
-
-	it("falls back to the raw id for unknown requirement ids", () => {
-		expect(requirementDisplayName("some-custom-id")).toBe("some-custom-id");
-	});
-});
-
-describe("courseKindDisplayName", () => {
-	it("returns human-readable label for a kind", () => {
-		expect(courseKindDisplayName("elective/other-faculty")).toBe("他学部専門");
 	});
 });

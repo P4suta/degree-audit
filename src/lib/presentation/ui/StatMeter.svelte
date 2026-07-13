@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
+	import * as m from "$lib/paraglide/messages";
 	import Progress from "./Progress.svelte";
 	import { resolveProgressState } from "./progress-layout.ts";
 
@@ -99,13 +100,13 @@
 				<span
 					class="font-medium tabular-nums text-[color:var(--color-accent-link)]"
 				>
-					履修中 {inProgressDelta} {unit} で充足予定
+					{m.progress_in_progress_hint({ delta: inProgressDelta, unit })}
 				</span>
 			{:else if showHint && state === "unmet" && remaining > 0}
 				<span
 					class="font-medium tabular-nums text-[color:var(--color-warning-fg)]"
 				>
-					あと {remaining} {unit}
+					{m.progress_remaining({ remaining, unit })}
 				</span>
 			{/if}
 		</div>

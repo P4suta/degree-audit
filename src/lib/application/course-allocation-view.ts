@@ -1,9 +1,6 @@
 import type { Course } from "../domain/entities/course.ts";
 import { isInProgress } from "../domain/value-objects/grade.ts";
-import {
-	kindDisplayName,
-	type SubjectCategoryKind,
-} from "../domain/value-objects/subject-category.ts";
+import type { SubjectCategoryKind } from "../domain/value-objects/subject-category.ts";
 import type { Assessment } from "./assessment-types.ts";
 
 /**
@@ -217,41 +214,3 @@ export const viewCourseAllocations = (
 
 	return result;
 };
-
-/** Display label for a requirement id. */
-export const requirementDisplayName = (requirementId: string): string => {
-	switch (requirementId) {
-		// R2-R5
-		case "primary-12":
-			return "初年次科目";
-		case "liberal":
-			return "教養科目";
-		// R6+
-		case "introductory-group":
-			return "導入科目群";
-		case "liberal-group":
-			return "教養科目群";
-		// shared by both rulesets
-		case "seminar-12":
-			return "ゼミナール I・II";
-		case "seminar-34":
-			return "ゼミナール III・IV";
-		case "seminar-56":
-			return "卒業論文・ゼミナール V・VI";
-		case "platform":
-			return "プラットフォーム科目";
-		case "elective-38":
-		case "elective-42":
-			return "選択科目";
-		case "total-124":
-			return "総修得単位";
-		case "thesis-eligibility":
-			return "卒業論文履修資格";
-		default:
-			return requirementId;
-	}
-};
-
-/** Display label for a subject-category kind. */
-export const courseKindDisplayName = (kind: SubjectCategoryKind): string =>
-	kindDisplayName(kind);

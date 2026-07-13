@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from "$app/paths";
 	import type { SpecResult } from "$lib/application/assessment-types";
+	import * as m from "$lib/paraglide/messages";
 	import Badge from "../ui/Badge.svelte";
 	import { resolveProgressState } from "../ui/progress-layout.ts";
 	import ChevronRight from "~icons/ic/round-chevron-right";
@@ -68,7 +69,12 @@
 	);
 	const ariaValueText = $derived(
 		hasInProgress
-			? `${result.actual} / ${result.required} ${unit}（履修中 ${inProgressDelta} ${unit}）`
+			? m.aria_progress_in_progress({
+					actual: result.actual,
+					required: result.required,
+					unit,
+					delta: inProgressDelta,
+				})
 			: `${result.actual} / ${result.required} ${unit}`,
 	);
 </script>
@@ -84,11 +90,11 @@
 >
 	<div class="flex items-center gap-3">
 		{#if state === "satisfied"}
-			<Badge variant="success" dot pill>充足</Badge>
+			<Badge variant="success" dot pill>{m.badge_satisfied()}</Badge>
 		{:else if state === "in-progress"}
-			<Badge variant="accent" dot pill>履修中</Badge>
+			<Badge variant="accent" dot pill>{m.badge_in_progress()}</Badge>
 		{:else}
-			<Badge variant="warning" dot pill>不足</Badge>
+			<Badge variant="warning" dot pill>{m.badge_unmet()}</Badge>
 		{/if}
 		<span
 			class="flex-1 min-w-0 truncate text-body-emph text-[color:var(--color-fg)]"
@@ -156,7 +162,7 @@
 				</span>
 			{:else if state === "unmet" && remaining > 0}
 				<span class="font-medium text-[color:var(--color-warning-fg)]">
-					あと {remaining} {unit}
+					{m.progress_remaining({ remaining, unit })}
 				</span>
 				<span class="font-medium text-[color:var(--color-fg-subtle)]">{percent}%</span>
 			{:else}

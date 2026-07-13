@@ -8,6 +8,7 @@
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
 	import { Credit } from "$lib/domain/value-objects/credit";
+	import * as m from "$lib/paraglide/messages";
 	import GraduationCap from "~icons/ic/round-school";
 	import "./layout.css";
 
@@ -28,17 +29,20 @@
 	const verdict = $derived.by(() => {
 		if (assessment === null) return null;
 		if (assessment.graduatable)
-			return { tone: "success", text: "要件充足" } as const;
+			return { tone: "success", text: m.verdict_pill_satisfied() } as const;
 		// 履修中（卒論など）込みで卒業可なら「充足予定」を出す。
 		if (assessment.tentative?.graduatable)
-			return { tone: "accent", text: "充足予定" } as const;
+			return { tone: "accent", text: m.verdict_pill_projected() } as const;
 		const remaining = Math.max(
 			0,
 			assessment.totalCreditsRequired - Credit.toNumber(assessment.totalCredits),
 		);
 		return {
 			tone: "warning",
-			text: remaining > 0 ? `あと ${remaining} 単位` : "要件未充足",
+			text:
+				remaining > 0
+					? m.verdict_pill_remaining({ credits: remaining })
+					: m.verdict_pill_unmet(),
 		} as const;
 	});
 </script>
@@ -59,7 +63,7 @@
 		href="#main-content"
 		class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-nav focus:rounded-[var(--radius-control)] focus:border focus:border-[color:var(--color-border)] focus:bg-[color:var(--color-surface)] focus:px-4 focus:py-2 focus:text-body focus:text-[color:var(--color-accent-link)] focus:shadow-[var(--shadow-card)]"
 	>
-		本文へスキップ
+		{m.skip_to_content()}
 	</a>
 	<!-- ライトガラスの sticky ヘッダー。backdrop-filter で軽い浮遊感、hairline
 	     でコンテンツと区切る。高さは iOS HIG の nav bar を踏まえて 56px。 -->
@@ -74,13 +78,13 @@
 			<h1
 				class="min-w-0 truncate text-body-emph text-[color:var(--color-fg)] tracking-[-0.01em]"
 			>
-				卒業要件判定ツール
+				{m.app_title()}
 			</h1>
 			<span
 				class="shrink-0 rounded-[var(--radius-chip)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] px-1.5 py-0.5 text-micro font-medium text-[color:var(--color-fg-subtle)]"
-				title="個人開発の非公式ツールです"
+				title={m.badge_unofficial_title()}
 			>
-				非公式
+				{m.badge_unofficial()}
 			</span>
 			<div class="ml-auto shrink-0 flex items-center pl-1" aria-live="polite">
 				{#if verdict}
@@ -104,12 +108,12 @@
 		style="padding-bottom: max(2rem, env(safe-area-inset-bottom));"
 	>
 		<p>
-			個人開発の非公式ツールです。判定は参考情報にすぎません。詳しくは
+			{m.footer_note_lead()}
 			<a
 				href={`${base}/disclaimer`}
 				class="text-[color:var(--color-accent-link)] underline hover:no-underline"
-				>免責事項</a
-			>。
+				>{m.link_disclaimer()}</a
+			>{m.footer_note_trail()}
 		</p>
 	</footer>
 </div>
