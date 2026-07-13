@@ -40,6 +40,10 @@ test-wasm:
 test-web: wasm-build
     bun install --frozen-lockfile && bun run check && bun run test:coverage
 
+# Playwright E2E + axe a11y (consent dialog, dark theme, static-page audits).
+e2e:
+    bun install --frozen-lockfile && bunx playwright install chromium && bun run test:e2e
+
 # Native line coverage via nextest (excludes the wasm-bindgen surface).
 cov:
     cargo llvm-cov nextest --workspace --exclude audit-wasm --summary-only

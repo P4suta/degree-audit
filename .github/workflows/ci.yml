@@ -83,3 +83,42 @@ jobs:
         # The real-PDF oracle tests are gated on a local PII file that is absent
         # in CI, so they no-op here; everything else runs.
         run: cargo test --workspace
+
+  e2e:
+    name: E2E (Playwright + axe)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up tools (mise)
+        uses: jdx/mise-action@v2
+
+      - name: Install deps
+        run: bun install --frozen-lockfile
+
+      - name: Cache Playwright browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+
+      - name: Install Playwright chromium
+        run: bunx playwright install --with-deps chromium
+
+      # CJK fonts so the Japanese UI renders (axe/layout assertions depend on it).
+      - name: Install fonts
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
+
+      - name: Run E2E (consent dialog / dark theme / axe a11y)
+        run: bun run test:e2e
+
+      - name: Upload Playwright artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore
