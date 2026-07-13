@@ -5,10 +5,7 @@
 /** Parse `#rrggbb` (or `#rgb`) into 8-bit `[r, g, b]`. */
 export function parseHex(hex: string): [number, number, number] {
 	const h = hex.replace("#", "");
-	const full =
-		h.length === 3
-			? [...h].map((c) => c + c).join("")
-			: h;
+	const full = h.length === 3 ? [...h].map((c) => c + c).join("") : h;
 	return [0, 2, 4].map((i) => Number.parseInt(full.slice(i, i + 2), 16)) as [
 		number,
 		number,

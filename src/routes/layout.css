@@ -30,10 +30,10 @@
 	--color-border-strong: rgba(0, 0, 0, 0.16);
 	--color-divider: rgba(0, 0, 0, 0.06);
 
-	/* --- text (solid ink so it survives the dark field) --- */
+	/* --- text (solid ink so it survives the dark field; all clear WCAG AA) --- */
 	--color-fg: #1d1d1f;
 	--color-fg-muted: #616163;
-	--color-fg-subtle: #8b8b8d;
+	--color-fg-subtle: #68686d;
 
 	/* --- accent: Apple Blue (唯一のインタラクティブ色) --- */
 	--color-accent: #0071e3;
@@ -113,7 +113,7 @@
 		/* text */
 		--color-fg: #f5f5f7;
 		--color-fg-muted: #a1a1a6;
-		--color-fg-subtle: #6e6e73;
+		--color-fg-subtle: #8e8e94;
 
 		/* accent (brighter on the dark field; on-fill text flips dark) */
 		--color-accent: #3d9bff;
@@ -346,6 +346,7 @@ dialog.disclaimer-dialog::backdrop {
 }
 .disclaimer-overlay {
 	height: 100vh;
+	/* biome-ignore lint/suspicious/noDuplicateProperties: 100vh fallback for browsers without dvh */
 	height: 100dvh;
 }
 @keyframes fadeIn {
