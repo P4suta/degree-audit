@@ -1,9 +1,8 @@
-//! The transcript-source port and its boundary DTO. Ported from
-//! `infrastructure/parsers/transcript-parser.ts`.
+//! The transcript-source port and its boundary DTO.
 //!
-//! `RawCourse` is an all-strings DTO — the parse boundary. Adapters (PDF/MHTML/
-//! text) implement [`TranscriptSource`]; the domain never sees them, only the
-//! typed `Course` the mapper produces.
+//! `RawCourse` is an all-strings DTO — the parse boundary. The PDF adapter
+//! implements [`TranscriptSource`]; the domain never sees it, only the typed
+//! `Course` the mapper produces.
 
 use audit_domain::DomainError;
 use serde::{Deserialize, Serialize};

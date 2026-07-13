@@ -88,9 +88,7 @@ impl From<std::io::Error> for CliError {
 
 impl From<serde_json::Error> for CliError {
     fn from(e: serde_json::Error) -> CliError {
-        CliError::new(format!("JSON を解釈できませんでした: {e}"))
-            .with_code("JSON")
-            .with_help("RawCourse オブジェクトの配列になっているか確認してください。")
+        CliError::new(format!("JSON を処理できませんでした: {e}")).with_code("JSON")
     }
 }
 

@@ -46,7 +46,7 @@ fn help_styles() -> clap::builder::Styles {
     subcommand_negates_reqs = true,
 )]
 pub struct Cli {
-    /// 成績表 PDF または RawCourse JSON（省略すると対話モード）
+    /// 成績表 PDF（省略すると対話モード）
     #[arg(value_name = "FILE")]
     pub file: Option<PathBuf>,
 
@@ -60,7 +60,7 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Command {
-    /// PDF 成績表または RawCourse JSON から卒業判定を行う
+    /// PDF 成績表から卒業判定を行う
     #[command(visible_alias = "a")]
     Assess(AssessArgs),
 
@@ -88,7 +88,7 @@ pub enum Command {
 /// Arguments for the `assess` subcommand.
 #[derive(Args, Debug)]
 pub struct AssessArgs {
-    /// 成績表 PDF または RawCourse JSON のパス
+    /// 成績表 PDF のパス
     pub file: PathBuf,
     /// Assessment を JSON で出力する
     #[arg(short = 'j', long)]

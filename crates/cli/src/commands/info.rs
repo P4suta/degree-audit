@@ -22,7 +22,7 @@ pub fn run(palette: &Palette, use_color: bool) -> Result<(), CliError> {
     )?;
     writeln!(
         out,
-        "{} PDF 個別成績表 / RawCourse JSON",
+        "{} PDF 個別成績表",
         paint(palette.muted, "対応入力:")
     )?;
     writeln!(

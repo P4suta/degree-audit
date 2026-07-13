@@ -6,7 +6,6 @@
 	import Summary from "$lib/presentation/components/Summary.svelte";
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import { profileStore } from "$lib/presentation/stores/profile.svelte";
-	import { skippedStore } from "$lib/presentation/stores/skipped.svelte";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
 
 	onMount(() => {
@@ -45,15 +44,6 @@
 		</div>
 	</div>
 {:else}
-	{#if skippedStore.count > 0}
-		<a
-			href={`${base}/import`}
-			class="block rounded-[var(--radius-control)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] p-3 text-sm text-[color:var(--color-warning-fg)] motion-safe:transition-colors hover:brightness-95"
-		>
-			{skippedStore.count} 件の科目が解析できずスキップされています。
-			<span class="underline">取り込み画面で詳細を確認する</span>
-		</a>
-	{/if}
 	<Summary {assessment} />
 	<section class="space-y-4">
 		<h3 class="text-h2 text-[color:var(--color-fg)]">

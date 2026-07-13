@@ -1,4 +1,4 @@
-//! The import use case. Ported from `application/import-transcript.ts`.
+//! The import use case.
 //!
 //! Parses raw rows via a [`TranscriptSource`], maps them to courses, builds an
 //! [`AcademicRecord`], and rejects imports where every course fell into `unknown`

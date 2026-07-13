@@ -6,11 +6,9 @@
 //! future SvelteKit front-end consumes the very same shape the CLI's `--json`
 //! emits (the case-for-a-declarative-AST payoff).
 
-use std::sync::Arc;
-
-use audit_app::{RawCourse, import_transcript, map_raw_courses};
+use audit_app::import_transcript;
 use audit_domain::assess::{Assessment, assess};
-use audit_domain::entity::academic_record::{AcademicRecord, SharedCourse};
+use audit_domain::entity::academic_record::SharedCourse;
 use audit_domain::entity::student_profile::StudentProfile;
 use audit_domain::ruleset::Registry;
 use serde::Serialize;
@@ -69,29 +67,6 @@ pub fn assess_from_pdf(bytes: &[u8]) -> Result<String, JsError> {
     serde_json::to_string(&assessment).map_err(js_error)
 }
 
-/// Assess graduation from a JSON array of `RawCourse` rows plus a profile.
-/// Returns the `Assessment` as a JSON string (the same shape as the CLI `--json`).
-#[wasm_bindgen]
-pub fn assess_from_raw_json(
-    raws_json: &str,
-    faculty: &str,
-    course: &str,
-    matriculation_year: u16,
-) -> Result<String, JsError> {
-    let raws: Vec<RawCourse> = serde_json::from_str(raws_json).map_err(js_error)?;
-    let profile = StudentProfile::new(faculty, course, matriculation_year).map_err(js_error)?;
-
-    let registry = Registry::standard();
-    let rule_set = registry.resolve(&profile).map_err(js_error)?;
-
-    let mapping = map_raw_courses(&raws, rule_set.category_map);
-    let courses = mapping.courses.into_iter().map(Arc::new).collect();
-    let record = AcademicRecord::new(profile, courses);
-    let assessment = assess(&record, rule_set);
-
-    serde_json::to_string(&assessment).map_err(js_error)
-}
-
 /// List the available rule sets as a JSON array of `{ id, displayName, specificity }`.
 #[wasm_bindgen]
 pub fn rule_sets_json() -> String {
@@ -117,17 +92,6 @@ fn js_error(e: impl std::fmt::Display) -> JsError {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn assess_from_raw_json_returns_assessment_shape() {
-        let raws = r#"[
-            {"rawCategoryLabel":"共通教育 / 初年次科目","name":"大学基礎論","creditText":"2","gradeText":"優","yearText":"2022"}
-        ]"#;
-        let json = assess_from_raw_json(raws, "人文社会科学部", "人文科学コース", 2022).unwrap();
-        assert!(json.contains("\"graduatable\":false"));
-        assert!(json.contains("\"totalCreditsRequired\":124"));
-        assert!(json.contains("\"steps\""));
-    }
 
     #[test]
     fn rule_sets_json_lists_both() {

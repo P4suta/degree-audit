@@ -300,8 +300,7 @@ input[aria-invalid="true"]:
 
 - **Display** 見出し「成績を取り込む」
 - 本文（fg-muted）で短い説明
-- コピペ Card を primary として配置
-- MHTML ドロップゾーンは `<details>` で畳む（開発者向け）
+- PDF 成績表のドロップゾーン Card を単独で配置（学部・コース・入学年度は PDF から自動取得）
 
 ### `/dashboard`
 
