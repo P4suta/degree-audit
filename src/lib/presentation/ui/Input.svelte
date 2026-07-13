@@ -32,7 +32,7 @@
 </script>
 
 <input
-	class="block w-full min-h-[44px] rounded-[var(--radius-control)] border bg-[color:var(--color-surface-raised)] px-3 py-2.5 text-base text-[color:var(--color-fg)] shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-60 {borderClass} {className}"
+	class="block w-full min-h-tap rounded-[var(--radius-control)] border bg-[color:var(--color-surface-raised)] px-3 py-2.5 text-form text-[color:var(--color-fg)] shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-60 {borderClass} {className}"
 	aria-invalid={invalid ? "true" : undefined}
 	aria-describedby={errorId}
 	bind:value

@@ -63,7 +63,7 @@
 			showLabel={false}
 		/>
 		<div
-			class="flex items-baseline justify-between gap-3 text-xs text-[color:var(--color-fg-muted)]"
+			class="flex items-baseline justify-between gap-3 text-caption text-[color:var(--color-fg-muted)]"
 		>
 			<span class="tabular-nums">
 				{result.actual} / {result.required} {unit}

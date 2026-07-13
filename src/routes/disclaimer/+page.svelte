@@ -18,7 +18,7 @@
 
 <a
 	href={`${base}/dashboard`}
-	class="inline-flex min-h-[44px] touch-manipulation items-center text-sm text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
+	class="inline-flex min-h-tap touch-manipulation items-center text-small text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
 >
 	&larr; Dashboard へ戻る
 </a>
@@ -27,14 +27,14 @@
 	<h2 class="text-display text-[color:var(--color-fg)]">
 		免責事項
 	</h2>
-	<p class="max-w-[640px] text-base text-[color:var(--color-fg-muted)]">
+	<p class="max-w-readable text-body text-[color:var(--color-fg-muted)]">
 		本ツールを利用する前に、以下の事項を必ずご確認ください。
 	</p>
 </header>
 
 <Card padding="lg">
 	<div
-		class="space-y-6 text-small leading-[1.75] text-[color:var(--color-fg)]"
+		class="space-y-6 text-small leading-relaxed text-[color:var(--color-fg)]"
 	>
 		<section class="space-y-2">
 			<h3
@@ -157,7 +157,7 @@
 	<div
 		class="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] p-6 text-center"
 	>
-		<p class="text-sm text-[color:var(--color-fg-muted)]">
+		<p class="text-small text-[color:var(--color-fg-muted)]">
 			上記の内容を確認のうえ、利用を開始できます。
 		</p>
 		<Button

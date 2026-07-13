@@ -185,7 +185,7 @@
 
 <a
 	href={`${base}/dashboard`}
-	class="inline-flex min-h-[44px] touch-manipulation items-center text-sm text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
+	class="inline-flex min-h-tap touch-manipulation items-center text-small text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
 >
 	&larr; Dashboard へ戻る
 </a>
@@ -203,7 +203,7 @@
 		></div>
 	</div>
 {:else if result() === null}
-	<p class="text-sm text-[color:var(--color-fg-muted)]">
+	<p class="text-small text-[color:var(--color-fg-muted)]">
 		この要件は見つかりませんでした。
 	</p>
 {:else}
@@ -230,7 +230,7 @@
 					unit={r.unit ?? "単位"}
 				/>
 				<div
-					class="flex items-center gap-2 text-sm text-[color:var(--color-fg)]"
+					class="flex items-center gap-2 text-small text-[color:var(--color-fg)]"
 				>
 					<span class="tabular-nums">
 						{r.actual} / {r.required} {r.unit ?? "単位"}
@@ -253,7 +253,7 @@
 					{/if}
 				</div>
 				{#if state === "unmet" && tr !== null && tr.actual > r.actual}
-					<p class="text-xs text-[color:var(--color-fg-muted)]">
+					<p class="text-caption text-[color:var(--color-fg-muted)]">
 						履修中込み：
 						<span class="tabular-nums text-[color:var(--color-fg)]">
 							{tr.actual} / {tr.required} {tr.unit ?? "単位"}
@@ -262,7 +262,7 @@
 				{/if}
 				{#if r.diagnostics.length > 0}
 					<ul
-						class="list-inside list-disc text-sm text-[color:var(--color-fg-muted)]"
+						class="list-inside list-disc text-small text-[color:var(--color-fg-muted)]"
 					>
 						{#each r.diagnostics as d (d)}
 							<li>{d}</li>
@@ -279,7 +279,7 @@
 					{#each r.subResults as sub, i (`${sub.required}-${i}`)}
 						<li>
 							<Card padding="md">
-								<div class="flex items-center justify-between gap-3 text-sm">
+								<div class="flex items-center justify-between gap-3 text-small">
 									<Badge variant={sub.satisfied ? "success" : "warning"}>
 										{sub.satisfied ? "✓" : "✗"}
 									</Badge>
@@ -289,7 +289,7 @@
 								</div>
 								{#if sub.diagnostics.length > 0}
 									<ul
-										class="mt-2 list-inside list-disc text-xs text-[color:var(--color-fg-muted)]"
+										class="mt-2 list-inside list-disc text-caption text-[color:var(--color-fg-muted)]"
 									>
 										{#each sub.diagnostics as d (d)}
 											<li>{d}</li>
@@ -307,7 +307,7 @@
 			<h3 class="text-h3 text-[color:var(--color-fg)]">貢献科目</h3>
 			{#if contributingAnnotated.length === 0}
 				<Card padding="md" variant="flat">
-					<p class="text-sm text-[color:var(--color-fg-subtle)]">
+					<p class="text-small text-[color:var(--color-fg-subtle)]">
 						この要件に貢献している科目はまだありません。
 					</p>
 				</Card>
@@ -334,7 +334,7 @@
 				>
 					履修中（評価待ち）
 				</h3>
-				<p class="text-sm text-[color:var(--color-fg-muted)]">
+				<p class="text-small text-[color:var(--color-fg-muted)]">
 					現時点では算入されていませんが、合格すればこの要件に算入される候補です。
 				</p>
 				<CourseList
@@ -352,7 +352,7 @@
 				>
 					履修中（評価待ち）
 				</h3>
-				<p class="text-sm text-[color:var(--color-fg-muted)]">
+				<p class="text-small text-[color:var(--color-fg-muted)]">
 					現時点の合計には含まれていません。すべて合格した場合の tentative 判定は下のヒント欄で確認できます。
 				</p>
 				<CourseList
@@ -372,7 +372,7 @@
 				<h3 class="text-h3 text-[color:var(--color-fg)]">
 					ここから読み替え（超過分の行き先）
 				</h3>
-				<p class="text-sm text-[color:var(--color-fg-muted)]">
+				<p class="text-small text-[color:var(--color-fg-muted)]">
 					この要件の必要単位を超えた分は選択科目へ読み替え候補になります。
 					うち <strong>{countedCount} 件</strong> が実際に算入され、
 					{#if excludedCount > 0}
@@ -406,7 +406,7 @@
 				<h3 class="text-h3 text-[color:var(--color-fg)]">
 					算入外（上限超過）
 				</h3>
-				<p class="text-sm text-[color:var(--color-fg-muted)]">
+				<p class="text-small text-[color:var(--color-fg-muted)]">
 					上限に達したため、この要件には算入できなかった科目です。
 				</p>
 				<CourseList
@@ -424,7 +424,7 @@
 				<h3 class="text-h3 text-[color:var(--color-fg)]">
 					要件超過（卒業単位には使われず）
 				</h3>
-				<p class="text-sm text-[color:var(--color-fg-muted)]">
+				<p class="text-small text-[color:var(--color-fg-muted)]">
 					この要件の必要単位を超えて取得した科目のうち、他の要件にも読み替えられなかったものです。
 				</p>
 				<CourseList

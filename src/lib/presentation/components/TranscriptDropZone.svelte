@@ -60,10 +60,10 @@
 		class="mx-auto h-6 w-6 text-[color:var(--color-fg-subtle)]"
 		aria-hidden="true"
 	/>
-	<p class="mt-3 text-sm text-[color:var(--color-fg)]">
+	<p class="mt-3 text-small text-[color:var(--color-fg)]">
 		PDF 成績表をここにドロップ
 	</p>
-	<p class="mt-1 text-xs text-[color:var(--color-fg-subtle)]">または</p>
+	<p class="mt-1 text-caption text-[color:var(--color-fg-subtle)]">または</p>
 	<div class="mt-3">
 		<Button
 			variant="secondary"

@@ -41,7 +41,7 @@
 			卒業要件まであと{totalRemaining > 0 ? ` ${totalRemaining} 単位` : ""}
 		{/if}
 	</h2>
-	<p class="text-xs text-[color:var(--color-fg-subtle)]">
+	<p class="text-caption text-[color:var(--color-fg-subtle)]">
 		※ この判定は参考情報です。最終確認は<strong
 			class="font-medium text-[color:var(--color-fg-muted)]"
 			>最新の履修案内・所属学部の教務担当・指導教員</strong
@@ -51,7 +51,7 @@
 			>免責事項</a
 		>）。
 	</p>
-	<p class="text-base text-[color:var(--color-fg-muted)]">
+	<p class="text-body text-[color:var(--color-fg-muted)]">
 		総修得単位
 		<span class="font-semibold tabular-nums text-[color:var(--color-fg)]">
 			{totalNumber}
@@ -66,7 +66,7 @@
 			・すべての要件を充足
 		{/if}
 	</p>
-	<div class="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm">
+	<div class="flex flex-wrap items-center gap-x-2 gap-y-2 text-small">
 		<span class="text-[color:var(--color-fg-muted)]">卒論履修資格</span>
 		<Badge
 			variant={assessment.thesisEligibility.satisfied ? "success" : "warning"}
@@ -84,12 +84,12 @@
 	</div>
 	{#if showTentativeHopeful}
 		<p
-			class="rounded-[var(--radius-card)] border border-[color:var(--color-accent-ring)] bg-[color:var(--color-accent-ring)]/40 px-4 py-3 text-sm text-[color:var(--color-fg)]"
+			class="rounded-[var(--radius-card)] border border-[color:var(--color-accent-ring)] bg-[color:var(--color-accent-ring)]/40 px-4 py-3 text-small text-[color:var(--color-fg)]"
 		>
 			履修中の {inProgressCount} 科目（{inProgressNumber} 単位）がすべて合格すれば、すべての要件を満たして卒業可能になります。
 		</p>
 	{:else if tentative !== undefined && !tentative.graduatable && inProgressCount > 0}
-		<p class="text-sm text-[color:var(--color-fg-muted)]">
+		<p class="text-small text-[color:var(--color-fg-muted)]">
 			※ 履修中の {inProgressCount} 科目がすべて合格しても、まだ不足する要件があります。
 		</p>
 	{/if}

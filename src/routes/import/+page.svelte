@@ -105,7 +105,7 @@
 	<h2 class="text-display text-[color:var(--color-fg)]">
 		成績を取り込む
 	</h2>
-	<p class="text-base text-[color:var(--color-fg-muted)] max-w-[640px]">
+	<p class="text-body text-[color:var(--color-fg-muted)] max-w-readable">
 		大学が発行する <strong class="font-semibold text-[color:var(--color-fg)]"
 			>PDF 成績表をドロップ</strong
 		>するだけで取り込めます。学部・コース・入学年度は PDF
@@ -119,7 +119,7 @@
 			<h3 id="pdf-heading" class="text-h2 text-[color:var(--color-fg)]">
 				公式の PDF 成績表をドロップ
 			</h3>
-			<p class="text-sm text-[color:var(--color-fg-muted)]">
+			<p class="text-small text-[color:var(--color-fg-muted)]">
 				大学が発行する「個別成績表（PDF）」をそのままドロップするだけ。学部・コース・入学年度は
 				PDF から自動で読み取ります。判定は Rust / WebAssembly
 				エンジンがブラウザ内で実行し、データは外部に送信されません。
@@ -130,7 +130,7 @@
 </Card>
 
 {#if importing}
-	<p class="text-sm text-[color:var(--color-fg-muted)]" aria-live="polite">
+	<p class="text-small text-[color:var(--color-fg-muted)]" aria-live="polite">
 		読み込み中…
 	</p>
 {/if}
