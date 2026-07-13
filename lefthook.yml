@@ -1,0 +1,55 @@
+# lefthook Git hooks manager. Enable with `just install-hooks`.
+# https://github.com/evilmartians/lefthook
+#
+# Hooks mirror CI so failures surface locally, not in Actions. Everything runs
+# natively on the toolchain mise provides (.mise.toml) plus the rust-toolchain
+# (rust-toolchain.toml) — no Docker. The web build's canonical path is still
+# Docker; here we run the Docker-free equivalents for fast local feedback.
+
+pre-commit:
+  parallel: true
+  commands:
+    rustfmt:
+      glob: "*.rs"
+      run: cargo fmt --check
+      fail_text: "rustfmt violations; fix with `just fmt`"
+    biome:
+      glob: "*.{ts,js,svelte,json,css}"
+      run: bunx biome check --no-errors-on-unmatched {staged_files}
+      fail_text: "Biome violations; fix with `bun run fix`"
+    typos:
+      # --force-exclude keeps _typos.toml excludes effective for explicit paths.
+      run: typos --force-exclude {staged_files}
+    actionlint:
+      glob: ".github/workflows/*.{yml,yaml}"
+      run: actionlint {staged_files}
+
+pre-push:
+  parallel: false # cargo / wasm / web are heavy; run them sequentially
+  # Run through `mise exec` so the exact .mise.toml tools resolve regardless of
+  # how the shell that launched git was activated (a freshly-installed tool like
+  # cargo-nextest isn't on a stale shell's PATH otherwise).
+  commands:
+    # Mirrors the CI Rust job: fmt, clippy, tests.
+    rust:
+      run: >-
+        mise exec -- cargo fmt --all --check
+        && mise exec -- cargo clippy --workspace --all-targets --locked -- -D warnings
+        && mise exec -- cargo nextest run --workspace --locked
+      fail_text: "Rust checks failed (fmt/clippy/test); see `just check`"
+    # Mirrors the CI "wasm boundary tests": the crate's #[wasm_bindgen] surface
+    # under node (the JsValue shapes the frontend depends on).
+    wasm-boundary:
+      run: mise exec -- wasm-pack test --node crates/audit-wasm
+      fail_text: "WASM boundary tests failed (wasm-pack test --node)"
+    # Mirrors the CI "Web (check / test)" job: build the wasm glue, then
+    # svelte-check/tsc and vitest with the coverage gate.
+    web:
+      run: >-
+        mise exec -- wasm-pack build crates/audit-wasm --target web --out-dir ../../src/lib/wasm --out-name degree_audit
+        && mise exec -- bun install --frozen-lockfile
+        && mise exec -- bun run check
+        && mise exec -- bun run test:coverage
+      fail_text: "Web checks failed (svelte-check/tsc/vitest + coverage gate)"
+    typos-full:
+      run: mise exec -- typos

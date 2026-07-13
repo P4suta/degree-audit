@@ -6,7 +6,9 @@
 # ローカル (docker compose), devcontainer, CI, Pages ビルドは
 # この Dockerfile を target 切替で呼び出すだけ。
 
-ARG BUN_VERSION=1.3.12
+# Keep in sync with .mise.toml `bun` so the Docker and mise/just paths use the
+# same Bun.
+ARG BUN_VERSION=1.3.14
 
 FROM oven/bun:${BUN_VERSION}-slim AS base
 WORKDIR /app

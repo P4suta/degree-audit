@@ -1,0 +1,12 @@
+# Pins the Rust toolchain for host, Dev Container, and CI alike — the single
+# source of truth for the Rust side of the build (mirrors .mise.toml for the
+# Node/Bun/CLI tools). rustup auto-installs this on the first `cargo` invocation
+# in the workspace, so local and CI compile with byte-identical rustc/clippy.
+#
+# The workspace targets edition 2024 (needs 1.85+); we pin a recent stable and
+# bump deliberately. wasm32-unknown-unknown is required by crates/audit-wasm.
+[toolchain]
+channel = "1.96.0"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-unknown-unknown"]
+profile = "minimal"
