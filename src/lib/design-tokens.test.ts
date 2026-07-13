@@ -230,18 +230,22 @@ describe("design token enforcement", () => {
 			expect(css, `missing token ${t}`).toContain(`${t}:`);
 	});
 
-	it("muted text clears WCAG AA on the base surfaces, both themes", () => {
+	it("muted / subtle text clears WCAG AA on the surfaces they render on, both themes", () => {
 		const { light, dark } = splitThemes(readCss());
-		const check = (block: string, surfaces: string[]) => {
-			const fg = hexToken(block, "--color-fg-muted");
+		const check = (block: string, name: string, surfaces: string[]) => {
+			const fg = hexToken(block, name);
 			for (const bg of surfaces)
 				expect(
 					contrastRatio(fg, bg),
-					`--color-fg-muted (${fg}) on ${bg}`,
+					`${name} (${fg}) on ${bg}`,
 				).toBeGreaterThanOrEqual(4.5);
 		};
-		check(light, ["#ffffff", "#f5f5f7"]);
-		check(dark, ["#0b0b0c", "#1c1c1e", "#2c2c2e"]);
+		// muted appears on every surface; subtle only on the page + card (never on
+		// the lighter raised surface). axe enforces the same on real elements.
+		check(light, "--color-fg-muted", ["#ffffff", "#f5f5f7"]);
+		check(light, "--color-fg-subtle", ["#ffffff", "#f5f5f7"]);
+		check(dark, "--color-fg-muted", ["#0b0b0c", "#1c1c1e", "#2c2c2e"]);
+		check(dark, "--color-fg-subtle", ["#0b0b0c", "#1c1c1e"]);
 	});
 
 	it("accent + semantic text clear WCAG AA, both themes", () => {
