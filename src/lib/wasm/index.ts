@@ -12,7 +12,7 @@ import type { Assessment } from "$lib/application/assess-graduation";
 import type { AcademicRecord } from "$lib/domain/entities/academic-record";
 import type { StudentProfile } from "$lib/domain/entities/student-profile";
 
-import init, { import_pdf_json } from "./degree_audit.js";
+import init, { importPdf as importPdfWasm } from "./degree_audit.js";
 import wasmUrl from "./degree_audit_bg.wasm?url";
 import {
 	type Diagnostic,
@@ -134,7 +134,8 @@ export const importPdf = async (
 	bytes: Uint8Array,
 ): Promise<PdfImportBundle> => {
 	await ensureReady();
-	const bundle = JSON.parse(import_pdf_json(bytes)) as RawBundle;
+	// serde-wasm-bindgen hands back a ready JS object (no JSON.parse round-trip).
+	const bundle = importPdfWasm(bytes) as unknown as RawBundle;
 	const profile = bundle.profile as StudentProfile;
 	const record = {
 		profile,
