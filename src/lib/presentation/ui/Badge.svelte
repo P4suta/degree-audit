@@ -45,7 +45,7 @@
 </script>
 
 <span
-	class="inline-flex items-center gap-1 border px-2 py-0.5 text-xs font-medium leading-none {variantClass} {radiusClass} {className}"
+	class="inline-flex items-center gap-1 border px-2 py-0.5 text-caption font-medium leading-none {variantClass} {radiusClass} {className}"
 >
 	{@render children()}
 </span>

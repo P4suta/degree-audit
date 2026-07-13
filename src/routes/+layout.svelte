@@ -35,9 +35,9 @@
 	     sticky + backdrop-filter で軽い浮遊感。罫線でコンテンツと区切る。
 	     高さは iOS HIG の nav bar を踏まえて 56px。 -->
 	<header
-		class="sticky top-0 z-30 border-b border-[color:var(--color-border)] bg-[rgba(255,255,255,0.72)] backdrop-blur-xl backdrop-saturate-150"
+		class="sticky top-0 z-nav border-b border-[color:var(--color-border)] bg-[color:var(--color-surface-glass)] backdrop-blur-xl backdrop-saturate-150"
 	>
-		<div class="container-page flex h-[56px] items-center gap-2">
+		<div class="container-page flex h-14 items-center gap-2">
 			<GraduationCap
 				class="h-5 w-5 text-[color:var(--color-accent)]"
 				aria-hidden="true"

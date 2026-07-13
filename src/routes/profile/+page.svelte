@@ -166,7 +166,7 @@
 	<h2 class="text-display text-[color:var(--color-fg)]">
 		学生プロフィール
 	</h2>
-	<p class="text-base text-[color:var(--color-fg-muted)] max-w-[640px]">
+	<p class="text-body text-[color:var(--color-fg-muted)] max-w-readable">
 		卒業要件ルールの解決に使用します。いつでも再設定できます。
 	</p>
 </header>
@@ -176,7 +176,7 @@
 		<div class="block">
 			<label
 				for="profile-faculty-id"
-				class="text-sm font-medium text-[color:var(--color-fg)]"
+				class="text-small font-medium text-[color:var(--color-fg)]"
 			>
 				学部
 			</label>
@@ -200,7 +200,7 @@
 			{#if fieldErrors.facultyId}
 				<p
 					id="profile-faculty-id-error"
-					class="mt-1 text-xs text-[color:var(--color-danger-fg)]"
+					class="mt-1 text-caption text-[color:var(--color-danger-fg)]"
 				>
 					{fieldErrors.facultyId}
 				</p>
@@ -209,7 +209,7 @@
 		<div class="block">
 			<label
 				for="profile-course-id"
-				class="text-sm font-medium text-[color:var(--color-fg)]"
+				class="text-small font-medium text-[color:var(--color-fg)]"
 			>
 				コース
 			</label>
@@ -233,7 +233,7 @@
 			{#if fieldErrors.courseId}
 				<p
 					id="profile-course-id-error"
-					class="mt-1 text-xs text-[color:var(--color-danger-fg)]"
+					class="mt-1 text-caption text-[color:var(--color-danger-fg)]"
 				>
 					{fieldErrors.courseId}
 				</p>
@@ -242,7 +242,7 @@
 		<div class="block">
 			<label
 				for="profile-matriculation-year"
-				class="text-sm font-medium text-[color:var(--color-fg)]"
+				class="text-small font-medium text-[color:var(--color-fg)]"
 			>
 				入学年度
 			</label>
@@ -260,13 +260,13 @@
 					<option value={y}>{y} 年度</option>
 				{/each}
 			</Select>
-			<p class="mt-1 text-xs text-[color:var(--color-fg-subtle)]">
+			<p class="mt-1 text-caption text-[color:var(--color-fg-subtle)]">
 				現在、令和 2 年度（2020 年度）以降入学生に対応しています。
 			</p>
 			{#if fieldErrors.matriculationYear}
 				<p
 					id="profile-matriculation-year-error"
-					class="mt-1 text-xs text-[color:var(--color-danger-fg)]"
+					class="mt-1 text-caption text-[color:var(--color-danger-fg)]"
 				>
 					{fieldErrors.matriculationYear}
 				</p>

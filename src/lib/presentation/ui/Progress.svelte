@@ -57,7 +57,7 @@
 <div class="space-y-1.5 {className}">
 	{#if showLabel}
 		<div
-			class="flex items-baseline justify-between gap-3 text-xs text-[color:var(--color-fg-muted)]"
+			class="flex items-baseline justify-between gap-3 text-caption text-[color:var(--color-fg-muted)]"
 		>
 			<span class="truncate">{label}</span>
 			<span class="tabular-nums">{actual} / {required} {unit}</span>
@@ -94,14 +94,14 @@
 	{#if showLabel}
 		{#if state === "in-progress"}
 			<p
-				class="text-xs text-[color:var(--color-accent-link)]"
+				class="text-caption text-[color:var(--color-accent-link)]"
 				aria-live="polite"
 			>
 				履修中 {inProgressDelta} {unit} で充足予定
 			</p>
 		{:else if state === "unmet" && remaining > 0}
 			<p
-				class="text-xs text-[color:var(--color-warning-fg)]"
+				class="text-caption text-[color:var(--color-warning-fg)]"
 				aria-live="polite"
 			>
 				あと {remaining} {unit}
