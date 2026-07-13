@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { contrastRatio } from "./contrast";
 
 /**
  * design-lint: assert no hardcoded design values leak into the Svelte layer.
@@ -16,6 +17,23 @@ import { describe, expect, it } from "vitest";
 
 const SRC = path.resolve(__dirname, "..");
 const CSS = path.join(SRC, "routes/layout.css");
+
+const readCss = () => fs.readFileSync(CSS, "utf-8");
+/** Light tokens live in `@theme`; dark overrides in the prefers-color-scheme block. */
+const splitThemes = (css: string) => {
+	// Split on the actual media query (with its brace) — not the prose mention of
+	// it in the @theme header comment.
+	const [light = "", dark = ""] = css.split(
+		"@media (prefers-color-scheme: dark) {",
+	);
+	return { light, dark };
+};
+const hexToken = (block: string, name: string): string => {
+	const m = block.match(new RegExp(`${name}:\\s*(#[0-9a-fA-F]{6})`));
+	if (m?.[1] === undefined)
+		throw new Error(`hex token ${name} not found in the expected theme block`);
+	return m[1];
+};
 
 const SVELTE_FILES = [
 	"lib/presentation/components/CourseList.svelte",
@@ -211,6 +229,71 @@ describe("design token enforcement", () => {
 		];
 		for (const t of required)
 			expect(css, `missing token ${t}`).toContain(`${t}:`);
+	});
+
+	it("muted text clears WCAG AA on the base surfaces, both themes", () => {
+		const { light, dark } = splitThemes(readCss());
+		const check = (block: string, surfaces: string[]) => {
+			const fg = hexToken(block, "--color-fg-muted");
+			for (const bg of surfaces)
+				expect(
+					contrastRatio(fg, bg),
+					`--color-fg-muted (${fg}) on ${bg}`,
+				).toBeGreaterThanOrEqual(4.5);
+		};
+		check(light, ["#ffffff", "#f5f5f7"]);
+		check(dark, ["#0b0b0c", "#1c1c1e", "#2c2c2e"]);
+	});
+
+	it("accent + semantic text clear WCAG AA, both themes", () => {
+		const { light, dark } = splitThemes(readCss());
+		const check = (block: string, surfaces: string[]) => {
+			const link = hexToken(block, "--color-accent-link");
+			for (const bg of surfaces)
+				expect(
+					contrastRatio(link, bg),
+					`accent-link (${link}) on ${bg}`,
+				).toBeGreaterThanOrEqual(4.5);
+			// Button text on the accent fill.
+			expect(
+				contrastRatio(
+					hexToken(block, "--color-accent-fg"),
+					hexToken(block, "--color-accent"),
+				),
+				"accent-fg on accent",
+			).toBeGreaterThanOrEqual(4.5);
+			// White button text on the danger fill (the danger variant).
+			expect(
+				contrastRatio("#ffffff", hexToken(block, "--color-danger")),
+				"white on danger fill",
+			).toBeGreaterThanOrEqual(4.5);
+			// Semantic panel text on its own tinted panel.
+			for (const s of ["success", "warning", "danger"])
+				expect(
+					contrastRatio(
+						hexToken(block, `--color-${s}-fg`),
+						hexToken(block, `--color-${s}-bg`),
+					),
+					`${s}-fg on ${s}-bg`,
+				).toBeGreaterThanOrEqual(4.5);
+		};
+		check(light, ["#ffffff", "#f5f5f7"]);
+		check(dark, ["#0b0b0c", "#1c1c1e"]);
+	});
+
+	it("every colour token has a dark override (light/dark parity)", () => {
+		const { light, dark } = splitThemes(readCss());
+		const names = (block: string) =>
+			new Set(block.match(/--color-[a-z-]+(?=:)/g) ?? []);
+		const lightNames = names(light);
+		expect(lightNames.size, "light defines colour tokens").toBeGreaterThan(0);
+		// No token may ship without a dark value, or it renders its light value on
+		// the dark field.
+		const missing = [...lightNames].filter((n) => !names(dark).has(n));
+		expect(
+			missing,
+			`tokens missing a dark override: ${missing.join(", ")}`,
+		).toEqual([]);
 	});
 
 	for (const file of SVELTE_FILES) {

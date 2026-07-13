@@ -16,6 +16,8 @@ export default defineConfig({
 				"src/lib/**/*.{test,spec}.{js,ts}",
 				"src/lib/**/index.ts",
 				"src/lib/**/fixtures.ts",
+				// Test-only WCAG helper; not imported by the app.
+				"src/lib/contrast.ts",
 				"src/lib/presentation/**",
 				// Vendored wasm-bindgen glue + the .wasm binary and its thin
 				// browser adapter: generated / browser-only, not unit-tested here.
