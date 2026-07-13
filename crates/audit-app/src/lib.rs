@@ -8,6 +8,6 @@ pub mod import;
 pub mod mapper;
 pub mod port;
 
-pub use import::{ImportOutcome, import_transcript};
+pub use import::{ImportOutcome, import_raw_courses, import_transcript};
 pub use mapper::{MappingFailure, MappingOutcome, map_raw_courses};
 pub use port::{RawCourse, TranscriptSource};

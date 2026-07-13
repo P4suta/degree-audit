@@ -13,7 +13,7 @@ use audit_domain::ruleset::RuleSet;
 use audit_domain::value::SubjectKind;
 
 use crate::mapper::{MappingFailure, map_raw_courses};
-use crate::port::TranscriptSource;
+use crate::port::{RawCourse, TranscriptSource};
 
 /// The result of a successful import.
 #[derive(Debug, Clone)]
@@ -35,7 +35,20 @@ pub fn import_transcript(
     profile: StudentProfile,
 ) -> Result<ImportOutcome, DomainError> {
     let raws = source.parse(bytes)?;
-    let mapping = map_raw_courses(&raws, rule_set.category_map);
+    import_raw_courses(&raws, rule_set, profile)
+}
+
+/// Run the import pipeline over already-parsed raw rows.
+///
+/// The post-parse half of [`import_transcript`], split out so callers that have
+/// already extracted the rows (e.g. from a single-pass PDF read) can reuse the
+/// mapping and all-unknown rejection without re-parsing.
+pub fn import_raw_courses(
+    raws: &[RawCourse],
+    rule_set: &RuleSet,
+    profile: StudentProfile,
+) -> Result<ImportOutcome, DomainError> {
+    let mapping = map_raw_courses(raws, rule_set.category_map);
 
     let unknown_category_count = mapping
         .courses
