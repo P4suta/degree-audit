@@ -36,7 +36,6 @@ interface RawSpec {
 }
 interface RawStep {
 	id: string;
-	label: string;
 	result: RawSpec;
 	consumedCourseIds: string[];
 }
@@ -95,7 +94,6 @@ const normalizeSpec = (r: RawSpec): unknown => ({
 
 const normalizeStep = (s: RawStep): unknown => ({
 	id: s.id,
-	label: s.label,
 	result: normalizeSpec(s.result),
 	consumedCourseIds: s.consumedCourseIds,
 });

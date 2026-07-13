@@ -50,6 +50,9 @@ impl Step {
 #[serde(rename_all = "camelCase")]
 pub struct StepOutcome {
     pub id: String,
+    /// Requirement display name for the CLI report. Not serialized to the WASM
+    /// wire: the web resolves names from `id` via its i18n catalog.
+    #[serde(skip_serializing, default)]
     pub label: String,
     pub result: SpecResult,
     pub consumed_course_ids: Vec<CourseId>,

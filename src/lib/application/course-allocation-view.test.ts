@@ -23,7 +23,6 @@ const result = (over: Partial<SpecResult> = {}): SpecResult => ({
 
 const step = (id: string, over: Partial<StepOutcome> = {}): StepOutcome => ({
 	id,
-	label: id,
 	result: result(),
 	consumedCourseIds: [],
 	...over,

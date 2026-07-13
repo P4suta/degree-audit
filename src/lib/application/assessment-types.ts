@@ -26,7 +26,6 @@ export interface SpecResult {
 
 export interface StepOutcome {
 	readonly id: string;
-	readonly label: string;
 	readonly result: SpecResult;
 	readonly consumedCourseIds: readonly string[];
 }
