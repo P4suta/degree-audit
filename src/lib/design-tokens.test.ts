@@ -19,6 +19,7 @@ const CSS = path.join(SRC, "routes/layout.css");
 
 const SVELTE_FILES = [
 	"lib/presentation/components/CourseList.svelte",
+	"lib/presentation/components/Disclaimer.svelte",
 	"lib/presentation/components/ErrorBanner.svelte",
 	"lib/presentation/components/ProgressBar.svelte",
 	"lib/presentation/components/RequirementCard.svelte",
@@ -39,8 +40,6 @@ const SVELTE_FILES = [
 	"routes/import/+page.svelte",
 	"routes/profile/+page.svelte",
 	"routes/requirements/[id]/+page.svelte",
-	// components/Disclaimer.svelte is added in the native-<dialog> conversion PR,
-	// once its overlay/backdrop move to layout.css tokens.
 ];
 
 /**

@@ -23,6 +23,8 @@
 	--color-surface-raised: #ffffff;
 	/* Light-glass sticky header (translucent over the page, blurred). */
 	--color-surface-glass: rgba(255, 255, 255, 0.72);
+	/* Dimming behind a modal (the consent dialog). */
+	--color-overlay-backdrop: rgba(0, 0, 0, 0.45);
 
 	/* --- borders --- */
 	--color-border: rgba(0, 0, 0, 0.08);
@@ -256,6 +258,49 @@ kbd {
 @utility z-nav {
 	/* The sticky glass header's stacking rung. */
 	z-index: 30;
+}
+@utility max-w-modal {
+	/* Desktop consent-dialog card width. */
+	max-width: 560px;
+}
+@utility max-h-modal {
+	/* Desktop consent-dialog card height, leaving a viewport gutter. */
+	max-height: calc(100dvh - 48px);
+}
+
+/*
+ * ─── Consent dialog (native <dialog>.showModal) ───────────────────
+ * The dialog is reset to a transparent, full-viewport shell so its inner
+ * .disclaimer-overlay owns the backdrop + centring. showModal() gives the
+ * focus trap, inert background, top-layer stacking, and Esc handling for free
+ * (the component swallows `cancel` so the gate can't be dismissed).
+ */
+dialog.disclaimer-dialog {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+	max-width: 100vw;
+	height: 100dvh;
+	max-height: 100dvh;
+	background: transparent;
+	overflow: hidden;
+}
+dialog.disclaimer-dialog::backdrop {
+	/* The inner overlay draws the dim; keep the UA backdrop out of the way. */
+	background: transparent;
+}
+.disclaimer-overlay {
+	height: 100vh;
+	height: 100dvh;
+}
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 /*
