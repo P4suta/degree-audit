@@ -18,6 +18,8 @@
 		/** ラベル行と残りテキストを出すか（カードの中では true、
 		 *  コンパクト表示では false） */
 		readonly showLabel?: boolean;
+		/** トラックの太さ。sm=4px（行内・レポート行）、hero=8px（ヒーローメーター）。 */
+		readonly size?: "sm" | "hero";
 	}
 
 	const {
@@ -30,7 +32,10 @@
 		unit = "単位",
 		class: className = "",
 		showLabel = true,
+		size = "sm",
 	}: Props = $props();
+
+	const trackHeight = $derived(size === "hero" ? "h-2" : "h-1");
 
 	const layout = $derived(
 		computeProgressLayout({ actual, required, tentativeActual }),
@@ -70,7 +75,7 @@
 		aria-valuemin={0}
 		aria-valuemax={required}
 		aria-valuetext={ariaValueText}
-		class="relative h-1 overflow-hidden rounded-[var(--radius-pill)] bg-[color:var(--color-divider)]"
+		class="relative {trackHeight} overflow-hidden rounded-[var(--radius-pill)] bg-[color:var(--color-divider)]"
 	>
 		{#if layout.hasInProgress}
 			<!--

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import X from "lucide-svelte/icons/x";
 	import Alert from "../ui/Alert.svelte";
+	import X from "~icons/ic/round-close";
 	import { errorsStore } from "../stores/errors.svelte.ts";
 </script>
 

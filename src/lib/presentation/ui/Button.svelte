@@ -54,7 +54,9 @@
 	});
 
 	const radiusClass = $derived(
-		variant === "pill" ? "rounded-[var(--radius-pill)]" : "rounded-[var(--radius-md)]",
+		variant === "pill"
+			? "rounded-[var(--radius-pill)]"
+			: "rounded-[var(--radius-control)]",
 	);
 </script>
 
