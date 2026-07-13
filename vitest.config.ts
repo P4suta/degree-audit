@@ -35,9 +35,9 @@ export default defineConfig({
 					statements: 100,
 				},
 				"src/lib/infrastructure/**": {
-					// コピペ入力は外部由来で、noUncheckedIndexedAccess の
-					// defensive `?? ""` や仕様外ガードで実際に到達しないブランチが
-					// 残る。100% を目指すと istanbul-ignore まみれになるので
+					// 外部境界を扱う層では noUncheckedIndexedAccess の defensive
+					// `?? ""` や仕様外ガードで実際に到達しないブランチが残る。
+					// 100% を目指すと istanbul-ignore まみれになるので
 					// branches/statements は 90% 水準に緩め、lines/functions は 100%
 					branches: 90,
 					functions: 100,

@@ -118,6 +118,14 @@ describe("defaultCategoryMap", () => {
 		expect(defaultCategoryMap({ rawLabel: raw })).toEqual(expected);
 	});
 
+	it("routes a course whose name carries ゼミナールV・VI to thesis (name-based fallback)", () => {
+		const r = defaultCategoryMap({
+			rawLabel: "ゼミナール",
+			courseName: "ゼミナールV・VI",
+		});
+		expect(r).toEqual({ kind: "seminar/5-6-thesis" });
+	});
+
 	it("returns unknown for an empty label", () => {
 		expect(defaultCategoryMap({ rawLabel: "" })).toEqual({
 			kind: "unknown",

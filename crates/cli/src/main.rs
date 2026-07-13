@@ -1,9 +1,9 @@
 //! degree-audit — a modern terminal front-end for the graduation audit engine.
 //!
-//! A composition root: it wires raw input (an official PDF transcript, or a JSON
-//! array of the `RawCourse` boundary DTO) to `audit_app`/`audit_domain` and renders
-//! the result. All presentation concerns (colour, panels, spinners, prompts, rich
-//! errors) live here in the CLI crate; the core stays pure.
+//! A composition root: it wires raw input (an official PDF transcript) to
+//! `audit_app`/`audit_domain` and renders the result. All presentation concerns
+//! (colour, panels, spinners, prompts, rich errors) live here in the CLI crate;
+//! the core stays pure.
 
 mod banner;
 mod cli;

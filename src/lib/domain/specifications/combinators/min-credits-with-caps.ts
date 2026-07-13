@@ -22,7 +22,7 @@ export interface PredicateCap {
  *   - スポーツ科学: `isSportsScience(course)` 述語に 4 単位上限
  * どちらの cap も独立に効き、満たされなければ `actual` に加算されない。
  *
- * 判定順序は入力 pool の順（＝ MHTML の表示順、概ね履修順）。上限超過分は
+ * 判定順序は入力 pool の順（＝ PDF 成績表の記載順、概ね履修順）。上限超過分は
  * 「後から履修した科目が卒業要件に入らない」という自然な挙動になる。
  */
 export const minCreditsWithCaps = (options: {

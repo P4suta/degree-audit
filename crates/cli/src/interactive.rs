@@ -44,16 +44,15 @@ fn pick_file() -> Result<PathBuf, CliError> {
     }
 }
 
-/// Names of `.pdf` / `.json` files in `dir`, sorted.
+/// Names of `.pdf` files in `dir`, sorted.
 fn list_transcripts(dir: &Path) -> Vec<String> {
     let mut names = Vec::new();
     if let Ok(entries) = fs::read_dir(dir) {
         for entry in entries.flatten() {
             let path = entry.path();
-            let is_transcript = path.extension().is_some_and(|e| {
-                let e = e.to_ascii_lowercase();
-                e == "pdf" || e == "json"
-            });
+            let is_transcript = path
+                .extension()
+                .is_some_and(|e| e.eq_ignore_ascii_case("pdf"));
             if is_transcript {
                 if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
                     names.push(name.to_owned());

@@ -10,7 +10,7 @@
 
 	const {
 		onFile,
-		accept = ".pdf,.mhtml,.mht,application/pdf,multipart/related,text/html",
+		accept = ".pdf,application/pdf",
 		disabled = false,
 	}: Props = $props();
 
@@ -61,7 +61,7 @@
 		aria-hidden="true"
 	/>
 	<p class="mt-3 text-sm text-[color:var(--color-fg)]">
-		MHTML ファイルをここにドロップ
+		PDF 成績表をここにドロップ
 	</p>
 	<p class="mt-1 text-xs text-[color:var(--color-fg-subtle)]">または</p>
 	<div class="mt-3">

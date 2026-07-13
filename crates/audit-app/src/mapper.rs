@@ -1,5 +1,4 @@
-//! Maps raw string rows to typed domain courses. Ported from
-//! `infrastructure/mappers/raw-to-course.ts`.
+//! Maps raw string rows to typed domain courses.
 //!
 //! This is the single parse boundary: fallible text → validated value objects.
 //! Rows that cannot be mapped are collected as [`MappingFailure`]s rather than

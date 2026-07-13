@@ -10,10 +10,10 @@ import { transcriptStore } from "./transcript.svelte.ts";
 /**
  * Exposes the current graduation assessment.
  *
- * By default this is derived on demand from the profile + transcript via the TS
- * engine (paste / MHTML paths). The PDF path instead runs the Rust/WASM core and
- * pushes a ready-made assessment via `set`, which then takes precedence — so the
- * dashboard and requirement pages render WASM-produced results unchanged.
+ * The PDF import path runs the Rust/WASM core and pushes a ready-made assessment
+ * via `set`, which takes precedence — so the dashboard and requirement pages
+ * render WASM-produced results unchanged. Absent an injected assessment, it falls
+ * back to deriving one on demand from the profile + transcript via the TS engine.
  */
 class AssessmentStore {
 	#override = $state<Assessment | null>(null);

@@ -9,12 +9,6 @@
 export function assess_from_pdf(bytes: Uint8Array): string;
 
 /**
- * Assess graduation from a JSON array of `RawCourse` rows plus a profile.
- * Returns the `Assessment` as a JSON string (the same shape as the CLI `--json`).
- */
-export function assess_from_raw_json(raws_json: string, faculty: string, course: string, matriculation_year: number): string;
-
-/**
  * Import an official PDF transcript and assess it in one call, returning a JSON
  * bundle (`{ assessment, courses, profile, skipped, unknownCategoryCount }`) that
  * the SvelteKit front-end feeds straight into its existing stores.
@@ -31,14 +25,12 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly assess_from_pdf: (a: number, b: number) => [number, number, number, number];
-    readonly assess_from_raw_json: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number, number];
     readonly import_pdf_json: (a: number, b: number) => [number, number, number, number];
     readonly rule_sets_json: () => [number, number];
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __externref_table_dealloc: (a: number) => void;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
-    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_start: () => void;
 }
 
