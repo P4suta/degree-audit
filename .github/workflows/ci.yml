@@ -21,6 +21,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      # The wasm glue is no longer vendored — regenerate it so the Docker build
+      # context (which includes src/lib/wasm) carries a fresh, in-sync build.
+      - name: Set up Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Set up tools (mise)
+        uses: jdx/mise-action@v2
+      - name: Build WASM glue
+        run: just wasm-build
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
@@ -59,13 +68,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      # rust-toolchain.toml drives the version + components (rustfmt/clippy);
+      # the action caches ~/.cargo and target.
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
-
-      - name: Cache cargo
-        uses: Swatinem/rust-cache@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: Format
         run: cargo fmt --all -- --check
