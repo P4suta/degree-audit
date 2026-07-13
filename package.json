@@ -25,6 +25,7 @@
 		"@axe-core/playwright": "^4.12.1",
 		"@biomejs/biome": "2.5.3",
 		"@iconify-json/ic": "^1.2.4",
+		"@inlang/paraglide-js": "^2.21.0",
 		"@playwright/test": "^1.61.1",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.57.0",
