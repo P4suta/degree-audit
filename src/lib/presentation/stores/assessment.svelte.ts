@@ -1,42 +1,27 @@
-import {
-	type Assessment,
-	assessGraduation,
-} from "../../application/assess-graduation.ts";
-import { isOk } from "../../domain/errors/result.ts";
-import { defaultRegistry } from "../../domain/rulesets/index.ts";
-import { profileStore } from "./profile.svelte.ts";
-import { transcriptStore } from "./transcript.svelte.ts";
+import type { Assessment } from "$lib/application/assess-graduation";
 
 /**
  * Exposes the current graduation assessment.
  *
- * The PDF import path runs the Rust/WASM core and pushes a ready-made assessment
- * via `set`, which takes precedence — so the dashboard and requirement pages
- * render WASM-produced results unchanged. Absent an injected assessment, it falls
- * back to deriving one on demand from the profile + transcript via the TS engine.
+ * The PDF import path runs the Rust/WASM core and injects a ready-made assessment
+ * via `set`; the dashboard and requirement pages render it unchanged. The Rust
+ * core is the single source of truth — there is no TypeScript fallback engine.
  */
 class AssessmentStore {
-	#override = $state<Assessment | null>(null);
+	#current = $state<Assessment | null>(null);
 
-	/** Inject an externally computed assessment (e.g. from the WASM core). */
+	/** Inject the assessment computed by the WASM core. */
 	set(assessment: Assessment): void {
-		this.#override = assessment;
+		this.#current = assessment;
 	}
 
-	/** Drop any injected assessment, reverting to on-demand TS computation. */
+	/** Drop the current assessment. */
 	clear(): void {
-		this.#override = null;
+		this.#current = null;
 	}
 
 	get current(): Assessment | null {
-		if (this.#override !== null) return this.#override;
-		const profile = profileStore.current;
-		if (profile === null) return null;
-		const record = transcriptStore.current;
-		if (record === null) return null;
-		const ruleSet = defaultRegistry.resolve(profile);
-		if (!isOk(ruleSet)) return null;
-		return assessGraduation(record, ruleSet.value);
+		return this.#current;
 	}
 }
 
