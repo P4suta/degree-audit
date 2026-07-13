@@ -1,4 +1,4 @@
-//! A stable course identifier. Ported from `value-objects/course-id.ts`.
+//! A stable course identifier.
 
 use std::fmt;
 

@@ -1,5 +1,5 @@
 //! The allocation pipeline: a pure fold that threads a shrinking course pool
-//! through consumption-strateged steps. Ported from `allocation/pipeline.ts`.
+//! through consumption-strateged steps.
 //!
 //! This is deliberately *not* part of the requirement AST: tree nodes are
 //! stateless `(rule, pool) -> result`, whereas the pipeline carries `remaining`

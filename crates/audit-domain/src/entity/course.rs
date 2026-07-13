@@ -1,4 +1,4 @@
-//! A single taken course. Ported from `entities/course.ts`.
+//! A single taken course.
 
 use serde::{Deserialize, Serialize};
 

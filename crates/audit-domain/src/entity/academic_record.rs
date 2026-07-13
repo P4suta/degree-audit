@@ -1,4 +1,4 @@
-//! A student's full set of taken courses. Ported from `entities/academic-record.ts`.
+//! A student's full set of taken courses.
 //!
 //! Courses are shared as `Arc<Course>` so the assessment can pass pools around and
 //! build "contributing" lists cheaply without cloning course data.

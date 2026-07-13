@@ -1,10 +1,8 @@
-//! The outcome of evaluating a requirement. Ported from `specifications/types.ts`.
+//! The outcome of evaluating a requirement.
 //!
 //! Diagnostics are kept as *structured facts* (an enum), not pre-rendered
 //! Japanese strings — human wording is a presentation concern. This keeps the
-//! domain pure and lets any front-end localize. The decision-relevant fields
-//! (`satisfied` / `required` / `actual` / `unit` / `contributing` / `excluded`)
-//! mirror the TypeScript engine one-for-one.
+//! domain pure and lets any front-end localize.
 
 use serde::{Deserialize, Serialize};
 

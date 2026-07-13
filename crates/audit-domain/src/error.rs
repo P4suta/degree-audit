@@ -1,9 +1,8 @@
-//! Domain errors as values. Ported from `errors/error-code.ts` and
-//! `errors/domain-error.ts`.
+//! Domain errors as values.
 //!
 //! Errors carry a stable machine [`ErrorCode`], a developer-facing English
-//! `message`, and a `user_message`. User-facing wording stays here for parity
-//! with the TypeScript engine; presentation layers may re-localize if needed.
+//! `message`, and a `user_message`. User-facing wording stays here;
+//! presentation layers may re-localize if needed.
 
 use std::fmt;
 
@@ -71,7 +70,7 @@ pub struct DomainError {
     pub code: ErrorCode,
     /// Developer-facing English detail.
     pub message: String,
-    /// End-user wording (Japanese, mirroring the TypeScript engine).
+    /// End-user wording (Japanese).
     #[serde(rename = "userMessage")]
     pub user_message: String,
 }
@@ -98,7 +97,7 @@ impl fmt::Display for DomainError {
 
 impl std::error::Error for DomainError {}
 
-/// Domain result alias, mirroring `Result<T, DomainError>` in the TS engine.
+/// Domain result alias for `Result<T, DomainError>`.
 pub type DomainResult<T> = Result<T, DomainError>;
 
 #[cfg(test)]

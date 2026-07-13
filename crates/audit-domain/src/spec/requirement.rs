@@ -1,4 +1,4 @@
-//! The declarative requirement algebra. Ported from `specifications/combinators/*`.
+//! The declarative requirement algebra.
 //!
 //! The combinator set is closed (rule sets are curated, never user-extended), so
 //! it is modeled as a sum type — a `Requirement` tree that is pure data:
@@ -129,7 +129,7 @@ impl Requirement {
         }
     }
 
-    // --- Constructors mirroring the TS combinator factories ---
+    // --- Constructors ---
 
     pub fn min_credits(
         id: impl Into<String>,

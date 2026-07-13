@@ -1,5 +1,4 @@
-//! A study language for foreign-language requirements. Ported from the
-//! `languageFromText` helper shared by the rule-set category maps.
+//! A study language for foreign-language requirements.
 //!
 //! A closed enum with a canonical Japanese name per language. Detection folds
 //! variants that the requirements treat as one (e.g. 韓国語 / 朝鮮語 → Korean),
@@ -8,8 +7,8 @@
 use serde::{Deserialize, Serialize};
 
 /// A language a course may be taught in. `Unspecified` is the fallback used when
-/// a foreign-language course's language cannot be identified (mirrors the TS
-/// `"外国語"` default). The wire form is the canonical Japanese name.
+/// a foreign-language course's language cannot be identified. The wire form is
+/// the canonical Japanese name.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Language {
     #[serde(rename = "英語")]
@@ -33,7 +32,7 @@ pub enum Language {
 }
 
 impl Language {
-    /// Canonical Japanese name (matches the strings the TS engine stores/compares).
+    /// Canonical Japanese name.
     pub const fn name(self) -> &'static str {
         match self {
             Language::English => "英語",
@@ -48,8 +47,8 @@ impl Language {
         }
     }
 
-    /// Identify a language from already-normalized (`match_key`ed) text, mirroring
-    /// `languageFromText`. Returns `None` when no language is recognized; callers
+    /// Identify a language from already-normalized (`match_key`ed) text.
+    /// Returns `None` when no language is recognized; callers
     /// decide whether to fall back to [`Language::Unspecified`].
     pub fn from_normalized(text: &str) -> Option<Language> {
         let has = |needle: &str| text.contains(needle);
