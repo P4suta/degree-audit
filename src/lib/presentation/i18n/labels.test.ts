@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { fieldLabel, kindLabel, requirementLabel, unitLabel } from "./labels.ts";
+import {
+	fieldLabel,
+	kindLabel,
+	requirementLabel,
+	unitLabel,
+} from "./labels.ts";
 
 describe("requirementLabel", () => {
 	it("maps known requirement ids to localized labels", () => {
