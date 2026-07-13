@@ -10,8 +10,8 @@
 	import { requirementLabel } from "$lib/presentation/i18n/labels";
 	import * as m from "$lib/paraglide/messages";
 
-	// プロフィールも成績も PDF から同時に得られるので、どちらか欠けていれば
-	// 取り込みへ戻す（独立した /profile ステップは存在しない）。
+	// Both profile and transcript come from the same PDF, so if either is
+	// missing, go back to import (there is no separate /profile step).
 	onMount(() => {
 		if (profileStore.current === null || transcriptStore.current === null) {
 			void safeGoto(`${base}/import`);
@@ -20,13 +20,13 @@
 
 	const assessment = $derived(assessmentStore.current);
 
-	// tentative: 履修中をすべて合格した場合の assessment。各要件行の
-	// 「履修中込みで充足予定」判定に使う
+	// tentative: the assessment assuming all in-progress courses pass. Used
+	// for each requirement row's "projected to be satisfied" judgement.
 	const tentativeStepResult = (id: string) =>
 		assessment?.tentative?.steps.find((s) => s.id === id)?.result;
 
-	// バー長を必要単位数に比例させるための基準（リスト内の最大 required）。
-	// 総修得(124)が通常の最大になり、各分類はそれに対する割合で描かれる。
+	// Baseline for scaling bar length to required credits (the max required in
+	// the list). Total (124) is usually the max; each category draws relative to it.
 	const maxRequired = $derived.by(() => {
 		if (assessment === null) return 1;
 		return Math.max(

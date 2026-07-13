@@ -31,8 +31,9 @@
 	});
 	const label = $derived(() => requirementLabel(requirementId));
 
-	// tentative: 履修中をすべて合格した場合の同じ要件の評価。
-	// current と値が違えば「→ 履修中込みで N」と progress の下に出す
+	// tentative: this same requirement evaluated assuming all in-progress
+	// courses pass. If it differs from current, show "→ N incl. in-progress"
+	// below the progress.
 	const tentativeResult = $derived(() => {
 		if (assessment === null || assessment.tentative === undefined) return null;
 		const t = assessment.tentative;
@@ -41,7 +42,7 @@
 		return t.steps.find((s) => s.id === requirementId)?.result ?? null;
 	});
 
-	// 各科目の allocation view（natural home vs effective home）
+	// Per-course allocation view (natural home vs effective home).
 	const allocations = $derived.by(() => {
 		if (assessment === null || record === null) return null;
 		const passed = new Set(
@@ -50,9 +51,9 @@
 		return viewCourseAllocations(assessment, record.courses, passed);
 	});
 
-	// この要件の natural home 科目のうち、他所へ読み替えられたもの。
-	// 移動先で算入された（counted）ものと、枠超過で算入外になった（excluded）
-	// ものを双方向に一つのリストとして見せる
+	// Courses whose natural home is this requirement but which were reallocated
+	// elsewhere. Presents both those counted at the destination and those
+	// excluded by an over-cap overflow as a single list.
 	interface ReallocatedEntry {
 		readonly course: Course;
 		readonly destination: string;
@@ -73,10 +74,10 @@
 					reason: null,
 				});
 			} else if (alloc.status.kind === "excluded") {
-				// elective が 16 単位枠 / 他学部 cap で落としたものも、
-				// 元所属から見ると「選択へ読み替えたが算入外」になる。
-				// ruleset 差分で elective step id が変わるので、現 assessment の
-				// 実際の選択ステップ id を参照する
+				// Courses dropped by the elective 16-credit cap / other-faculty cap
+				// read, from the origin's view, as "reallocated to elective but not
+				// counted". The elective step id varies across rulesets, so look up
+				// the actual elective step id in the current assessment.
 				const electiveDestId =
 					assessment?.steps.find((s) => s.id.startsWith("elective-"))?.id ??
 					"elective-38";
@@ -91,7 +92,7 @@
 		return out;
 	});
 
-	// 要件を満たしたが、どこにも算入されなかった余り（例：教養 42 のうち 28 超過分の 14）
+	// Surplus that satisfied the requirement but was counted nowhere (e.g. 14 of the 42 general-education credits over the 28 cap).
 	const unusedOverflow = $derived.by(() => {
 		if (allocations === null) return [] as Course[];
 		const out: Course[] = [];
@@ -103,8 +104,9 @@
 		return out;
 	});
 
-	// この要件が natural home の履修中科目。まだ未評価だが、合格すればここに算入
-	// される候補。tentative で算入が確定しているものは "→ 算入予定" を出す
+	// In-progress courses whose natural home is this requirement. Not yet
+	// evaluated, but candidates to be counted here if they pass. Those confirmed
+	// counted in the tentative assessment show "→ projected to count".
 	const inProgressForThisReq = $derived.by(() => {
 		if (allocations === null) return [] as Course[];
 		if (isPipelineStep === false) return [] as Course[];
@@ -117,19 +119,19 @@
 		return out;
 	});
 
-	// total-124 / thesis-eligibility 用の一覧（natural home に関係なく全履修中を表示）
+	// List for total-124 / thesis-eligibility (shows all in-progress courses regardless of natural home).
 	const allInProgressCourses = $derived(
 		assessment?.inProgressCourses ?? ([] as readonly Course[]),
 	);
 
-	// この要件に「実際に算入されている」科目だけを抜き出す。
-	// spec.contributingCourses は kind にマッチした pool 全部を返すので、
-	// consume-required で超過した分（＝本来ここが natural home だが下流へ流れた
-	// 分）も含まれてしまう。allocation 情報で「この要件が消費した / elective
-	// 観察で算入した」ものだけにフィルタする。
-	// ただし total-124 / thesis-eligibility は pipeline step ではなく
-	// 全 passed courses を評価するもの（読み替え概念は無い）なので、フィルタせず
-	// r.contributingCourses をそのまま表示する
+	// Extract only the courses actually counted toward this requirement.
+	// spec.contributingCourses returns the whole pool matching the kind, so it
+	// also includes the consume-required overflow (naturally homed here but
+	// flowed downstream). Filter by allocation info to just those this
+	// requirement consumed / counted via the elective observation.
+	// Exception: total-124 / thesis-eligibility are not pipeline steps but
+	// evaluate all passed courses (no reallocation concept), so show
+	// r.contributingCourses as-is without filtering.
 	interface ContribEntry {
 		readonly course: Course;
 		readonly naturalHome: string | null;
@@ -143,7 +145,7 @@
 		for (const c of r.contributingCourses) {
 			const alloc = allocations?.get(c.id as string);
 			if (isPipelineStep) {
-				// 本要件で "counted" 扱いになっているものだけを残す
+				// Keep only those marked "counted" for this requirement.
 				if (alloc?.status.kind !== "counted") continue;
 				if (alloc.status.requirementId !== requirementId) continue;
 				entries.push({
@@ -152,7 +154,7 @@
 					reallocated: alloc.status.reallocated,
 				});
 			} else {
-				// total-124 / thesis-eligibility：そのまま表示
+				// total-124 / thesis-eligibility: show as-is.
 				entries.push({
 					course: c,
 					naturalHome:
@@ -166,7 +168,7 @@
 		return entries;
 	});
 
-	// ページタイトルは動的。要件名が解決できるまでは汎用タイトル
+	// Dynamic page title; use a generic title until the requirement name resolves.
 	const resolvedLabel = $derived(label());
 	const pageTitle = $derived(
 		resolvedLabel !== "" && resolvedLabel !== requirementId
@@ -214,7 +216,7 @@
 			tentativeSatisfied: tr?.satisfied,
 		})}
 		{@const unit = r.unit ?? "単位"}
-		<!-- ヒーロー: 要件名 + 状態 + 大メーター + 現在値。診断は静かな注記に -->
+		<!-- Hero: requirement name + status + large meter + current value. Diagnostics as a quiet note. -->
 		<section class="space-y-3">
 			<StatMeter
 				title={label()}
@@ -356,7 +358,7 @@
 			</section>
 		{/if}
 
-		<!-- 上級の配分情報は壁にせず、段階開示に畳む -->
+		<!-- Fold advanced allocation info into progressive disclosure rather than a wall. -->
 		{#if reallocatedOut.length > 0 || (r.excludedCourses && r.excludedCourses.length > 0) || unusedOverflow.length > 0}
 			<Disclosure title={m.requirement_allocation_disclosure()}>
 				{#if reallocatedOut.length > 0}

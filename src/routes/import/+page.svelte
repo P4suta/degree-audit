@@ -104,9 +104,9 @@
 	<title>{m.title_import()} — {m.app_title()}</title>
 </svelte:head>
 
-<!-- ドロップゾーン自身が用途を説明するので、見出しは文書アウトライン用に
-     sr-only で置くだけ。画面上は入力に集中させる。ドロップゾーンはビューポート
-     いっぱいに広げ、コンテンツを上下左右中央に置く。 -->
+<!-- The drop zone explains its own purpose, so the heading is sr-only, kept
+     only for the document outline; the screen stays focused on input. The drop
+     zone spans the full viewport with its content centered. -->
 <h2 class="sr-only">{m.import_heading()}</h2>
 
 <div class="flex min-h-fill flex-col">

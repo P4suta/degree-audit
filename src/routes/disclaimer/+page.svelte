@@ -7,7 +7,7 @@
 	import Card from "$lib/presentation/ui/Card.svelte";
 	import ArrowBack from "~icons/ic/round-arrow-back";
 
-	// このページから同意しても OK にする。モーダル経由と同じ扱い
+	// Allow consenting from this page too, treated the same as via the modal.
 	const handleAcknowledge = () => {
 		disclaimerStore.acknowledge();
 		void safeGoto(`${base}/`);
@@ -146,9 +146,9 @@
 
 {#if !disclaimerStore.acknowledged}
 	<!--
-	  未同意で /disclaimer を開いた場合（モーダル内リンクから来た等）。
-	  ここから直接同意して利用を開始できる導線を出す。
-	  同意済みの場合は冗長なので出さない
+	  Shown when /disclaimer is opened without consent (e.g. via the modal's link).
+	  Offers a path to consent directly here and start using the app.
+	  Omitted when already acknowledged, since it would be redundant.
 	-->
 	<div
 		class="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] p-6 text-center"
