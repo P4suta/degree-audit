@@ -1,17 +1,17 @@
 import type { FieldCategory } from "./field-category.ts";
 
 export type SubjectCategoryKind =
-	// R2-R5（令和2〜5年度）用の区分
+	// R2-R5 (AY2020-2023, Reiwa 2-5) categories
 	| "common-education/primary"
 	| "common-education/liberal/field"
 	| "common-education/liberal/foreign-language"
 	| "common-education/liberal/career"
-	// R6+（令和6年度以降）用の導入科目群分解
+	// R6+ (AY2024 onward, Reiwa 6+) introductory course groups
 	| "common-education/introductory/core-learning"
 	| "common-education/introductory/core-english"
 	| "common-education/introductory/foreign-language"
 	| "common-education/introductory/math-ai"
-	// R6+ 教養科目群 7 分野
+	// R6+ liberal course group: 7 fields
 	| "common-education/liberal-group/life"
 	| "common-education/liberal-group/health-sports"
 	| "common-education/liberal-group/career"
@@ -19,22 +19,22 @@ export type SubjectCategoryKind =
 	| "common-education/liberal-group/humanities-social"
 	| "common-education/liberal-group/natural-science"
 	| "common-education/liberal-group/complex"
-	// ゼミナール（両制度共通）
+	// Seminar (both regimes)
 	| "seminar/1-2"
 	| "seminar/3-4/spring"
 	| "seminar/3-4/fall"
 	| "seminar/5-6-thesis"
-	// R2-R5 プラットフォーム構成
+	// R2-R5 platform structure
 	| "platform/basic-a"
 	| "platform/basic-b"
 	| "platform/foreign-language"
 	| "platform/advanced"
-	// R6+ プラットフォーム構成
+	// R6+ platform structure
 	| "platform/faculty-common"
 	| "platform/humanities"
 	| "platform/global-studies"
 	| "platform/social-science"
-	// 選択（両制度共通）
+	// Elective (both regimes)
 	| "elective/own-course"
 	| "elective/other-course"
 	| "elective/other-faculty"
@@ -51,7 +51,7 @@ export type SubjectCategory =
 			readonly language: string;
 	  }
 	| { readonly kind: "common-education/liberal/career" }
-	// R6+ 導入科目群
+	// R6+ introductory course groups
 	| { readonly kind: "common-education/introductory/core-learning" }
 	| { readonly kind: "common-education/introductory/core-english" }
 	| {
@@ -59,7 +59,7 @@ export type SubjectCategory =
 			readonly language: string;
 	  }
 	| { readonly kind: "common-education/introductory/math-ai" }
-	// R6+ 教養科目群 7 分野
+	// R6+ liberal course group: 7 fields
 	| { readonly kind: "common-education/liberal-group/life" }
 	| { readonly kind: "common-education/liberal-group/health-sports" }
 	| { readonly kind: "common-education/liberal-group/career" }
@@ -75,7 +75,7 @@ export type SubjectCategory =
 	| { readonly kind: "platform/basic-b" }
 	| { readonly kind: "platform/foreign-language" }
 	| { readonly kind: "platform/advanced" }
-	// R6+ プラットフォーム
+	// R6+ platform
 	| { readonly kind: "platform/faculty-common" }
 	| { readonly kind: "platform/humanities" }
 	| { readonly kind: "platform/global-studies" }
@@ -98,7 +98,7 @@ export const SubjectCategory = {
 	liberalCareer: (): SubjectCategory => ({
 		kind: "common-education/liberal/career",
 	}),
-	// R6+ 導入科目群
+	// R6+ introductory course groups
 	introCoreLearning: (): SubjectCategory => ({
 		kind: "common-education/introductory/core-learning",
 	}),
@@ -112,7 +112,7 @@ export const SubjectCategory = {
 	introMathAi: (): SubjectCategory => ({
 		kind: "common-education/introductory/math-ai",
 	}),
-	// R6+ 教養科目群 7 分野
+	// R6+ liberal course group: 7 fields
 	liberalGroupLife: (): SubjectCategory => ({
 		kind: "common-education/liberal-group/life",
 	}),
@@ -144,7 +144,7 @@ export const SubjectCategory = {
 		kind: "platform/foreign-language",
 	}),
 	platformAdvanced: (): SubjectCategory => ({ kind: "platform/advanced" }),
-	// R6+ プラットフォーム
+	// R6+ platform
 	platformFacultyCommon: (): SubjectCategory => ({
 		kind: "platform/faculty-common",
 	}),
@@ -186,9 +186,8 @@ export const isLiberal = (c: SubjectCategory): boolean =>
 	c.kind.startsWith("common-education/liberal");
 
 /**
- * 画面表示用のカテゴリ名。診断メッセージやバッジなどで kind の生文字列
- * （例: `common-education/liberal/field`）を出さないようにするための単一情報源。
- * ここを更新するだけで全画面の表示が揃う。
+ * Display names for categories: the single source of truth so diagnostics and
+ * badges never surface a raw kind string (e.g. `common-education/liberal/field`).
  */
 const KIND_DISPLAY_NAMES: Readonly<Record<SubjectCategoryKind, string>> = {
 	"common-education/primary": "初年次科目",

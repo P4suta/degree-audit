@@ -3,9 +3,9 @@
 	import ChevronDown from "~icons/ic/round-expand-more";
 	import type { HTMLSelectAttributes } from "svelte/elements";
 
-	// appearance-none で OS デフォルトの矢印を消し、<ChevronDown> を重ね描き。
-	// iOS auto-zoom 回避のため text-base (16px)、タップターゲットのため min-h-[44px]。
-	// 値型は number / string 両方を受けられるようにジェネリック化。
+	// appearance-none hides the OS default arrow; <ChevronDown> is drawn on top.
+	// text-base (16px) avoids iOS auto-zoom; min-h-[44px] for the tap target.
+	// Generic over value type so it accepts number or string.
 
 	interface Props extends Omit<HTMLSelectAttributes, "class" | "value" | "children"> {
 		value?: TValue;

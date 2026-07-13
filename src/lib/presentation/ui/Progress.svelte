@@ -9,16 +9,15 @@
 		readonly actual: number;
 		readonly required: number;
 		readonly satisfied: boolean;
-		/** 履修中を含めた tentative actual（履修中が無い / 情報が無い場合は省略）。 */
+		/** Tentative actual including in-progress (omitted when none / unknown). */
 		readonly tentativeActual?: number | undefined;
-		/** 履修中を含めた tentative satisfied（badge/state 判定に使う）。 */
+		/** Tentative satisfied including in-progress (drives badge/state). */
 		readonly tentativeSatisfied?: boolean | undefined;
 		readonly unit?: string;
 		readonly class?: string;
-		/** ラベル行と残りテキストを出すか（カードの中では true、
-		 *  コンパクト表示では false） */
+		/** Whether to show the label row and remaining text. */
 		readonly showLabel?: boolean;
-		/** トラックの太さ。sm=4px（行内・レポート行）、hero=8px（ヒーローメーター）。 */
+		/** Track thickness: sm=4px (inline/report rows), hero=8px (hero meter). */
 		readonly size?: "sm" | "hero";
 	}
 
@@ -79,9 +78,8 @@
 	>
 		{#if layout.hasInProgress}
 			<!--
-			  履修中層: 完了〜履修中まで広がる下敷き。Apple Blue を薄くして
-			  `repeating-linear-gradient` で斜線を敷く。stripe は 4px 周期で
-			  accent-ring / 透過の繰り返し（動かない）。
+			  In-progress layer: underlay spanning completed→in-progress. Faint Apple
+			  Blue with a static diagonal `repeating-linear-gradient` stripe.
 			-->
 			<div
 				class="absolute inset-y-0 left-0 motion-safe:transition-all"
@@ -89,7 +87,7 @@
 				aria-hidden="true"
 			></div>
 		{/if}
-		<!-- 完了層: 履修中層の上にかぶせる -->
+		<!-- Completed layer: overlaid on the in-progress layer. -->
 		<div
 			class="absolute inset-y-0 left-0 {fillColor} motion-safe:transition-all"
 			style={`width: ${layout.completedPct}%`}

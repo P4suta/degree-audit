@@ -131,10 +131,9 @@ describe("viewCourseAllocations — edge cases", () => {
 		const v = viewCourseAllocations(withEx, record.courses, passedIds);
 		const firstCourseId = record.courses[0]?.id as string;
 		const alloc = v.get(firstCourseId);
-		// 最初の course は primary-named なので pipeline が consume 済み。
-		// contribut に含まれる場合は counted になるので excluded 経路は辿らないが、
-		// 少なくとも 1 件でも excluded 経路が実行されることを確認するため、
-		// pipeline consume に無い仮想 course を使う
+		// The first course is primary-named, so the pipeline already consumed it
+		// (counted, not excluded). Use a synthetic course absent from the pipeline
+		// to exercise the excluded path at least once.
 		void alloc;
 		const orphan = Course.of({
 			id: CourseId.of("ORPHAN"),
@@ -183,7 +182,7 @@ describe("viewCourseAllocations — edge cases", () => {
 			AcademicRecord.passedCourses(record).map((c) => c.id as string),
 		);
 		const v = viewCourseAllocations(stripped, record.courses, passedIds);
-		// 以前 elective で算入されていた own-course 類は unused-overflow 扱いになる
+		// own-course courses formerly counted as elective become unused-overflow
 		const ownCourses = [...v.values()].filter(
 			(a) => a.course.category.kind === "elective/own-course",
 		);

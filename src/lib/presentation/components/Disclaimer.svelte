@@ -45,16 +45,16 @@
 </script>
 
 <!--
-  ご利用にあたって（免責事項）同意モーダル。
+  Terms-of-use (disclaimer) consent modal.
 
-  レイアウト方針:
-    - モバイル（<640px）: フル viewport の "シート"。rounded/border なし。
-      viewport 全体を使いきるので「縦にはみ出す」感を消す。notch/ホームバー
-      対応で safe-area-inset を padding に乗せる。
-    - デスクトップ（≥640px）: 中央配置の max-w-modal（560px）カード。
+  Layout:
+    - Mobile (<640px): full-viewport "sheet", no radius/border. Fills the whole
+      viewport to kill the "overflows vertically" feel; safe-area-inset is added
+      to padding for notch / home-bar devices.
+    - Desktop (≥640px): centered max-w-modal (560px) card.
 
-  高さは 100dvh (dynamic viewport height) を優先。iOS Safari で address bar
-  が表示されているとき 100vh が実画面より大きくなる問題を回避する。
+  Height prefers 100dvh (dynamic viewport height) to avoid iOS Safari's 100vh
+  being larger than the real viewport while the address bar is shown.
 -->
 <dialog
 	bind:this={dialogEl}

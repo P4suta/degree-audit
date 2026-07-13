@@ -58,7 +58,6 @@ describe("computeProgressLayout", () => {
 			tentativeActual: 3,
 			required: 12,
 		});
-		// tentative は actual に張り付く
 		expect(out.tentativeActualOrActual).toBe(8);
 		expect(out.tentativePct).toBeCloseTo(out.completedPct);
 		expect(out.hasInProgress).toBe(false);

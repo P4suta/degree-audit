@@ -4,12 +4,12 @@
 	import { resolveProgressState } from "./progress-layout.ts";
 
 	/**
-	 * ヒーロー用のメーターブロック。大見出し（verdict / 要件名）＋太いメーター＋
-	 * 数値リードアウト＋補助スロットを 1 かたまりにする。Dashboard の全体進捗と
-	 * 要件詳細の要件進捗で共用する。カードで囲わず、余白と階層で前に出す。
+	 * Hero meter block: large heading (verdict / requirement name) + thick meter +
+	 * numeric readout + auxiliary slots as one unit. Shared by the dashboard's
+	 * overall progress and requirement detail. Foregrounded by spacing, not a card.
 	 */
 	interface Props {
-		/** 大見出し（卒業判定の verdict、または要件名）。 */
+		/** Large heading (graduation verdict or requirement name). */
 		readonly title: string;
 		readonly actual: number;
 		readonly required: number;
@@ -17,12 +17,11 @@
 		readonly tentativeActual?: number | undefined;
 		readonly tentativeSatisfied?: boolean | undefined;
 		readonly unit?: string;
-		/** 見出しの直下・メーターの上に出る補助行（ステータス badge・注記など）。 */
+		/** Auxiliary row below the heading, above the meter (status badges, notes). */
 		readonly lead?: Snippet;
-		/** リードアウト行の下に出るメタ情報（badge 群など）。 */
+		/** Meta info below the readout row (badge group, etc.). */
 		readonly meta?: Snippet;
-		/** リードアウト右の「あと N / 履修中」ヒントを出すか（見出しが残数を
-		 *  述べている場合は false で重複を避ける）。 */
+		/** Whether to show the "remaining N / in progress" hint at the right of the readout. */
 		readonly showHint?: boolean;
 	}
 
@@ -46,11 +45,11 @@
 	const inProgressDelta = $derived(
 		tentativeActual === undefined ? 0 : Math.max(0, tentativeActual - actual),
 	);
-	// 達成率（0〜100%）。超過は 100% で頭打ち。
+	// Completion rate (0-100%), capped at 100%.
 	const pct = $derived(
 		required > 0 ? Math.round(Math.min(100, (actual / required) * 100)) : 0,
 	);
-	// 履修中込みの見込み達成率と、その差分があるか。
+	// Projected rate including in-progress, and whether there's a delta.
 	const hasInProgress = $derived(
 		tentativeActual !== undefined && tentativeActual > actual,
 	);

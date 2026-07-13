@@ -35,7 +35,7 @@ pub enum Grade {
     /// 履修中 — in progress; not yet counted, but a future counting candidate.
     #[serde(rename = "履修中")]
     Risyuchu,
-    /// 不明 — unknown / unparseable.
+    /// 不明 — unknown / unparsable.
     #[serde(rename = "不明")]
     Unknown,
 }

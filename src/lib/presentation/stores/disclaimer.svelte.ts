@@ -1,12 +1,12 @@
 /**
- * 免責事項の同意状態をメモリ上で保持するストア。
+ * In-memory store for the disclaimer acknowledgement state.
  *
- * 他の store と同じく **永続化しない**：タブを閉じる・リロードする・別サイトへ
- * 離脱するたびに false に戻り、免責モーダルが再度表示される。
+ * Like the other stores, **never persisted**: it resets to false on tab close,
+ * reload, or navigating away, so the disclaimer modal shows again.
  *
- * 毎セッションでの再確認は意図的。卒業要件という人の進路に関わる判定を扱う
- * ため、単発の「同意を押した事実」を記憶して済ませるのではなく、利用者が
- * 毎回その前提を認識することを重視する。
+ * Re-confirming each session is intentional. Because the tool makes judgements
+ * that affect a person's academic path, the goal is for users to re-acknowledge
+ * the premise every time rather than relying on a single past acknowledgement.
  */
 class DisclaimerStore {
 	#acknowledged: boolean = $state(false);

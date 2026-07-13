@@ -1,7 +1,6 @@
 <!--
-  後方互換のためのシム（ラベル無しのバー単体）。
-  新コードはラベル付きバーが欲しければ `$lib/presentation/ui/Progress.svelte`
-  を直接 import する。
+  Backward-compat shim (bare bar, no label). New code that wants a labeled bar
+  should import `$lib/presentation/ui/Progress.svelte` directly.
 -->
 <script lang="ts">
 	interface Props {

@@ -7,9 +7,9 @@
 		readonly onFile: (file: File) => void;
 		readonly accept?: string;
 		readonly disabled?: boolean;
-		/** 取り込み処理中。ゾーン内にスピナー状態を出し、操作を止める。 */
+		/** Importing: show a spinner in the zone and block interaction. */
 		readonly busy?: boolean;
-		/** 追加クラス（例: flex-1 で親の高さいっぱいに広げる）。 */
+		/** Extra classes (e.g. flex-1 to fill the parent height). */
 		readonly class?: string;
 	}
 

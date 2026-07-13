@@ -6,9 +6,9 @@
 		class?: string;
 		padding?: "sm" | "md" | "lg" | "none";
 		/**
-		 * "bordered" (default) = 境界 1px + 影なし（Apple 流）
-		 * "flat"     = 境界なし + 影なし（画面の背景差で区切るとき）
-		 * "lifted"   = 影あり（重要な最前面カード。多用しない）
+		 * "bordered" (default) = 1px border, no shadow (Apple style)
+		 * "flat"     = no border, no shadow (separated by background contrast)
+		 * "lifted"   = with shadow (important foreground card; use sparingly)
 		 */
 		variant?: "bordered" | "flat" | "lifted";
 	}

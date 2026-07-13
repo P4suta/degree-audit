@@ -22,15 +22,13 @@ export const AcademicRecord = {
 		record.courses.filter((c) => isPassing(c.grade)),
 
 	/**
-	 * 履修中（評価未確定）の科目。現時点の卒業判定には算入されないが、
-	 * 「すべて合格した場合」の tentative 判定に使う。
+	 * In-progress (grade pending) courses. Not counted toward graduation now,
+	 * but used for the tentative "if all are passed" assessment.
 	 */
 	inProgressCourses: (record: AcademicRecord): readonly Course[] =>
 		record.courses.filter((c) => isInProgress(c.grade)),
 
-	/**
-	 * passed courses に履修中を加えた集合。tentative 判定の入力になる。
-	 */
+	/** Passed courses plus in-progress ones. Input to the tentative assessment. */
 	passedOrInProgressCourses: (record: AcademicRecord): readonly Course[] =>
 		record.courses.filter((c) => isPassing(c.grade) || isInProgress(c.grade)),
 

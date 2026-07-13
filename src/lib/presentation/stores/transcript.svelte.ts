@@ -1,10 +1,11 @@
 import type { AcademicRecord } from "../../domain/entities/academic-record.ts";
 
 /**
- * 履修記録のメモリ保持ストア。
+ * In-memory store for the academic record.
  *
- * **永続化はしない**。成績という機微情報を扱うため、タブを閉じたら必ず消える
- * メモリ保持のみに限定する（LocalStorage / SessionStorage 等には書き出さない）。
+ * **Never persisted.** Because grades are sensitive, the record is kept in
+ * memory only and always cleared when the tab closes (never written to
+ * LocalStorage / SessionStorage etc.).
  */
 class TranscriptStore {
 	#current: AcademicRecord | null = $state(null);

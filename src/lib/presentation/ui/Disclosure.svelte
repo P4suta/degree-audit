@@ -3,15 +3,15 @@
 	import ChevronRight from "~icons/ic/round-chevron-right";
 
 	/**
-	 * 段階開示。native <details>/<summary> の上に薄く化粧しただけ。展開状態・
-	 * キーボード操作・スクリーンリーダー通知はブラウザ標準に委ねる（a11y 無料）。
-	 * 主要情報の下に「上級の詳細」を畳んでおき、壁を作らないために使う。
+	 * Progressive disclosure: a thin skin over native <details>/<summary>.
+	 * Expand state, keyboard, and screen-reader announcements are left to the
+	 * browser (a11y for free). Use it to fold advanced detail under the essentials.
 	 */
 	interface Props {
 		readonly title: string;
-		/** 見出し右に出す件数など（任意）。 */
+		/** Optional count shown at the right of the heading. */
 		readonly count?: number | undefined;
-		/** 初期状態で開くか。 */
+		/** Whether it starts expanded. */
 		readonly open?: boolean;
 		readonly children: Snippet;
 	}

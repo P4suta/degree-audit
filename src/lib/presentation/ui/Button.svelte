@@ -28,7 +28,7 @@
 			case "secondary":
 				return "bg-[color:var(--color-surface)] text-[color:var(--color-fg)] border-[color:var(--color-border)] hover:bg-[color:var(--color-surface-alt)]";
 			case "pill":
-				// Apple の "Learn more" 風。pill 形状 + accent-link テキスト
+				// Apple "Learn more" style: pill shape + accent-link text.
 				return "bg-transparent text-[color:var(--color-accent-link)] border-[color:var(--color-accent-link)] hover:bg-[color:var(--color-accent-ring)]";
 			case "ghost":
 				return "bg-transparent text-[color:var(--color-fg-muted)] border-transparent hover:bg-[color:var(--color-divider)]";
@@ -37,11 +37,11 @@
 		}
 	});
 
-	// サイズは WCAG / iOS HIG / Material の推奨に沿って：
-	//   sm=32px（副次操作・密度優先のセカンダリ）
-	//   md=44px（主要操作・iOS HIG の最小タップ推奨値）
-	//   lg=52px（CTA・「本気の同意」用。Disclaimer の同意ボタン等）
-	// min-h で下限を保証し、padding は line-height + min-h で決まる視覚高さの調整用。
+	// Sizes follow WCAG / iOS HIG / Material guidance:
+	//   sm=32px (secondary / density-first actions)
+	//   md=44px (primary actions; iOS HIG minimum tap target)
+	//   lg=52px (CTAs / strong consent, e.g. the Disclaimer accept button)
+	// min-h guarantees the floor; padding tunes the visual height set by line-height + min-h.
 	const sizeClass = $derived.by(() => {
 		switch (size) {
 			case "sm":

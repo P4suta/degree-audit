@@ -23,8 +23,9 @@
 		Credit.toNumber(assessment.inProgressCredits),
 	);
 	const inProgressCount = $derived(assessment.inProgressCourses.length);
-	// 履修中がすべて合格した時の tentative 判定。現在 graduatable=false でも
-	// tentative.graduatable=true なら「今期全部通れば卒業できる」ヒントを出せる
+	// Tentative verdict assuming all in-progress courses pass: even when
+	// graduatable=false, tentative.graduatable=true lets us hint "pass everything
+	// this term to graduate".
 	const tentative = $derived(assessment.tentative);
 	const showTentativeHopeful = $derived(
 		!assessment.graduatable && tentative !== undefined && tentative.graduatable,
@@ -32,8 +33,8 @@
 
 	const verdictTitle = $derived.by(() => {
 		if (assessment.graduatable) return "卒業要件を満たしています";
-		// 履修中（卒論など）がすべて通れば充足するなら、それを前面に出す。
-		// 「未充足」より「充足予定」の方が実態に近く役に立つ。
+		// If in-progress work (e.g. thesis) would satisfy it, surface that:
+		// "will be satisfied" is more accurate and useful than "unmet".
 		if (tentative?.graduatable) return "履修中を含めれば卒業要件を満たせます";
 		if (totalRemaining > 0) return `卒業要件まであと ${totalRemaining} 単位`;
 		return "卒業要件は未充足です";
