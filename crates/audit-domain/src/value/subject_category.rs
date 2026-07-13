@@ -1,4 +1,4 @@
-//! What bucket a course falls into. Ported from `value-objects/subject-category.ts`.
+//! What bucket a course falls into.
 //!
 //! [`SubjectCategory`] is the data-bearing category (some variants carry a field
 //! or language). [`SubjectKind`] is its field-less discriminant — a `Copy` value
@@ -119,7 +119,7 @@ impl SubjectKind {
         }
     }
 
-    /// Japanese display label (mirrors `KIND_DISPLAY_NAMES`).
+    /// Japanese display label.
     pub const fn display_name(self) -> &'static str {
         use SubjectKind::*;
         match self {
@@ -352,7 +352,7 @@ mod tests {
     }
 
     #[test]
-    fn wire_shape_matches_ts() {
+    fn wire_shape_is_stable() {
         let c = SubjectCategory::LiberalField {
             field: FieldCategory::Humanities,
         };

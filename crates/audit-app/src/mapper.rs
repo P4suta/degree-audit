@@ -182,7 +182,7 @@ mod tests {
     }
 
     #[test]
-    fn maps_valid_rows_and_skips_unparseable_credit() {
+    fn maps_valid_rows_and_skips_unparsable_credit() {
         let raws = vec![
             raw("大学基礎論", "共通教育 / 初年次科目", "2", "優"),
             raw("壊れた行", "共通教育 / 初年次科目", "", "可"),

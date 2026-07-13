@@ -1,4 +1,4 @@
-//! The graduation assessment service. Ported from `application/assess-graduation.ts`.
+//! The graduation assessment service.
 //!
 //! Pure computation with no I/O, so it lives in the domain. Runs the allocation
 //! pipeline over passing courses, evaluates the standalone total-credits and

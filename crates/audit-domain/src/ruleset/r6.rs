@@ -1,5 +1,4 @@
 //! The R6 rule set: 令和6年度 (2024–) 人文科学コース.
-//! Ported from `rulesets/r6-humanities-2024/{metadata,category-map,requirements}.ts`.
 
 use audit_text::match_key;
 
@@ -19,7 +18,7 @@ fn applicable_to(profile: &StudentProfile) -> bool {
     match_key(&profile.course_id).contains(&match_key("人文"))
 }
 
-// --- category map (ported from r6/category-map.ts) ---
+// --- category map ---
 
 fn language_from(label: &str, name: &str) -> Language {
     Language::from_normalized(name)
@@ -152,7 +151,7 @@ fn category_map(lookup: &CategoryLookup) -> SubjectCategory {
 
 pub const CATEGORY_MAP: CategoryMap = category_map;
 
-// --- requirements (ported from r6/requirements.ts) ---
+// --- requirements ---
 
 fn core_learning_required() -> Vec<NamedSubject> {
     vec![

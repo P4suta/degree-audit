@@ -20,5 +20,4 @@ export const CourseId = {
 		}
 		return brand(trimmed);
 	},
-	toString: (id: CourseId): string => id,
 } as const;

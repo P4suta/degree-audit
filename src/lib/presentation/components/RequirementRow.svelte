@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { base } from "$app/paths";
-	import type { SpecResult } from "$lib/domain/specifications/types";
+	import type { SpecResult } from "$lib/application/assessment-types";
+	import { unitLabel } from "$lib/presentation/i18n/labels";
+	import * as m from "$lib/paraglide/messages";
 	import Badge from "../ui/Badge.svelte";
 	import { resolveProgressState } from "../ui/progress-layout.ts";
 	import ChevronRight from "~icons/ic/round-chevron-right";
@@ -10,14 +12,14 @@
 		readonly label: string;
 		readonly result: SpecResult;
 		readonly tentativeResult?: SpecResult | undefined;
-		/** リスト内の最大 required。これを基準にバー長・目盛りを共通スケール化し、
-		 *  「塗り＝取得単位・空き＝残り単位」を絶対量として目視で測れるようにする。 */
+		/** Largest required in the list; used as the shared scale for bar length
+		 *  and ticks so fill=earned and empty=remaining read as absolute amounts. */
 		readonly maxRequired: number;
 	}
 
 	const { id, label, result, tentativeResult, maxRequired }: Props = $props();
 
-	const unit = $derived(result.unit ?? "単位");
+	const unit = $derived(unitLabel(result.unit));
 	const remaining = $derived(Math.max(0, result.required - result.actual));
 	const state = $derived(
 		resolveProgressState({
@@ -30,22 +32,22 @@
 			? 0
 			: Math.max(0, tentativeResult.actual - result.actual),
 	);
-	// 達成率（0〜100%）。超過は 100% で頭打ち。
+	// Completion rate (0-100%), capped at 100%.
 	const percent = $derived(
 		result.required > 0
 			? Math.round(Math.min(100, (result.actual / result.required) * 100))
 			: 0,
 	);
-	// 履修中込みの見込み達成率（履修中がすべて通った場合）。
+	// Projected rate including in-progress (if all in-progress courses pass).
 	const tentativePercent = $derived(
 		tentativeResult !== undefined && result.required > 0
 			? Math.round(Math.min(100, (tentativeResult.actual / result.required) * 100))
 			: percent,
 	);
 
-	// すべて共通スケール（0〜maxRequired 単位）で幅を出す。よって
-	//   track 幅 = この要件の必要単位、fill 幅 = 取得単位、空き = 残り単位
-	// が行をまたいで同じ物差しで読める。
+	// All widths on a shared scale (0-maxRequired credits), so
+	//   track = this requirement's required, fill = earned, empty = remaining
+	// read on the same ruler across rows.
 	const base100 = $derived(maxRequired > 0 ? maxRequired : 1);
 	const pct = (n: number) => (Math.max(0, n) / base100) * 100;
 	const requiredPct = $derived(pct(result.required));
@@ -59,7 +61,7 @@
 		),
 	);
 	const hasInProgress = $derived(tentativePct > actualPct + 0.01);
-	// 10 単位ごとの目盛り。共通スケールなので全行で縦に揃う。
+	// Ticks every 10 credits; the shared scale keeps them aligned across rows.
 	const tickPct = $derived((10 / base100) * 100);
 	const fillColor = $derived(
 		result.satisfied
@@ -68,15 +70,20 @@
 	);
 	const ariaValueText = $derived(
 		hasInProgress
-			? `${result.actual} / ${result.required} ${unit}（履修中 ${inProgressDelta} ${unit}）`
+			? m.aria_progress_in_progress({
+					actual: result.actual,
+					required: result.required,
+					unit,
+					delta: inProgressDelta,
+				})
 			: `${result.actual} / ${result.required} ${unit}`,
 	);
 </script>
 
 <!--
-  レポート行: 罫線区切りのリストで並べる 1 行。行頭に状態ドット、要件名、
-  右端に現在値と chevron。2 行目は共通スケールのメーター（目盛り + トラック +
-  取得塗り）で、単位数の重みと取得/残りを目視で測れるようにする。
+  Report row: one line in a rule-separated list. Status dot, requirement name,
+  then current value and chevron. The second line is a shared-scale meter
+  (ticks + track + earned fill) so credit weight and earned/remaining are legible.
 -->
 <a
 	href={`${base}/requirements/${encodeURIComponent(id)}`}
@@ -84,11 +91,11 @@
 >
 	<div class="flex items-center gap-3">
 		{#if state === "satisfied"}
-			<Badge variant="success" dot pill>充足</Badge>
+			<Badge variant="success" dot pill>{m.badge_satisfied()}</Badge>
 		{:else if state === "in-progress"}
-			<Badge variant="accent" dot pill>履修中</Badge>
+			<Badge variant="accent" dot pill>{m.badge_in_progress()}</Badge>
 		{:else}
-			<Badge variant="warning" dot pill>不足</Badge>
+			<Badge variant="warning" dot pill>{m.badge_unmet()}</Badge>
 		{/if}
 		<span
 			class="flex-1 min-w-0 truncate text-body-emph text-[color:var(--color-fg)]"
@@ -117,13 +124,13 @@
 			aria-valuemax={result.required}
 			aria-valuetext={ariaValueText}
 		>
-			<!-- トラック: 0〜必要単位（この要件の大きさ） -->
+			<!-- Track: 0-required (this requirement's size). -->
 			<div
 				class="absolute inset-y-0 left-0 bg-[color:var(--color-overlay-light)]"
 				style={`width: ${requiredPct}%`}
 				aria-hidden="true"
 			></div>
-			<!-- 履修中層: 取得〜履修中込みまで、accent の薄い斜線ストライプ -->
+			<!-- In-progress layer: earned→in-progress, faint accent diagonal stripe. -->
 			{#if hasInProgress}
 				<div
 					class="absolute inset-y-0 left-0 motion-safe:transition-all"
@@ -131,14 +138,14 @@
 					aria-hidden="true"
 				></div>
 			{/if}
-			<!-- 取得塗り: 0〜取得単位（絶対長＝取得単位） -->
+			<!-- Earned fill: 0-earned (absolute length = earned credits). -->
 			<div
 				class="absolute inset-y-0 left-0 rounded-[var(--radius-pill)] {fillColor} motion-safe:transition-all"
 				style={`width: ${actualPct}%`}
 				aria-hidden="true"
 			></div>
-			<!-- 目盛り: 0〜必要単位を 10 単位ごとに薄く刻む物差し。最前面に置き、
-			     取得塗り・残りトラックの両方を横断して長さを測れるようにする。 -->
+			<!-- Ticks: a ruler marking every 10 credits up to required, kept on top
+			     so lengths are measurable across both fill and remaining track. -->
 			<div
 				class="absolute inset-y-0 left-0"
 				style={`width: ${requiredPct}%; background-image: repeating-linear-gradient(to right, var(--color-overlay-medium) 0, var(--color-overlay-medium) 1px, transparent 1px, transparent ${tickPct}%)`}
@@ -149,14 +156,14 @@
 			class="flex shrink-0 items-baseline gap-1.5 text-caption tabular-nums"
 		>
 			{#if hasInProgress}
-				<!-- 現状% → 履修中込みの見込み% -->
+				<!-- Current % → projected % including in-progress. -->
 				<span class="font-medium text-[color:var(--color-fg-subtle)]">{percent}%</span>
 				<span class="font-medium text-[color:var(--color-accent-link)]">
 					→ {tentativePercent}%
 				</span>
 			{:else if state === "unmet" && remaining > 0}
 				<span class="font-medium text-[color:var(--color-warning-fg)]">
-					あと {remaining} {unit}
+					{m.progress_remaining({ remaining, unit })}
 				</span>
 				<span class="font-medium text-[color:var(--color-fg-subtle)]">{percent}%</span>
 			{:else}

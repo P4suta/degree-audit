@@ -1,8 +1,8 @@
 //! Rule sets: the curated graduation requirements for a faculty/year cohort, plus
 //! the registry that resolves the applicable one for a profile.
 //!
-//! Ported from `rulesets/types.ts` and `rulesets/registry.ts`. A [`RuleSet`] is
-//! mostly pure data (a requirement pipeline); its category map and predicates are
+//! A [`RuleSet`] is mostly pure data (a requirement pipeline); its category map
+//! and predicates are
 //! plain function pointers (never serialized), keeping the type framework-free.
 
 pub mod default;

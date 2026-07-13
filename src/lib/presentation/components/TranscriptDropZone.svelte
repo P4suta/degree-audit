@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from "$lib/paraglide/messages";
 	import Button from "../ui/Button.svelte";
 	import FileUp from "~icons/ic/round-upload-file";
 	import Spinner from "~icons/ic/round-autorenew";
@@ -7,9 +8,9 @@
 		readonly onFile: (file: File) => void;
 		readonly accept?: string;
 		readonly disabled?: boolean;
-		/** 取り込み処理中。ゾーン内にスピナー状態を出し、操作を止める。 */
+		/** Importing: show a spinner in the zone and block interaction. */
 		readonly busy?: boolean;
-		/** 追加クラス（例: flex-1 で親の高さいっぱいに広げる）。 */
+		/** Extra classes (e.g. flex-1 to fill the parent height). */
 		readonly class?: string;
 	}
 
@@ -55,7 +56,7 @@
 <div
 	class="flex flex-col items-center justify-center gap-5 rounded-[var(--radius-card)] border-2 border-dashed px-6 py-12 text-center motion-safe:transition-colors sm:py-16 {stateClass} {className}"
 	role="region"
-	aria-label="成績ファイルのドロップゾーン"
+	aria-label={m.dropzone_region_label()}
 	aria-busy={busy}
 	ondragover={(e) => {
 		e.preventDefault();
@@ -76,7 +77,7 @@
 				class="h-8 w-8 text-[color:var(--color-accent)] motion-safe:animate-spinner"
 				aria-hidden="true"
 			/>
-			<p class="text-body">取り込み中…</p>
+			<p class="text-body">{m.dropzone_importing()}</p>
 		</div>
 	{:else}
 		<span
@@ -86,10 +87,10 @@
 		</span>
 		<div class="space-y-1.5">
 			<p class="text-h2 text-[color:var(--color-fg)]">
-				PDF 成績表をここにドロップ
+				{m.dropzone_title()}
 			</p>
 			<p class="text-body text-[color:var(--color-fg-muted)]">
-				大学発行の「個別成績表（PDF）」をそのまま
+				{m.dropzone_subtitle()}
 			</p>
 		</div>
 		<Button
@@ -97,7 +98,7 @@
 			onclick={() => inputElement?.click()}
 			disabled={inert}
 		>
-			ファイルを選択
+			{m.dropzone_select_file()}
 		</Button>
 		<input
 			bind:this={inputElement}

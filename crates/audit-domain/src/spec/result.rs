@@ -1,10 +1,8 @@
-//! The outcome of evaluating a requirement. Ported from `specifications/types.ts`.
+//! The outcome of evaluating a requirement.
 //!
 //! Diagnostics are kept as *structured facts* (an enum), not pre-rendered
 //! Japanese strings — human wording is a presentation concern. This keeps the
-//! domain pure and lets any front-end localize. The decision-relevant fields
-//! (`satisfied` / `required` / `actual` / `unit` / `contributing` / `excluded`)
-//! mirror the TypeScript engine one-for-one.
+//! domain pure and lets any front-end localize.
 
 use serde::{Deserialize, Serialize};
 
@@ -12,22 +10,21 @@ use crate::entity::academic_record::SharedCourse;
 use crate::value::{FieldCategory, Language, SubjectKind};
 
 /// The counting unit a [`SpecResult`]'s `required`/`actual` are expressed in.
+///
+/// Serialized as a stable key (the default `credit` is omitted from the wire);
+/// the front-end localizes it. `token()` holds the Japanese form for the CLI.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum Unit {
     /// 単位 — credits (the default; omitted from the wire form).
-    #[serde(rename = "単位")]
     Credit,
     /// 分野 — fields/areas covered.
-    #[serde(rename = "分野")]
     Field,
     /// 言語 — languages satisfied.
-    #[serde(rename = "言語")]
     Language,
     /// 科目 — named subjects acquired.
-    #[serde(rename = "科目")]
     Subject,
     /// 要件 — sub-requirements satisfied.
-    #[serde(rename = "要件")]
     Requirement,
 }
 

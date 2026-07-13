@@ -1,5 +1,4 @@
-//! The student whose transcript is being assessed. Ported from
-//! `entities/student-profile.ts` (the Zod schema becomes explicit validation).
+//! The student whose transcript is being assessed.
 //!
 //! `course_id` is the program/course label (e.g. "人文科学コース") that rule-set
 //! `applicable_to` predicates inspect — not a [`crate::value::CourseId`].

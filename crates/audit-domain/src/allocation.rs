@@ -1,5 +1,5 @@
 //! The allocation pipeline: a pure fold that threads a shrinking course pool
-//! through consumption-strateged steps. Ported from `allocation/pipeline.ts`.
+//! through consumption-strateged steps.
 //!
 //! This is deliberately *not* part of the requirement AST: tree nodes are
 //! stateless `(rule, pool) -> result`, whereas the pipeline carries `remaining`
@@ -50,6 +50,9 @@ impl Step {
 #[serde(rename_all = "camelCase")]
 pub struct StepOutcome {
     pub id: String,
+    /// Requirement display name for the CLI report. Not serialized to the WASM
+    /// wire: the web resolves names from `id` via its i18n catalog.
+    #[serde(skip_serializing, default)]
     pub label: String,
     pub result: SpecResult,
     pub consumed_course_ids: Vec<CourseId>,

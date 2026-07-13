@@ -27,14 +27,9 @@ const assertValid = (value: number): void => {
 const brand = (value: number): Credit => value as Credit;
 
 export const Credit = {
-	zero: brand(0),
 	of: (value: number): Credit => {
 		assertValid(value);
 		return brand(value);
 	},
-	plus: (a: Credit, b: Credit): Credit => brand(a + b),
-	sum: (values: readonly Credit[]): Credit =>
-		brand(values.reduce<number>((acc, v) => acc + v, 0)),
-	isAtLeast: (value: Credit, threshold: Credit): boolean => value >= threshold,
 	toNumber: (c: Credit): number => c,
 } as const;

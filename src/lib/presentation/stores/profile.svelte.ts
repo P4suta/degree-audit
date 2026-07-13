@@ -3,12 +3,12 @@ import { StudentProfile as StudentProfileNS } from "../../domain/entities/studen
 import { isOk } from "../../domain/errors/result.ts";
 
 /**
- * 学生プロフィールのメモリ保持ストア。
+ * In-memory store for the student profile.
  *
- * **永続化はしない**（LocalStorage / SessionStorage 等に書き出さない）。
- * タブを閉じる・リロードする・別サイトへ離脱する — いずれの場合も情報は
- * 残らない。卒業要件判定ツールは成績という機微情報を扱うため、
- * 「ブラウザに何も残さない」ことをプライバシー面の強い保証として採用する。
+ * **Never persisted** (not written to LocalStorage / SessionStorage etc.).
+ * Nothing survives closing the tab, reloading, or navigating away. Since the
+ * tool handles sensitive grade data, "leave nothing in the browser" is adopted
+ * as a strong privacy guarantee.
  */
 class ProfileStore {
 	#current: StudentProfile | null = $state(null);

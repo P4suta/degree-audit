@@ -3,6 +3,7 @@
 </script>
 
 <script lang="ts">
+	import * as m from "$lib/paraglide/messages";
 	import Alert from "../ui/Alert.svelte";
 	import X from "~icons/ic/round-close";
 	import type { Warning } from "../stores/warnings.svelte.ts";
@@ -53,7 +54,7 @@
 						<button
 							type="button"
 							class="inline-flex min-h-8 min-w-8 touch-manipulation items-center justify-center rounded hover:bg-[color:var(--color-warning-border)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-warning)]"
-							aria-label="警告を閉じる"
+							aria-label={m.warning_dismiss()}
 							onclick={() => warningsStore.dismiss(warning.id)}
 						>
 							<X class="h-4 w-4" aria-hidden="true" />

@@ -2,10 +2,9 @@
 	import type { Snippet } from "svelte";
 
 	/**
-	 * Badge の色は success / warning / danger / neutral / accent の 5 種。
-	 * DESIGN.md のルール「accent（青）はインタラクティブ要素専用」を徹底するため、
-	 * accent バリアントは「他と同じ見た目の強調バッジ」として控えめに扱う
-	 * （実際にリンクやボタンに化けるわけではない情報ラベルとして）。
+	 * Five variants: success / warning / danger / neutral / accent.
+	 * DESIGN.md reserves accent (blue) for interactive elements, so the accent
+	 * variant stays a restrained info label, not something that looks clickable.
 	 */
 	type Variant = "success" | "warning" | "danger" | "neutral" | "accent";
 
@@ -13,9 +12,9 @@
 		children: Snippet;
 		variant?: Variant;
 		class?: string;
-		/** 角丸を pill にする（デフォルトは chip 4px） */
+		/** Pill radius instead of the default chip (4px). */
 		pill?: boolean;
-		/** 先頭に variant 色の状態ドットを出す（レポート行の行頭ステータス用）。 */
+		/** Show a leading variant-colored status dot. */
 		dot?: boolean;
 	}
 

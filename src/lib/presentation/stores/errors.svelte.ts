@@ -1,9 +1,9 @@
 import type { DomainError } from "../../domain/errors/domain-error.ts";
 
 /**
- * FIFO キューでエラーを保持する。`push` は新しいエラーを末尾に追加し、
- * ErrorBanner は `current`（先頭）を表示する。`dismiss` で先頭をドロップして
- * 次のエラーが露出する。連続してエラーが起きたときに最初の原因を失わない。
+ * Holds errors in a FIFO queue. `push` appends to the tail and ErrorBanner
+ * displays `current` (the head); `dismiss` drops the head to expose the next
+ * error. This preserves the first cause when errors occur in quick succession.
  */
 class ErrorsStore {
 	#queue: DomainError[] = $state([]);

@@ -7,12 +7,10 @@ const config = {
 			filename.split(/[/\\]/).includes("node_modules") ? undefined : true,
 	},
 	kit: {
-		// precompress: 静的ホストが .br/.gz を配れるよう事前圧縮も出力する。
 		adapter: adapter({ fallback: "404.html", precompress: true }),
 		paths: { base: process.env.BASE_PATH ?? "" },
-		// アプリ CSS（~41KB）を各ページの <head> にインライン化し、レンダー
-		// ブロッキングな <link rel="stylesheet"> の往復を無くす（FCP/LCP 改善）。
-		// しきい値は UTF-16 コードユニット長。
+		// Inline app CSS into each page <head> to drop the render-blocking
+		// stylesheet round-trip. Threshold is in UTF-16 code units.
 		inlineStyleThreshold: 50_000,
 		prerender: {
 			entries: ["*"],

@@ -1,9 +1,9 @@
-//! A credit count. Ported from `value-objects/credit.ts`.
+//! A credit count.
 //!
 //! This university awards whole credits only, so a non-negative integer newtype
 //! makes negative and non-finite values unrepresentable by construction — the two
-//! failure modes the TypeScript `Credit.of` guarded at runtime vanish at the type
-//! level. Text parsing (which *can* fail) lives at the app-layer mapper boundary.
+//! failure modes a runtime guard would catch vanish at the type level. Text
+//! parsing (which *can* fail) lives at the app-layer mapper boundary.
 
 use std::iter::Sum;
 use std::ops::Add;
@@ -29,7 +29,7 @@ impl Credit {
         self.0
     }
 
-    /// Whether this reaches a threshold (mirrors `Credit.isAtLeast`).
+    /// Whether this reaches a threshold.
     pub const fn is_at_least(self, threshold: Credit) -> bool {
         self.0 >= threshold.0
     }

@@ -1,5 +1,4 @@
-//! The single pure interpreter for the [`Requirement`] algebra. Ported faithfully
-//! from every `specifications/combinators/*` evaluate body.
+//! The single pure interpreter for the [`Requirement`] algebra.
 //!
 //! Every arm is a pure function of `(rule params, pool)`. No allocation state
 //! (consumed ids) appears here — that lives only in the pipeline fold. This keeps
@@ -74,7 +73,7 @@ fn matches(pred: &CoursePredicate, course: &Course) -> bool {
     }
 }
 
-/// Detect スポーツ科学 lecture/practical courses (ported from `predicates.ts`).
+/// Detect スポーツ科学 lecture/practical courses.
 fn is_sports_science(course: &Course) -> bool {
     let name_key = match_key(&course.name);
     if name_key.contains(&match_key("スポーツ科学講義"))
@@ -85,7 +84,7 @@ fn is_sports_science(course: &Course) -> bool {
     match_key(&course.raw_category_label).contains(&match_key("スポーツ科学"))
 }
 
-/// De-duplicate courses by id, preserving first-seen order (mirrors `uniqueById`).
+/// De-duplicate courses by id, preserving first-seen order.
 fn unique_by_id(courses: Vec<SharedCourse>) -> Vec<SharedCourse> {
     let mut seen = std::collections::HashSet::new();
     let mut out = Vec::new();
@@ -304,7 +303,7 @@ fn eval_per_language_min(
     kinds: &[SubjectKind],
     pool: &[SharedCourse],
 ) -> SpecResult {
-    // Insertion-ordered accumulation, mirroring the TS Map iteration order.
+    // Insertion-ordered accumulation.
     let mut credits_by_lang: Vec<(Language, u32)> = Vec::new();
     let mut excluded_by_lang: Vec<(Language, u32)> = Vec::new();
     let mut contributing = Vec::new();

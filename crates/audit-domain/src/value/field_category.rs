@@ -1,4 +1,4 @@
-//! A liberal-arts field bucket. Ported from `value-objects/field-category.ts`.
+//! A liberal-arts field bucket.
 
 use serde::{Deserialize, Serialize};
 
@@ -15,7 +15,7 @@ pub enum FieldCategory {
 }
 
 impl FieldCategory {
-    /// All fields, in canonical order (mirrors `FIELD_CATEGORIES`).
+    /// All fields, in canonical order.
     pub const ALL: [FieldCategory; 4] = [
         FieldCategory::Humanities,
         FieldCategory::Social,
@@ -23,7 +23,7 @@ impl FieldCategory {
         FieldCategory::Natural,
     ];
 
-    /// Japanese display label (mirrors `FIELD_CATEGORY_LABELS`).
+    /// Japanese display label.
     pub const fn label(self) -> &'static str {
         match self {
             FieldCategory::Humanities => "人文",
@@ -39,7 +39,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn labels_match_ts() {
+    fn labels_are_correct() {
         assert_eq!(FieldCategory::Humanities.label(), "人文");
         assert_eq!(FieldCategory::BioMedical.label(), "生命医療");
     }

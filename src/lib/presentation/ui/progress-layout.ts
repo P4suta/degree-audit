@@ -1,17 +1,11 @@
 /**
- * Progress バーの「完了 / 履修中 / 残り」の幅比率を純粋計算で求める。
+ * Pure computation of the completed / in-progress / remaining width ratios for
+ * the progress bar. Split out from the UI component so it can be unit-tested.
  *
- * UI コンポーネントから切り出しておくことで単体テストが書きやすくなる。
- * ロジックは以下：
- *   - actual は確定で算入された値。required を超えたら required で頭打ち
- *   - tentativeActual は「履修中をすべて合格扱いにした時の actual」。
- *     undefined なら履修中情報なし。actual 以下になることは想定外だが、
- *     万一起きても actual を下回らない値として扱う
- *   - 完了 % = min(actual, required) / required
- *   - 履修中 % = (min(tentativeActual, required) - min(actual, required)) / required
- *     これは「バー全体の何パーセントを占めるか」を返す。現場での stack レイアウトは
- *     絶対位置で完了層が履修中層の上に乗るので、履修中層の width は
- *     完了 % + 履修中 % = tentativeRatio を与えて重ねる方が隙間が出にくい
+ * `tentativeActual` is the actual assuming every in-progress course passes;
+ * `undefined` means no in-progress data. The in-progress layer is stacked
+ * beneath the completed layer, so its width is given as the combined ratio
+ * (completed + in-progress) to avoid gaps.
  */
 export interface ProgressLayoutInput {
 	readonly actual: number;
@@ -20,17 +14,16 @@ export interface ProgressLayoutInput {
 }
 
 export interface ProgressLayout {
-	/** 完了セクションの幅パーセンテージ（0〜100）。 */
+	/** Width percentage of the completed section (0-100). */
 	readonly completedPct: number;
 	/**
-	 * 完了 + 履修中を合わせた幅パーセンテージ（0〜100）。
-	 * Progress 側では完了層の _下敷き_ として履修中層に割り当てる。
-	 * 完了 ≤ 履修中 を保証する
+	 * Combined width percentage of completed + in-progress (0-100), used as the
+	 * layer beneath the completed section. Guaranteed >= completedPct.
 	 */
 	readonly tentativePct: number;
-	/** 履修中セクションが実際に幅を占めるか。= tentativePct > completedPct。 */
+	/** Whether the in-progress section occupies any width (tentativePct > completedPct). */
 	readonly hasInProgress: boolean;
-	/** 履修中込みの actual。UI の aria-valuetext 等で使う。 */
+	/** Actual including in-progress, for aria-valuetext etc. */
 	readonly tentativeActualOrActual: number;
 }
 
@@ -49,7 +42,6 @@ export const computeProgressLayout = (
 	const clampedActual = Math.max(0, Math.min(actual, required));
 	const completedPct = (clampedActual / required) * 100;
 	const tentActualRaw = tentativeActual ?? actual;
-	// 履修中は actual 以上（単調増加）。万一逆転したら actual に張り付ける
 	const tentActual = Math.max(actual, tentActualRaw);
 	const clampedTent = Math.max(0, Math.min(tentActual, required));
 	const tentativePct = (clampedTent / required) * 100;
@@ -62,10 +54,10 @@ export const computeProgressLayout = (
 };
 
 /**
- * バーの状態。Badge / サブテキストの色分岐に使う。
- * - 'satisfied'  = 確定で充足している
- * - 'in-progress' = 確定では不足だが、履修中が合格すれば充足予定
- * - 'unmet'      = 履修中込みでも不足、または履修中情報なしで不足
+ * Bar state, used to branch badge / subtext colours.
+ * - 'satisfied'   = met with confirmed credits
+ * - 'in-progress' = short now, but will be met if in-progress courses pass
+ * - 'unmet'       = short even with in-progress, or short with no in-progress data
  */
 export type ProgressState = "satisfied" | "in-progress" | "unmet";
 

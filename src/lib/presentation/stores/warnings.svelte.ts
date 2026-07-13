@@ -1,10 +1,10 @@
 /**
- * 情報レベルのユーザー向け通知。`errorsStore` より軽い扱いで、赤バナーでは
- * なく黄／青の注意書きとして表示する。現状は「未分類の科目が N 件ある」といった
- * 取り込み時の警告を流すために使う。
+ * Informational user-facing notices, lighter than `errorsStore`: shown as
+ * yellow/blue notes rather than a red banner. Currently used for import-time
+ * warnings such as "N uncategorised courses".
  *
- * `autoDismissMs` を指定すると WarningBanner 側で自動消去される（ホバー中は
- * 停止する）。`errorsStore` は従来通り手動のみ。
+ * When `autoDismissMs` is set, WarningBanner auto-dismisses the entry (paused
+ * while hovered); `errorsStore` remains manual-only.
  */
 export interface Warning {
 	readonly id: string;

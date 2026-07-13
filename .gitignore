@@ -32,6 +32,10 @@ playwright-report
 # Coverage
 /coverage
 
+# Paraglide compiled output — regenerated from messages/ + project.inlang/ by
+# the vite plugin. Message sources (messages/*.json, project.inlang/) stay tracked.
+/src/lib/paraglide
+
 # Rust
 /target
 # cargo-mutants run output

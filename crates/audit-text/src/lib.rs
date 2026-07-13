@@ -2,8 +2,6 @@
 //! surface caused by full-/half-width forms, Roman numerals, decorative markers,
 //! invisible characters, and control characters — all at the boundary.
 //!
-//! Ported from `src/lib/domain/text/normalize.ts`.
-//!
 //! - [`canonicalize`]  For storage/display. NFKC + strip invisible + strip control chars.
 //! - [`sanitize_line`] For a single line of user input. canonicalize + fold line breaks + length cap.
 //! - [`match_key`]     For string matching. canonicalize + strip decorative markers + strip whitespace + lowercase.
@@ -25,7 +23,7 @@ fn is_removable_control(c: char) -> bool {
         && !matches!(c, '\n' | '\r' | '\t')
 }
 
-/// Decorative markers dropped by [`match_key`] (mirrors `DECORATIVE_MARKERS_RE`).
+/// Decorative markers dropped by [`match_key`].
 fn is_decorative_marker(c: char) -> bool {
     matches!(c, '※' | '★' | '☆' | '◆' | '◇' | '◎' | '§' | '¶' | '†' | '‡')
 }
@@ -77,7 +75,7 @@ pub fn match_key(input: &str) -> String {
 mod tests {
     use super::*;
 
-    // --- canonicalize (ported from normalize.test.ts) ---
+    // --- canonicalize ---
 
     #[test]
     fn canonicalize_applies_nfkc() {

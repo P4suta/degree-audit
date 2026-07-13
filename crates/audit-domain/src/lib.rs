@@ -4,8 +4,6 @@
 //! objects and entities of the transcript domain, the declarative `Requirement`
 //! AST with its single pure interpreter, the allocation fold, the assessment
 //! service, and the curated rule sets.
-//!
-//! Ported from the TypeScript `src/lib/domain/**` tree.
 
 pub mod allocation;
 pub mod assess;

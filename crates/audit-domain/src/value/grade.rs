@@ -1,7 +1,7 @@
-//! A letter grade. Ported from `value-objects/grade.ts`.
+//! A letter grade.
 //!
-//! The wire form of each variant is the Japanese grade token (e.g. `秀`), matching
-//! the TypeScript `Grade` union so serialized transcripts stay byte-compatible.
+//! The wire form of each variant is the Japanese grade token (e.g. `秀`), so
+//! serialized transcripts stay byte-compatible.
 
 use serde::{Deserialize, Serialize};
 
@@ -35,7 +35,7 @@ pub enum Grade {
     /// 履修中 — in progress; not yet counted, but a future counting candidate.
     #[serde(rename = "履修中")]
     Risyuchu,
-    /// 不明 — unknown / unparseable.
+    /// 不明 — unknown / unparsable.
     #[serde(rename = "不明")]
     Unknown,
 }
@@ -84,7 +84,7 @@ impl Grade {
     }
 }
 
-/// Alias table mirroring `ALIASES` in `grade.ts`.
+/// Alias table for alternative grade tokens.
 fn alias(key: &str) -> Option<Grade> {
     Some(match key {
         "秀" | "s" | "a+" | "ap" => Grade::Shu,
@@ -105,7 +105,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn passing_set_matches_ts() {
+    fn passing_set_is_correct() {
         for g in [Grade::Shu, Grade::Yu, Grade::Ryo, Grade::Ka, Grade::Nintei] {
             assert!(g.is_passing(), "{} should pass", g.token());
         }

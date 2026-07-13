@@ -10,7 +10,7 @@
  * Japanese strings the existing presentation expects. Nothing downstream changes.
  */
 
-import type { Assessment } from "$lib/application/assess-graduation";
+import type { Assessment } from "$lib/application/assessment-types";
 import type { AcademicRecord } from "$lib/domain/entities/academic-record";
 import type { StudentProfile } from "$lib/domain/entities/student-profile";
 
@@ -36,7 +36,6 @@ interface RawSpec {
 }
 interface RawStep {
 	id: string;
-	label: string;
 	result: RawSpec;
 	consumedCourseIds: string[];
 }
@@ -95,7 +94,6 @@ const normalizeSpec = (r: RawSpec): unknown => ({
 
 const normalizeStep = (s: RawStep): unknown => ({
 	id: s.id,
-	label: s.label,
 	result: normalizeSpec(s.result),
 	consumedCourseIds: s.consumedCourseIds,
 });

@@ -39,7 +39,6 @@ const SVELTE_FILES = [
 	"lib/presentation/components/CourseList.svelte",
 	"lib/presentation/components/Disclaimer.svelte",
 	"lib/presentation/components/ErrorBanner.svelte",
-	"lib/presentation/components/ProgressBar.svelte",
 	"lib/presentation/components/RequirementRow.svelte",
 	"lib/presentation/components/Summary.svelte",
 	"lib/presentation/components/TranscriptDropZone.svelte",

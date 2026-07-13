@@ -1,5 +1,4 @@
 //! The default rule set: 令和2〜5年度 (2020–2023) 人文科学コース.
-//! Ported from `rulesets/default/{metadata,category-map,requirements,predicates}.ts`.
 //!
 //! This is the rule set that applies to the sample transcript (2022 matriculation).
 
@@ -21,7 +20,7 @@ fn applicable_to(profile: &StudentProfile) -> bool {
     (MATRICULATION_MIN..=MATRICULATION_MAX).contains(&profile.matriculation_year)
 }
 
-// --- category map (ported from default/category-map.ts) ---
+// --- category map ---
 
 fn language_from(label: &str, name: &str) -> Language {
     Language::from_normalized(name)
@@ -137,7 +136,7 @@ fn category_map(lookup: &CategoryLookup) -> SubjectCategory {
 
 pub const CATEGORY_MAP: CategoryMap = category_map;
 
-// --- requirements (ported from default/requirements.ts) ---
+// --- requirements ---
 
 fn primary_required_subjects() -> Vec<NamedSubject> {
     vec![

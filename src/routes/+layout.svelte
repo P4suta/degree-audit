@@ -8,61 +8,65 @@
 	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
 	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
 	import { Credit } from "$lib/domain/value-objects/credit";
+	import * as m from "$lib/paraglide/messages";
 	import GraduationCap from "~icons/ic/round-school";
 	import "./layout.css";
 
 	let { children } = $props();
 
-	// 免責事項専用ページ (/disclaimer) は「同意する前に全文を読みに来る」
-	// ための入口なので、モーダルで被せてしまうと読めなくなる。
-	// このページだけはモーダルを出さずコンテンツを見せる（同意ボタンは
-	// ページ内に別途設置している）
+	// The /disclaimer page is where users go to read the full text before
+	// agreeing, so covering it with the modal would make it unreadable.
+	// Skip the modal on this page only (it has its own inline consent button).
 	const onDisclaimerPage = $derived(page.route.id === "/disclaimer");
 	const showModal = $derived(
 		!disclaimerStore.acknowledged && !onDisclaimerPage,
 	);
 
-	// ヘッダーに常駐する「成果物」表示。gyakubiki の plan pill に相当し、判定が
-	// 済んでいれば chrome 側に verdict を出す。判定前は何も出さない。
+	// Persistent header verdict, like gyakubiki's plan pill: show it in the
+	// chrome once an assessment exists. Nothing before assessment.
 	const assessment = $derived(assessmentStore.current);
 	const verdict = $derived.by(() => {
 		if (assessment === null) return null;
 		if (assessment.graduatable)
-			return { tone: "success", text: "要件充足" } as const;
-		// 履修中（卒論など）込みで卒業可なら「充足予定」を出す。
+			return { tone: "success", text: m.verdict_pill_satisfied() } as const;
+		// If graduatable once in-progress courses (e.g. thesis) pass, show "projected".
 		if (assessment.tentative?.graduatable)
-			return { tone: "accent", text: "充足予定" } as const;
+			return { tone: "accent", text: m.verdict_pill_projected() } as const;
 		const remaining = Math.max(
 			0,
 			assessment.totalCreditsRequired - Credit.toNumber(assessment.totalCredits),
 		);
 		return {
 			tone: "warning",
-			text: remaining > 0 ? `あと ${remaining} 単位` : "要件未充足",
+			text:
+				remaining > 0
+					? m.verdict_pill_remaining({ credits: remaining })
+					: m.verdict_pill_unmet(),
 		} as const;
 	});
 </script>
 
 <!--
-  免責事項の同意モーダル。disclaimerStore.acknowledged が true になるまで
-  本体コンテンツへアクセスできない。卒業に関わる判定を提供する性質上、毎
-  セッション確認を取る設計。ただし /disclaimer ページ自体は除外する。
+  Disclaimer consent modal. Blocks access to the main content until
+  disclaimerStore.acknowledged is true. Because this tool provides
+  graduation-related judgements, consent is confirmed every session.
+  The /disclaimer page itself is exempt.
 -->
 {#if showModal}
 	<Disclaimer />
 {/if}
 
-<div class="min-h-screen antialiased" aria-hidden={showModal}>
-	<!-- キーボード/スクリーンリーダー利用者向け: 最初のフォーカスで本文へ飛べる。
-	     通常は視覚的に隠し (sr-only)、フォーカス時のみ表示する。 -->
+<div class="min-h-screen antialiased" inert={showModal}>
+	<!-- Skip link for keyboard/screen-reader users: first focus jumps to the
+	     content. Visually hidden (sr-only) normally, shown only on focus. -->
 	<a
 		href="#main-content"
 		class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-nav focus:rounded-[var(--radius-control)] focus:border focus:border-[color:var(--color-border)] focus:bg-[color:var(--color-surface)] focus:px-4 focus:py-2 focus:text-body focus:text-[color:var(--color-accent-link)] focus:shadow-[var(--shadow-card)]"
 	>
-		本文へスキップ
+		{m.skip_to_content()}
 	</a>
-	<!-- ライトガラスの sticky ヘッダー。backdrop-filter で軽い浮遊感、hairline
-	     でコンテンツと区切る。高さは iOS HIG の nav bar を踏まえて 56px。 -->
+	<!-- Light-glass sticky header: backdrop-filter for a subtle float, a hairline
+	     to separate it from content. Height 56px, following the iOS HIG nav bar. -->
 	<header
 		class="sticky top-0 z-nav border-b border-[color:var(--color-border)] bg-[color:var(--color-surface-glass)] backdrop-blur-xl backdrop-saturate-[1.8]"
 	>
@@ -74,13 +78,13 @@
 			<h1
 				class="min-w-0 truncate text-body-emph text-[color:var(--color-fg)] tracking-[-0.01em]"
 			>
-				卒業要件判定ツール
+				{m.app_title()}
 			</h1>
 			<span
 				class="shrink-0 rounded-[var(--radius-chip)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-alt)] px-1.5 py-0.5 text-micro font-medium text-[color:var(--color-fg-subtle)]"
-				title="個人開発の非公式ツールです"
+				title={m.badge_unofficial_title()}
 			>
-				非公式
+				{m.badge_unofficial()}
 			</span>
 			<div class="ml-auto shrink-0 flex items-center pl-1" aria-live="polite">
 				{#if verdict}
@@ -104,12 +108,12 @@
 		style="padding-bottom: max(2rem, env(safe-area-inset-bottom));"
 	>
 		<p>
-			個人開発の非公式ツールです。判定は参考情報にすぎません。詳しくは
+			{m.footer_note_lead()}
 			<a
 				href={`${base}/disclaimer`}
 				class="text-[color:var(--color-accent-link)] underline hover:no-underline"
-				>免責事項</a
-			>。
+				>{m.link_disclaimer()}</a
+			>{m.footer_note_trail()}
 		</p>
 	</footer>
 </div>

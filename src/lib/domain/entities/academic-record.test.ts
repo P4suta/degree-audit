@@ -18,69 +18,31 @@ const profile = (() => {
 	return r.value;
 })();
 
-const course = (
-	id: string,
-	credit: number,
-	grade: Grade,
-	kind: Parameters<typeof SubjectCategory.primary> | SubjectCategory,
-): Course =>
+const course = (id: string, grade: Grade): Course =>
 	Course.of({
 		id: CourseId.of(id),
 		name: `name-${id}`,
-		credit: Credit.of(credit),
+		credit: Credit.of(2),
 		grade,
-		category: Array.isArray(kind)
-			? SubjectCategory.primary()
-			: (kind as SubjectCategory),
+		category: SubjectCategory.primary(),
 		rawCategoryLabel: "raw",
 	});
 
-describe("AcademicRecord", () => {
-	const passed1 = course("C1", 2, Grade.Yu, SubjectCategory.primary());
-	const passed2 = course("C2", 4, Grade.Nintei, SubjectCategory.seminar12());
-	const failed = course("C3", 2, Grade.Fuka, SubjectCategory.primary());
-	const withdrew = course("C4", 2, Grade.Torikeshi, SubjectCategory.primary());
-	const record = AcademicRecord.of(profile, [
-		passed1,
-		passed2,
-		failed,
-		withdrew,
-	]);
-
-	it("of stores profile and courses verbatim", () => {
-		expect(record.profile).toBe(profile);
-		expect(record.courses).toHaveLength(4);
-	});
-
-	it("passedCourses filters to passing grades", () => {
+describe("AcademicRecord.passedCourses", () => {
+	it("filters to passing grades", () => {
+		const passed1 = course("C1", Grade.Yu);
+		const passed2 = course("C2", Grade.Nintei);
+		const failed = course("C3", Grade.Fuka);
+		const withdrew = course("C4", Grade.Torikeshi);
+		const record: AcademicRecord = {
+			profile,
+			courses: [passed1, passed2, failed, withdrew],
+		};
 		expect(AcademicRecord.passedCourses(record)).toEqual([passed1, passed2]);
 	});
 
-	it("totalCredits sums credits of passing courses only", () => {
-		expect(Credit.toNumber(AcademicRecord.totalCredits(record))).toBe(6);
-	});
-
-	it("coursesByKind filters passing courses of the given kind", () => {
-		const primaries = AcademicRecord.coursesByKind(
-			record,
-			"common-education/primary",
-		);
-		expect(primaries).toEqual([passed1]);
-	});
-
-	it("creditsByKind sums credits for the given kind", () => {
-		const n = Credit.toNumber(
-			AcademicRecord.creditsByKind(record, "seminar/1-2"),
-		);
-		expect(n).toBe(4);
-	});
-
-	it("passedCourses on empty record is empty", () => {
-		const empty = AcademicRecord.of(profile, []);
-		expect(AcademicRecord.passedCourses(empty)).toEqual([]);
-		expect(Credit.toNumber(AcademicRecord.totalCredits(empty))).toBe(0);
-		expect(
-			AcademicRecord.coursesByKind(empty, "common-education/primary"),
-		).toEqual([]);
+	it("is empty for a record with no courses", () => {
+		const record: AcademicRecord = { profile, courses: [] };
+		expect(AcademicRecord.passedCourses(record)).toEqual([]);
 	});
 });

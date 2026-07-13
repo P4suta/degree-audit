@@ -22,7 +22,7 @@
 		actions,
 	}: Props = $props();
 
-	// DESIGN.md: 左 3px のアクセントボーダー + 薄い色背景 + アイコン
+	// DESIGN.md: 3px left accent border + tinted background + icon.
 	const variantClass = $derived.by(() => {
 		switch (variant) {
 			case "info":

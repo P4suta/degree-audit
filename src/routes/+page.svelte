@@ -2,6 +2,7 @@
 	import { base } from "$app/paths";
 	import { onMount } from "svelte";
 	import { safeGoto } from "$lib/presentation/navigation";
+	import * as m from "$lib/paraglide/messages";
 	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
 
 	// PDF-only entry: the profile is read from the dropped PDF, so a fresh visit
@@ -15,4 +16,4 @@
 	});
 </script>
 
-<p class="text-small text-[color:var(--color-fg-muted)]">リダイレクト中…</p>
+<p class="text-small text-[color:var(--color-fg-muted)]">{m.redirecting()}</p>

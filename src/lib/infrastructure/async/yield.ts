@@ -1,9 +1,9 @@
 /**
- * イベントループに 1 frame 相当の時間を譲る。長い同期処理の前に 1 度呼ぶだけ
- * でも、ローディング表示 / スピナーが描画されるので体感フリーズがなくなる。
+ * Yield ~one frame to the event loop. Calling this once before a long
+ * synchronous task lets a loading/spinner paint, so there is no perceived freeze.
  *
- * requestAnimationFrame があればそれを、無ければ setTimeout(0) にフォールバック。
- * SSR / テスト環境では rAF が存在しないため window チェックで判定する。
+ * Uses requestAnimationFrame when available, else falls back to setTimeout(0).
+ * rAF is absent under SSR / tests, hence the window check.
  */
 export const yieldToMain = (): Promise<void> =>
 	new Promise<void>((resolve) => {

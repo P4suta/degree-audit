@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { base } from "$app/paths";
 	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
+	import * as m from "$lib/paraglide/messages";
 	import Button from "$lib/presentation/ui/Button.svelte";
 
 	let dialogEl = $state<HTMLDialogElement>();
@@ -45,16 +46,16 @@
 </script>
 
 <!--
-  ご利用にあたって（免責事項）同意モーダル。
+  Terms-of-use (disclaimer) consent modal.
 
-  レイアウト方針:
-    - モバイル（<640px）: フル viewport の "シート"。rounded/border なし。
-      viewport 全体を使いきるので「縦にはみ出す」感を消す。notch/ホームバー
-      対応で safe-area-inset を padding に乗せる。
-    - デスクトップ（≥640px）: 中央配置の max-w-modal（560px）カード。
+  Layout:
+    - Mobile (<640px): full-viewport "sheet", no radius/border. Fills the whole
+      viewport to kill the "overflows vertically" feel; safe-area-inset is added
+      to padding for notch / home-bar devices.
+    - Desktop (≥640px): centered max-w-modal (560px) card.
 
-  高さは 100dvh (dynamic viewport height) を優先。iOS Safari で address bar
-  が表示されているとき 100vh が実画面より大きくなる問題を回避する。
+  Height prefers 100dvh (dynamic viewport height) to avoid iOS Safari's 100vh
+  being larger than the real viewport while the address bar is shown.
 -->
 <dialog
 	bind:this={dialogEl}
@@ -74,7 +75,7 @@
 				style="padding-top: max(1rem, env(safe-area-inset-top));"
 			>
 				<h2 id="disclaimer-title" class="text-h2 text-[color:var(--color-fg)] sm:text-h1">
-					ご利用にあたって
+					{m.disclaimer_modal_heading()}
 				</h2>
 			</div>
 
@@ -83,42 +84,38 @@
 				class="flex-1 space-y-3 overflow-y-auto px-4 text-small leading-relaxed text-[color:var(--color-fg-muted)] sm:px-8 sm:leading-relaxed"
 			>
 				<p>
-					本ツールは個人が作成・提供する<strong
-						class="text-[color:var(--color-fg)]">非公式</strong
-					>のものであり、特定の大学・教育機関とは一切の関係がなく、いかなる機関による承認又は推奨を受けたものではありません。
+					{m.disclaimer_modal_p1_a()}<strong
+						class="text-[color:var(--color-fg)]">{m.disclaimer_modal_p1_strong()}</strong
+					>{m.disclaimer_modal_p1_b()}
 				</p>
 
 				<p>
-					本ツールの対応範囲は現時点で<strong
+					{m.disclaimer_modal_p2_a()}<strong
 						class="text-[color:var(--color-fg)]"
-						>人文社会科学部 人文科学コース（令和 2 年度以降入学生）</strong
-					>のみです。大学の規程は改定されることがあり、本ツール作成時点（2026
-					年 4 月）の内容と最新の規程が異なる場合があります。
+						>{m.disclaimer_modal_p2_strong()}</strong
+					>{m.disclaimer_modal_p2_b()}
 				</p>
 
 				<p>
-					本ツールは現状有姿（AS IS）で提供され、明示又は黙示を問わず、正確性・完全性・最新性・特定目的への適合性その他一切の保証をいたしません。成績の取り込み、区分分類、要件判定のいずれにも誤りが含まれる可能性があります。
+					{m.disclaimer_modal_p3()}
 				</p>
 
 				<p>
-					本ツールの利用又は利用不能により生じた直接的・間接的・付随的・結果的損害（履修登録の誤り、単位不足による留年・卒業延期その他の不利益を含みます）について、作成者は一切の責任を負いません。
+					{m.disclaimer_modal_p4()}
 				</p>
 
 				<p
 					class="rounded-[var(--radius-control)] border border-[color:var(--color-warning-border)] bg-[color:var(--color-warning-bg)] p-3 text-[color:var(--color-warning-fg)]"
 				>
-					<strong>本ツールの判定結果は参考情報にすぎません。</strong>
-					卒業・履修に関わる最終的な判断は、必ず<strong>最新の履修案内</strong>、<strong
-						>所属学部の教務担当</strong
-					>、<strong>指導教員（チューター）</strong
-					>にご確認ください。特に卒業論文履修資格は、大学が年
-					2 回（3 月・9 月）に開催する判定会議が公式の決定機関となります。
+					<strong>{m.disclaimer_modal_p5_strong1()}</strong>
+					{m.disclaimer_modal_p5_a()}<strong>{m.disclaimer_modal_p5_strong2()}</strong>、<strong
+						>{m.disclaimer_modal_p5_strong3()}</strong
+					>、<strong>{m.disclaimer_modal_p5_strong4()}</strong
+					>{m.disclaimer_modal_p5_b()}
 				</p>
 
 				<p>
-					入力された学生プロフィール・成績データは、すべてブラウザタブ内のメモリ上でのみ処理されます。サーバーへの送信、ブラウザへの永続保存（LocalStorage
-					/
-					Cookie 等）は一切行われず、タブを閉じる・リロードする・別ページへ移動するといった操作ですべて消去されます。
+					{m.disclaimer_modal_p6()}
 				</p>
 			</div>
 
@@ -133,16 +130,16 @@
 					autofocus
 					onclick={() => disclaimerStore.acknowledge()}
 				>
-					上記を確認のうえ、利用する
+					{m.disclaimer_acknowledge()}
 				</Button>
 				<p
 					class="mt-2 text-center text-caption text-[color:var(--color-fg-subtle)] sm:mt-3"
 				>
-					完全版は <a
+					{m.disclaimer_modal_footnote_lead()} <a
 						href={`${base}/disclaimer`}
 						class="underline hover:text-[color:var(--color-accent-link)]"
-						>免責事項ページ</a
-					> で確認できます
+						>{m.disclaimer_full_link()}</a
+					> {m.disclaimer_modal_footnote_trail()}
 				</p>
 			</div>
 		</div>

@@ -1,13 +1,11 @@
 <script lang="ts">
 	import type { HTMLInputAttributes } from "svelte/elements";
 
-	// DESIGN.md は本文 15px だが、フォーム要素は iOS Safari の
-	// 自動ズーム（font-size < 16px でフォーカス時にズームインされる）を
-	// 回避するため text-base (16px) を強制する。
+	// DESIGN.md sets body text at 15px, but form fields force text-base (16px)
+	// to avoid iOS Safari's focus auto-zoom (triggered below 16px).
 	//
-	// min-h-[44px] は iOS HIG / Material のタップターゲット推奨下限。
-	// value は bind:value で双方向にしたい場面が多いため、Svelte 5 の
-	// `bindable` で受ける。
+	// min-h-[44px] is the iOS HIG / Material minimum tap target.
+	// value is received via Svelte 5 `bindable` since two-way bind:value is common.
 
 	interface Props extends Omit<HTMLInputAttributes, "class" | "value"> {
 		value?: string;

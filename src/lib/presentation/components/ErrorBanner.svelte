@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from "$lib/paraglide/messages";
 	import Alert from "../ui/Alert.svelte";
 	import X from "~icons/ic/round-close";
 	import { errorsStore } from "../stores/errors.svelte.ts";
@@ -12,8 +13,8 @@
 				type="button"
 				class="inline-flex min-h-8 min-w-8 touch-manipulation items-center justify-center rounded hover:bg-[color:var(--color-danger-border)]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-danger)]"
 				aria-label={errorsStore.count > 1
-					? "このエラーを閉じて次のエラーを表示"
-					: "エラーを閉じる"}
+					? m.error_dismiss_next()
+					: m.error_dismiss()}
 				onclick={() => errorsStore.dismiss()}
 			>
 				<X class="h-4 w-4" aria-hidden="true" />
@@ -21,11 +22,11 @@
 		{/snippet}
 		{#if errorsStore.count > 1}
 			<p class="text-caption">
-				他に {errorsStore.count - 1} 件のエラーがあります
+				{m.error_more_count({ count: errorsStore.count - 1 })}
 			</p>
 		{/if}
 		<details class="mt-1 text-caption opacity-60">
-			<summary class="cursor-pointer select-none">開発者向け情報</summary>
+			<summary class="cursor-pointer select-none">{m.error_dev_info()}</summary>
 			<p class="mt-1 font-mono">{current.code}</p>
 		</details>
 	</Alert>

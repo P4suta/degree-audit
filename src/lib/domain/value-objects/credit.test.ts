@@ -43,42 +43,6 @@ describe("Credit", () => {
 		});
 	});
 
-	describe("zero", () => {
-		it("is a Credit with numeric value 0", () => {
-			expect(Credit.toNumber(Credit.zero)).toBe(0);
-		});
-	});
-
-	describe("plus", () => {
-		it("returns a new Credit with the summed value", () => {
-			const a = Credit.of(2);
-			const b = Credit.of(3);
-			expect(Credit.toNumber(Credit.plus(a, b))).toBe(5);
-		});
-	});
-
-	describe("sum", () => {
-		it("returns zero for an empty list", () => {
-			expect(Credit.toNumber(Credit.sum([]))).toBe(0);
-		});
-
-		it("returns the total of all elements", () => {
-			const values = [Credit.of(2), Credit.of(3), Credit.of(4)];
-			expect(Credit.toNumber(Credit.sum(values))).toBe(9);
-		});
-	});
-
-	describe("isAtLeast", () => {
-		it("returns true when value >= threshold", () => {
-			expect(Credit.isAtLeast(Credit.of(5), Credit.of(4))).toBe(true);
-			expect(Credit.isAtLeast(Credit.of(4), Credit.of(4))).toBe(true);
-		});
-
-		it("returns false when value < threshold", () => {
-			expect(Credit.isAtLeast(Credit.of(3), Credit.of(4))).toBe(false);
-		});
-	});
-
 	describe("toNumber", () => {
 		it("extracts the underlying numeric value", () => {
 			expect(Credit.toNumber(Credit.of(7))).toBe(7);

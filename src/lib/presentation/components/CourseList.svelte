@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Course } from "$lib/domain/entities/course";
 	import { Credit } from "$lib/domain/value-objects/credit";
+	import * as m from "$lib/paraglide/messages";
 	import Badge from "../ui/Badge.svelte";
 
 	type BadgeVariant = "accent" | "warning" | "neutral" | "success" | "danger";
@@ -21,7 +22,7 @@
 
 	const {
 		courses,
-		emptyMessage = "該当科目はありません",
+		emptyMessage = m.course_list_empty(),
 		annotations,
 	}: Props = $props();
 
@@ -54,7 +55,7 @@
 					>
 						{course.rawCategoryLabel}
 						{#if course.year !== undefined}
-							・{course.year}年度
+							{m.course_year({ year: course.year })}
 						{/if}
 					</p>
 					{#if badge}
@@ -72,7 +73,7 @@
 					<span
 						class="shrink-0 text-caption tabular-nums text-[color:var(--color-fg-muted)]"
 					>
-						{Credit.toNumber(course.credit)} 単位
+						{m.course_credits({ credits: Credit.toNumber(course.credit) })}
 					</span>
 				</div>
 			</li>
