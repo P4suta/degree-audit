@@ -1,0 +1,25 @@
+# Out-of-workspace fuzz crate (own [workspace]) so cargo-fuzz's nightly + ASan
+# build never touches the main workspace. Run with `just fuzz pdf-glyphs fuzz_extract`.
+[package]
+name = "pdf-glyphs-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.pdf-glyphs]
+path = ".."
+
+[[bin]]
+name = "fuzz_extract"
+path = "fuzz_targets/fuzz_extract.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]

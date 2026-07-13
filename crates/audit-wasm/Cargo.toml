@@ -1,6 +1,7 @@
 # audit-wasm — the browser driving adapter. Exposes the shared core to JS.
-# The boundary is JSON DTOs only; the domain types serialize straight through, so
-# a future SvelteKit front-end consumes the same `Assessment` shape as the CLI.
+# The boundary hands back structured `JsValue`s (via serde-wasm-bindgen), not JSON
+# strings; the domain types serialize straight through, so the SvelteKit front-end
+# consumes the same `Assessment` shape the CLI's `--json` emits.
 [package]
 name = "audit-wasm"
 version = "0.1.0"
@@ -17,5 +18,14 @@ audit-domain.workspace = true
 audit-app.workspace = true
 transcript-parse.workspace = true
 serde.workspace = true
-serde_json.workspace = true
 wasm-bindgen = "0.2"
+# Serialize domain types straight into JsValue (no JSON string round-trip).
+serde-wasm-bindgen = "0.6"
+# Route Rust panics to console.error for legible browser stack traces.
+console_error_panic_hook = "0.1"
+
+[dev-dependencies]
+# Boundary tests exercise the #[wasm_bindgen] surface under node (see tests/).
+wasm-bindgen-test = "0.3"
+# JSON.stringify for inspecting the JsValue wire shape in the boundary tests.
+js-sys = "0.3"

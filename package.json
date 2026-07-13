@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"wasm:build": "wasm-pack build crates/audit-wasm --target web --out-dir pkg --out-name degree_audit && cp crates/audit-wasm/pkg/degree_audit.js crates/audit-wasm/pkg/degree_audit.d.ts crates/audit-wasm/pkg/degree_audit_bg.wasm crates/audit-wasm/pkg/degree_audit_bg.wasm.d.ts src/lib/wasm/",
+		"wasm:build": "wasm-pack build crates/audit-wasm --target web --out-dir ../../src/lib/wasm --out-name degree_audit",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -14,6 +14,7 @@
 		"test": "vitest",
 		"test:run": "vitest --run",
 		"test:coverage": "vitest --run --coverage",
+		"test:e2e": "playwright test",
 		"lint": "biome check",
 		"format": "biome format --write",
 		"fix": "biome check --write",
@@ -21,7 +22,9 @@
 		"deps:audit": "bun audit --audit-level=moderate"
 	},
 	"devDependencies": {
+		"@axe-core/playwright": "^4.12.1",
 		"@biomejs/biome": "2.5.3",
+		"@playwright/test": "^1.61.1",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.57.0",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",

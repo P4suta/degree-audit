@@ -1,8 +1,10 @@
 /**
  * Browser adapter over the Rust/WASM core.
  *
- * The web app runs the very same audit engine the CLI does: this loads the
- * wasm-bindgen module and exposes a typed `importPdf` that returns an
+ * The web app runs the very same audit engine the CLI does. Module instantiation
+ * and PDF parsing happen inside a Web Worker (audit.worker.ts) so the ~570KB
+ * instantiate + parse never blocks the main thread right after a drop; this file
+ * is the tiny main-thread facade over that worker. `importPdf` returns an
  * `Assessment` shaped exactly like the legacy TypeScript one — the only wire
  * differences (structured diagnostics / exclusion reasons) are normalized to the
  * Japanese strings the existing presentation expects. Nothing downstream changes.
@@ -12,8 +14,6 @@ import type { Assessment } from "$lib/application/assess-graduation";
 import type { AcademicRecord } from "$lib/domain/entities/academic-record";
 import type { StudentProfile } from "$lib/domain/entities/student-profile";
 
-import init, { import_pdf_json } from "./degree_audit.js";
-import wasmUrl from "./degree_audit_bg.wasm?url";
 import {
 	type Diagnostic,
 	type ExclusionReason,
@@ -65,12 +65,6 @@ interface RawBundle {
 	skipped: number;
 	unknownCategoryCount: number;
 }
-
-let ready: Promise<void> | null = null;
-const ensureReady = (): Promise<void> => {
-	if (ready === null) ready = init(wasmUrl).then(() => undefined);
-	return ready;
-};
 
 /** Everything one PDF import yields, ready for the existing stores. */
 export interface PdfImportBundle {
@@ -129,12 +123,60 @@ const normalizeAssessment = (a: RawAssessment): Assessment =>
 			: {}),
 	}) as unknown as Assessment;
 
-/** Import and assess an official PDF transcript entirely in the browser. */
+/** One worker response: the raw bundle on success, or an error message. */
+interface WorkerResponse {
+	id: number;
+	ok: boolean;
+	result?: unknown;
+	error?: string;
+}
+
+// A single worker, created lazily on the first import and reused thereafter.
+let worker: Worker | null = null;
+let nextId = 0;
+const pending = new Map<
+	number,
+	{ resolve: (bundle: RawBundle) => void; reject: (error: Error) => void }
+>();
+
+const getWorker = (): Worker => {
+	if (worker === null) {
+		worker = new Worker(new URL("./audit.worker.ts", import.meta.url), {
+			type: "module",
+		});
+		worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
+			const { id, ok, result, error } = e.data;
+			const entry = pending.get(id);
+			if (entry === undefined) return;
+			pending.delete(id);
+			if (ok) entry.resolve(result as RawBundle);
+			else entry.reject(new Error(error ?? "WASM import failed"));
+		};
+	}
+	return worker;
+};
+
+/** Import and assess an official PDF transcript entirely in the browser. The
+ *  heavy work runs in a Web Worker; the transcript buffer is transferred (not
+ *  copied) into it, so `bytes` is left detached on return. */
 export const importPdf = async (
 	bytes: Uint8Array,
 ): Promise<PdfImportBundle> => {
-	await ensureReady();
-	const bundle = JSON.parse(import_pdf_json(bytes)) as RawBundle;
+	const id = nextId++;
+	const w = getWorker();
+	const bundle = await new Promise<RawBundle>((resolve, reject) => {
+		pending.set(id, { resolve, reject });
+		// Zero-copy transfer of the underlying buffer to the worker.
+		w.postMessage(
+			{
+				id,
+				buffer: bytes.buffer,
+				byteOffset: bytes.byteOffset,
+				byteLength: bytes.byteLength,
+			},
+			[bytes.buffer],
+		);
+	});
 	const profile = bundle.profile as StudentProfile;
 	const record = {
 		profile,
