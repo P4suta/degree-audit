@@ -4,33 +4,51 @@
 /**
  * Assess graduation directly from the bytes of an official PDF transcript.
  * The profile (faculty/course/matriculation year) is read from the PDF header.
- * Returns the `Assessment` as a JSON string.
+ * Returns the `Assessment` as a JS value.
+ *
+ * # Errors
+ * Same failure modes as [`import_pdf`].
  */
-export function assess_from_pdf(bytes: Uint8Array): string;
+export function assessFromPdf(bytes: Uint8Array): any;
 
 /**
- * Import an official PDF transcript and assess it in one call, returning a JSON
- * bundle (`{ assessment, courses, profile, skipped, unknownCategoryCount }`) that
- * the SvelteKit front-end feeds straight into its existing stores.
+ * Import an official PDF transcript and assess it in one call, returning a
+ * structured object (`{ assessment, courses, profile, skipped,
+ * unknownCategoryCount }`) that the SvelteKit front-end feeds straight into its
+ * existing stores.
+ *
+ * # Errors
+ * Fails if the PDF header is unreadable, no rule set applies, the transcript
+ * cannot be imported, or the result cannot be serialized to a JS value.
  */
-export function import_pdf_json(bytes: Uint8Array): string;
+export function importPdf(bytes: Uint8Array): any;
 
 /**
- * List the available rule sets as a JSON array of `{ id, displayName, specificity }`.
+ * List the available rule sets as an array of `{ id, displayName, specificity }`.
+ *
+ * # Errors
+ * Fails only if the metadata cannot be serialized to a JS value.
  */
-export function rule_sets_json(): string;
+export function ruleSets(): any;
+
+/**
+ * Route Rust panics to `console.error` for legible stack traces in the browser.
+ */
+export function start(): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
-    readonly assess_from_pdf: (a: number, b: number) => [number, number, number, number];
-    readonly import_pdf_json: (a: number, b: number) => [number, number, number, number];
-    readonly rule_sets_json: () => [number, number];
-    readonly __wbindgen_externrefs: WebAssembly.Table;
+    readonly assessFromPdf: (a: number, b: number) => [number, number, number];
+    readonly importPdf: (a: number, b: number) => [number, number, number];
+    readonly ruleSets: () => [number, number, number];
+    readonly start: () => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
-    readonly __externref_table_dealloc: (a: number) => void;
+    readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
+    readonly __wbindgen_externrefs: WebAssembly.Table;
+    readonly __externref_table_dealloc: (a: number) => void;
     readonly __wbindgen_start: () => void;
 }
 
