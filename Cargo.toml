@@ -26,12 +26,12 @@ serde_json = "1"
 
 # CLI-only presentation stack (used solely by crates/cli; keeps the core pure).
 anstyle = "1"
-anstream = "0.6"
-indicatif = "0.17"
+anstream = "1.0"
+indicatif = "0.18"
 miette = { version = "7", features = ["fancy"] }
-inquire = "0.7"
+inquire = "0.9"
 clap_complete = "4"
-clap_mangen = "0.2"
+clap_mangen = "0.3"
 terminal_size = "0.4"
 unicode-width = "0.2"
 
