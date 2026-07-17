@@ -24,7 +24,7 @@
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.12.1",
-		"@biomejs/biome": "2.5.3",
+		"@biomejs/biome": "2.5.4",
 		"@iconify-json/ic": "^1.2.4",
 		"@inlang/paraglide-js": "^2.21.0",
 		"@inlang/plugin-message-format": "^4.4.0",
