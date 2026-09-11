@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0 # needed for the PR --in-diff base
 
       - name: Set up Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+        uses: actions-rust-lang/setup-rust-toolchain@v2
 
       - name: Install cargo-mutants
         uses: taiki-e/install-action@v2
