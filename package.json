@@ -24,7 +24,7 @@
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.12.1",
-		"@biomejs/biome": "2.5.3",
+		"@biomejs/biome": "2.5.13",
 		"@iconify-json/ic": "^1.2.4",
 		"@inlang/paraglide-js": "^2.21.0",
 		"@inlang/plugin-message-format": "^4.4.0",
@@ -33,17 +33,17 @@
 		"@sveltejs/kit": "^2.57.0",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"@tailwindcss/vite": "^4.2.2",
-		"@vitest/coverage-istanbul": "4.1.10",
-		"fast-check": "4.9.0",
-		"happy-dom": "20.10.6",
+		"@vitest/coverage-istanbul": "5.0.0",
+		"fast-check": "4.10.0",
+		"happy-dom": "20.14.5",
 		"lighthouse": "^13.4.0",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
 		"tailwindcss": "^4.2.2",
 		"typescript": "^6.0.3",
-		"unplugin-icons": "^23.0.1",
+		"unplugin-icons": "^24.0.0",
 		"vite": "^8.0.7",
-		"vitest": "^4.1.3"
+		"vitest": "^5.0.0"
 	},
 	"dependencies": {
 		"zod": "^4.3.6"
