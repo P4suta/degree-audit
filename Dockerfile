@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.7
+# syntax=docker/dockerfile:1.28
 # Single source of truth for the Bun version, dependency install, and the
 # check / lint / test / build targets. Local (docker compose), devcontainer,
 # CI and Pages builds all invoke this Dockerfile by switching the target.
