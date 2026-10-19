@@ -9,8 +9,12 @@
 
 import type { FieldCategory } from "$lib/domain/value-objects/field-category";
 import type { SubjectCategoryKind } from "$lib/domain/value-objects/subject-category";
-import { fieldLabel, kindLabel, unitLabel } from "$lib/presentation/i18n/labels";
 import * as m from "$lib/paraglide/messages";
+import {
+	fieldLabel,
+	kindLabel,
+	unitLabel,
+} from "$lib/presentation/i18n/labels";
 
 /** A structured diagnostic as emitted by the Rust `Diagnostic` enum (tag = "type"). */
 export type Diagnostic =
