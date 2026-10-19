@@ -12,8 +12,8 @@
 				},
 				"issue": 59,
 				"branch": "ci/remove-unattended-campaigns",
-				"head": "4ed58f02b760cd6c10efe3952d1cdc73ce0076ac",
-				"tree": "253f460a88d52fe2e7ed81feb06527ab08728a9d",
+				"head": "4c5caed2997c482030ee9c514cef682f8f5f512a",
+				"tree": "438f2825a25e0c0cd937d33626c594e0d9252c57",
 				"scopes": [
 					".github/workflows/fuzz.yml",
 					".github/workflows/mutants.yml",
@@ -22,13 +22,16 @@
 					".mise.toml",
 					"target/maintenance/ci-cost-issue.md",
 					"target/maintenance/ci-cost-pr.md",
-					"target/maintenance/ci-cost-importance.json"
+					"target/maintenance/ci-cost-importance.json",
+					"src/meta/no-university-name.test.ts",
+					"src/meta/.scrub-probe.md",
+					"target/maintenance"
 				],
 				"initial_dirty": {},
 				"adopted": false
 			},
-			"object": "0ca1b1cb80e466841dde2fb11e28da2bdf7991a3",
-			"signed_commit": "tree 253f460a88d52fe2e7ed81feb06527ab08728a9d\nparent 4ed58f02b760cd6c10efe3952d1cdc73ce0076ac\nauthor Yasunobu <42543015+P4suta@users.noreply.github.com> 1792426317 +0900\ncommitter Yasunobu <42543015+P4suta@users.noreply.github.com> 1792426317 +0900\ngpgsig -----BEGIN SSH SIGNATURE-----\n U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAggYuFWiqTPADsoSIEpaH7qKaADz\n KmGLmP6IPbTLrOaDQAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5\n AAAAQBD0BRUhjlgnRUInKDjUMDlesRy1plR171zs8NFaw4D1PMmqzQkQD2GMkcfGvGWpwQ\n W1TthuvQ6bXN0BzM+PJgo=\n -----END SSH SIGNATURE-----\n\n{\"schema\":1,\"destination\":{\"repository\":\"P4suta/degree-audit\",\"repository_id\":1213175995,\"owner_id\":42543015,\"required\":true},\"issue\":59,\"branch\":\"ci/remove-unattended-campaigns\",\"head\":\"4ed58f02b760cd6c10efe3952d1cdc73ce0076ac\",\"tree\":\"253f460a88d52fe2e7ed81feb06527ab08728a9d\",\"scopes\":[\".github/workflows/fuzz.yml\",\".github/workflows/mutants.yml\",\".github/workflows/ci.yml\",\"justfile\",\".mise.toml\",\"target/maintenance/ci-cost-issue.md\",\"target/maintenance/ci-cost-pr.md\",\"target/maintenance/ci-cost-importance.json\"],\"initial_dirty\":{},\"adopted\":false}"
+			"object": "ce8f93f65225793532f06d448a54f9c85956e324",
+			"signed_commit": "tree 438f2825a25e0c0cd937d33626c594e0d9252c57\nparent 4c5caed2997c482030ee9c514cef682f8f5f512a\nauthor Yasunobu <42543015+P4suta@users.noreply.github.com> 1792426899 +0900\ncommitter Yasunobu <42543015+P4suta@users.noreply.github.com> 1792426899 +0900\ngpgsig -----BEGIN SSH SIGNATURE-----\n U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAggYuFWiqTPADsoSIEpaH7qKaADz\n KmGLmP6IPbTLrOaDQAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5\n AAAAQKgorHjlEKdrd8YCIFgb0jqqP7MyFzJg52dE23hUSxPtyPDbz4J1PmpvkPoeKlnIT1\n yuCibdnZTyQ6u7p9gQug4=\n -----END SSH SIGNATURE-----\n\n{\"schema\":1,\"destination\":{\"repository\":\"P4suta/degree-audit\",\"repository_id\":1213175995,\"owner_id\":42543015,\"required\":true},\"issue\":59,\"branch\":\"ci/remove-unattended-campaigns\",\"head\":\"4c5caed2997c482030ee9c514cef682f8f5f512a\",\"tree\":\"438f2825a25e0c0cd937d33626c594e0d9252c57\",\"scopes\":[\".github/workflows/fuzz.yml\",\".github/workflows/mutants.yml\",\".github/workflows/ci.yml\",\"justfile\",\".mise.toml\",\"target/maintenance/ci-cost-issue.md\",\"target/maintenance/ci-cost-pr.md\",\"target/maintenance/ci-cost-importance.json\",\"src/meta/no-university-name.test.ts\",\"src/meta/.scrub-probe.md\",\"target/maintenance\"],\"initial_dirty\":{},\"adopted\":false}"
 		}
 	]
 }
