@@ -12,18 +12,19 @@
 				},
 				"issue": 57,
 				"branch": "renovate/crate-lopdf-vulnerability",
-				"head": "4de79f2be5f1556a9bfdfc9e999d5f614d6d2d48",
-				"tree": "6483887aec035a5f479a3d80680b9ab688315dec",
+				"head": "190da7c81ac1192e801a882706182fa89abcedc9",
+				"tree": "e33d2f43dee84a12b3fac0ec56e1540a7767c307",
 				"scopes": [
 					"crates/pdf-glyphs",
 					"Cargo.lock",
+					"src/lib/wasm/diagnostics.ts",
 					"target/maintenance/lopdf-importance.json"
 				],
 				"initial_dirty": {},
 				"adopted": false
 			},
-			"object": "8c15083d017c2f0e947c6ed4207c10cadd4b7ed5",
-			"signed_commit": "tree 6483887aec035a5f479a3d80680b9ab688315dec\nparent 4de79f2be5f1556a9bfdfc9e999d5f614d6d2d48\nauthor Yasunobu <42543015+P4suta@users.noreply.github.com> 1792410134 +0900\ncommitter Yasunobu <42543015+P4suta@users.noreply.github.com> 1792410134 +0900\ngpgsig -----BEGIN SSH SIGNATURE-----\n U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAggYuFWiqTPADsoSIEpaH7qKaADz\n KmGLmP6IPbTLrOaDQAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5\n AAAAQH8aMi7YyFGrbNmE5m+tsjJy6nhsUYOx+EB1qwfKfDdOHo9QnJfFRu0DfzVqOVkTb6\n Er9iRNMAuzPjj3I8Upigk=\n -----END SSH SIGNATURE-----\n\n{\"schema\":1,\"destination\":{\"repository\":\"P4suta/degree-audit\",\"repository_id\":1213175995,\"owner_id\":42543015,\"required\":true},\"issue\":57,\"branch\":\"renovate/crate-lopdf-vulnerability\",\"head\":\"4de79f2be5f1556a9bfdfc9e999d5f614d6d2d48\",\"tree\":\"6483887aec035a5f479a3d80680b9ab688315dec\",\"scopes\":[\"crates/pdf-glyphs\",\"Cargo.lock\",\"target/maintenance/lopdf-importance.json\"],\"initial_dirty\":{},\"adopted\":false}"
+			"object": "bae66f336db020af60866e8be8c334b3a515db69",
+			"signed_commit": "tree e33d2f43dee84a12b3fac0ec56e1540a7767c307\nparent 190da7c81ac1192e801a882706182fa89abcedc9\nauthor Yasunobu <42543015+P4suta@users.noreply.github.com> 1792411233 +0900\ncommitter Yasunobu <42543015+P4suta@users.noreply.github.com> 1792411233 +0900\ngpgsig -----BEGIN SSH SIGNATURE-----\n U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAggYuFWiqTPADsoSIEpaH7qKaADz\n KmGLmP6IPbTLrOaDQAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5\n AAAAQGVGd4O72vZraykh+QzhxkIM7Nt/Npp8yqAFqZYrNuG05mIVv4eTbzDQgNuEGCDtCy\n kAXEAEtojY7ydhy3p59gs=\n -----END SSH SIGNATURE-----\n\n{\"schema\":1,\"destination\":{\"repository\":\"P4suta/degree-audit\",\"repository_id\":1213175995,\"owner_id\":42543015,\"required\":true},\"issue\":57,\"branch\":\"renovate/crate-lopdf-vulnerability\",\"head\":\"190da7c81ac1192e801a882706182fa89abcedc9\",\"tree\":\"e33d2f43dee84a12b3fac0ec56e1540a7767c307\",\"scopes\":[\"crates/pdf-glyphs\",\"Cargo.lock\",\"src/lib/wasm/diagnostics.ts\",\"target/maintenance/lopdf-importance.json\"],\"initial_dirty\":{},\"adopted\":false}"
 		}
 	]
 }
