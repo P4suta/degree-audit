@@ -55,7 +55,7 @@ fuzz CRATE TARGET *ARGS:
     cd crates/{{CRATE}} && cargo +nightly fuzz run {{TARGET}} -- -max_total_time=60 {{ARGS}}
 
 # Scope lives in mutants.toml. Pass `--in-diff <file>` for a changed-lines run.
-# Mutation testing (weekly in CI, slow): do the tests kill injected bugs?
+# Local mutation analysis for a test-quality investigation.
 mutants *ARGS:
     cargo mutants --timeout 60 {{ARGS}}
 

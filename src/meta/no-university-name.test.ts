@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join, relative } from "node:path";
+import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
@@ -26,6 +26,7 @@ const EXCLUDED_PATHS: readonly string[] = [
 	".svelte-kit",
 	"build",
 	"coverage",
+	"target",
 	".git",
 	"tests/fixtures",
 ];
@@ -48,7 +49,7 @@ const isExcluded = (rel: string): boolean =>
 const walk = (dir: string, acc: string[]): void => {
 	for (const entry of readdirSync(dir)) {
 		const full = join(dir, entry);
-		const rel = relative(ROOT, full);
+		const rel = relative(ROOT, full).split(sep).join("/");
 		if (isExcluded(rel)) continue;
 		const s = statSync(full);
 		if (s.isDirectory()) {

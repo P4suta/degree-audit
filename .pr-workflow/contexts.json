@@ -10,22 +10,29 @@
 					"owner_id": 42543015,
 					"required": true
 				},
-				"issue": 57,
-				"branch": "renovate/crate-lopdf-vulnerability",
-				"head": "16ac90c802dac782ac2a14a925ff96f8a32e5664",
-				"tree": "7a6ae9fb20c0f005605db83f225fe9a851e9d8af",
+				"issue": 59,
+				"branch": "ci/remove-unattended-campaigns",
+				"head": "0fe3356bfd085bda44cfe31d3ac88ac88c23c5f6",
+				"tree": "768fa74ea096ba5203a1401f58b0ab4e568c99d5",
 				"scopes": [
-					"crates/pdf-glyphs",
-					"Cargo.lock",
-					"src/lib/wasm/diagnostics.ts",
-					"playwright.config.ts",
-					"target/maintenance/lopdf-importance.json"
+					".github/workflows/fuzz.yml",
+					".github/workflows/mutants.yml",
+					".github/workflows/ci.yml",
+					"justfile",
+					".mise.toml",
+					"target/maintenance/ci-cost-issue.md",
+					"target/maintenance/ci-cost-pr.md",
+					"target/maintenance/ci-cost-importance.json",
+					"src/meta/no-university-name.test.ts",
+					"src/meta/.scrub-probe.md",
+					"target/maintenance",
+					"vitest.config.ts"
 				],
 				"initial_dirty": {},
 				"adopted": false
 			},
-			"object": "681f24eecc20edc984640388151904ff9b9cd98e",
-			"signed_commit": "tree 7a6ae9fb20c0f005605db83f225fe9a851e9d8af\nparent 16ac90c802dac782ac2a14a925ff96f8a32e5664\nauthor Yasunobu <42543015+P4suta@users.noreply.github.com> 1792416386 +0900\ncommitter Yasunobu <42543015+P4suta@users.noreply.github.com> 1792416386 +0900\ngpgsig -----BEGIN SSH SIGNATURE-----\n U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAggYuFWiqTPADsoSIEpaH7qKaADz\n KmGLmP6IPbTLrOaDQAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5\n AAAAQBuPwipeyQ1Khda+OAnUulSPNVyfTDWS8VEddmc9Edk5UPKFB5ydQz8k9nBXpejSdI\n cdrscW+Lq7eF2omZnoEg8=\n -----END SSH SIGNATURE-----\n\n{\"schema\":1,\"destination\":{\"repository\":\"P4suta/degree-audit\",\"repository_id\":1213175995,\"owner_id\":42543015,\"required\":true},\"issue\":57,\"branch\":\"renovate/crate-lopdf-vulnerability\",\"head\":\"16ac90c802dac782ac2a14a925ff96f8a32e5664\",\"tree\":\"7a6ae9fb20c0f005605db83f225fe9a851e9d8af\",\"scopes\":[\"crates/pdf-glyphs\",\"Cargo.lock\",\"src/lib/wasm/diagnostics.ts\",\"playwright.config.ts\",\"target/maintenance/lopdf-importance.json\"],\"initial_dirty\":{},\"adopted\":false}"
+			"object": "39371d5be3ff1fe902cec946a698d3050085d64a",
+			"signed_commit": "tree 768fa74ea096ba5203a1401f58b0ab4e568c99d5\nparent 0fe3356bfd085bda44cfe31d3ac88ac88c23c5f6\nauthor Yasunobu <42543015+P4suta@users.noreply.github.com> 1792430548 +0900\ncommitter Yasunobu <42543015+P4suta@users.noreply.github.com> 1792430548 +0900\ngpgsig -----BEGIN SSH SIGNATURE-----\n U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAggYuFWiqTPADsoSIEpaH7qKaADz\n KmGLmP6IPbTLrOaDQAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5\n AAAAQNv87f1RN+CA0CMzLgCARADRgDXUQ/AC4RTYuEZYqu1SvGOlmblk6+baet63NsYIrJ\n v6Hy85slhzuD4J/pfwLws=\n -----END SSH SIGNATURE-----\n\n{\"schema\":1,\"destination\":{\"repository\":\"P4suta/degree-audit\",\"repository_id\":1213175995,\"owner_id\":42543015,\"required\":true},\"issue\":59,\"branch\":\"ci/remove-unattended-campaigns\",\"head\":\"0fe3356bfd085bda44cfe31d3ac88ac88c23c5f6\",\"tree\":\"768fa74ea096ba5203a1401f58b0ab4e568c99d5\",\"scopes\":[\".github/workflows/fuzz.yml\",\".github/workflows/mutants.yml\",\".github/workflows/ci.yml\",\"justfile\",\".mise.toml\",\"target/maintenance/ci-cost-issue.md\",\"target/maintenance/ci-cost-pr.md\",\"target/maintenance/ci-cost-importance.json\",\"src/meta/no-university-name.test.ts\",\"src/meta/.scrub-probe.md\",\"target/maintenance\",\"vitest.config.ts\"],\"initial_dirty\":{},\"adopted\":false}"
 		}
 	]
 }

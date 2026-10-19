@@ -2,6 +2,9 @@ import { sveltekit } from "@sveltejs/kit/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vitest/config";
 
+const FULL_COVERAGE_PERCENT = 100;
+const BOUNDARY_COVERAGE_PERCENT = 90;
+
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	test: {
@@ -27,25 +30,25 @@ export default defineConfig({
 			],
 			thresholds: {
 				"src/lib/domain/**": {
-					branches: 100,
-					functions: 100,
-					lines: 100,
-					statements: 100,
+					branches: FULL_COVERAGE_PERCENT,
+					functions: FULL_COVERAGE_PERCENT,
+					lines: FULL_COVERAGE_PERCENT,
+					statements: FULL_COVERAGE_PERCENT,
 				},
 				"src/lib/application/**": {
-					branches: 100,
-					functions: 100,
-					lines: 100,
-					statements: 100,
+					branches: FULL_COVERAGE_PERCENT,
+					functions: FULL_COVERAGE_PERCENT,
+					lines: FULL_COVERAGE_PERCENT,
+					statements: FULL_COVERAGE_PERCENT,
 				},
 				"src/lib/infrastructure/**": {
 					// Boundary layer keeps unreachable defensive branches
 					// (noUncheckedIndexedAccess `?? ""`, out-of-spec guards),
 					// so branches/statements are relaxed to 90%.
-					branches: 90,
-					functions: 100,
-					lines: 100,
-					statements: 90,
+					branches: BOUNDARY_COVERAGE_PERCENT,
+					functions: FULL_COVERAGE_PERCENT,
+					lines: FULL_COVERAGE_PERCENT,
+					statements: BOUNDARY_COVERAGE_PERCENT,
 				},
 			},
 		},
