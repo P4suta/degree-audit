@@ -27,6 +27,8 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2
       - name: Set up tools (mise)
         uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4
+        with:
+          install_args: just aqua:rustwasm/wasm-pack
       - name: Build WASM glue
         run: just wasm-build
 
@@ -97,6 +99,8 @@ jobs:
 
       - name: Set up tools (mise)
         uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4
+        with:
+          install_args: node aqua:rustwasm/wasm-pack
 
       # Exercises the #[wasm_bindgen] surface under node — the JsValue shapes
       # (camelCase keys, error propagation) the front-end relies on.
@@ -113,6 +117,8 @@ jobs:
 
       - name: Set up tools (mise)
         uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4
+        with:
+          install_args: bun node
 
       - name: Install deps
         run: bun install --frozen-lockfile
