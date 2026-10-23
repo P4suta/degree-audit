@@ -80,9 +80,7 @@ pub fn extract(bytes: &[u8]) -> Result<Vec<Fragment>, ExtractError> {
         let page = page_number.min(u16::MAX as u32) as u16;
         let fonts = load_page_fonts(&doc, page_id);
 
-        let Ok(content_bytes) = doc.get_page_content(page_id) else {
-            continue;
-        };
+        let content_bytes = doc.get_page_content(page_id);
         let Ok(content) = Content::decode(&content_bytes) else {
             continue;
         };

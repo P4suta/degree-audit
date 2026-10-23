@@ -19,15 +19,12 @@ describe("Grade", () => {
 });
 
 describe("isPassing", () => {
-	it.each([
-		Grade.Shu,
-		Grade.Yu,
-		Grade.Ryo,
-		Grade.Ka,
-		Grade.Nintei,
-	])("%s is passing", (g) => {
-		expect(isPassing(g)).toBe(true);
-	});
+	it.each([Grade.Shu, Grade.Yu, Grade.Ryo, Grade.Ka, Grade.Nintei])(
+		"%s is passing",
+		(g) => {
+			expect(isPassing(g)).toBe(true);
+		},
+	);
 
 	it.each([
 		Grade.Fuka,

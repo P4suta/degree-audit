@@ -5,7 +5,7 @@
 
 # Keep in sync with .mise.toml `bun` so the Docker and mise/just paths use the
 # same Bun.
-ARG BUN_VERSION=1.3.14
+ARG BUN_VERSION=1.4.3
 
 FROM oven/bun:${BUN_VERSION}-slim AS base
 WORKDIR /app
