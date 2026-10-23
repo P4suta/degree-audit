@@ -56,17 +56,15 @@ describe("ConsoleSink", () => {
 		};
 	};
 
-	it.each([
-		"debug",
-		"info",
-		"warn",
-		"error",
-	] as const)("routes %s records to the matching console method", (level) => {
-		const target = makeTarget();
-		const sink = new ConsoleSink(target);
-		sink.write(record({ level, message: `L ${level}` }));
-		expect(target.calls[level]).toHaveLength(1);
-	});
+	it.each(["debug", "info", "warn", "error"] as const)(
+		"routes %s records to the matching console method",
+		(level) => {
+			const target = makeTarget();
+			const sink = new ConsoleSink(target);
+			sink.write(record({ level, message: `L ${level}` }));
+			expect(target.calls[level]).toHaveLength(1);
+		},
+	);
 
 	it("includes context when non-empty and omits when empty", () => {
 		const target = makeTarget();
