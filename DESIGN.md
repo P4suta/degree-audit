@@ -27,7 +27,6 @@ font-family:
 ### タイポグラフィスケール
 
 Display 40 / H1 28 / H2 22 / H3 17 / Body 15 / Small 13 / Caption 12 / Micro 11（px）。
-
 - 見出しほど line-height を締め（1.08〜1.24）、本文は広く（1.45〜1.55）。
 - weight は 400 と 600 が中心。700 以上と 300 は使わない。
 - 本文にも軽い負のトラッキング（`-0.005em`）を入れる。
@@ -46,7 +45,6 @@ Display 40 / H1 28 / H2 22 / H3 17 / Body 15 / Small 13 / Caption 12 / Micro 11�
 
 `prefers-color-scheme: dark` で同名トークンの値だけを差し替える（`-dark` サフィックスは作らない）。
 コンポーネントは全て `var(--color-*)` を参照するので値の差し替えだけで反転する。
-
 - テキスト色は不透明なソリッド値で持つ（不透明度インクは暗い地で潰れる）。
 - アクセント青はダーク地で沈まないよう明るめにし、塗り上の文字色は暗色へ反転する。
 - 全テキスト/アクセント/セマンティック対の AA (4.5:1) と全トークンのダーク値の存在は
@@ -66,7 +64,6 @@ Display 40 / H1 28 / H2 22 / H3 17 / Body 15 / Small 13 / Caption 12 / Micro 11�
 
 1 系統 3 レジスタ。生の `cubic-bezier` / `@keyframes` は書かず、`@theme` のトークン
 （`--ease-*` / `--animate-*`）経由でのみ使う。
-
 - state（hover / focus / press）: `--ease-standard`、`motion-safe:transition-*`。
 - movement / enter: `--ease-spring`。入場は `animate-rise-in`、`animate-fade-in`、`animate-spinner`。
 - `prefers-reduced-motion: reduce` で `layout.css` が全アニメの duration を 0.01ms 化。
@@ -89,7 +86,6 @@ import School from "~icons/ic/round-school";
 ## コンポーネント
 
 具体的な padding・border・radius 値は各コンポーネントの実装が真実。ここでは役割を示す。
-
 - **Button**: 主 = accent 塗り + 白文字、secondary = 境界のみ、pill = リンク寄り、ghost = 無地。
   focus-visible は `outline: 2px solid --color-accent`（offset 2px）。
 - **Card**: `--color-surface` + `--color-border` + `--radius-card`。影より境界で区切る。

@@ -5,9 +5,9 @@
 
 # Keep in sync with .mise.toml `bun` so the Docker and mise/just paths use the
 # same Bun.
-ARG BUN_VERSION=1.4.3
+ARG BUN_VERSION=1.4.4
 
-FROM oven/bun:${BUN_VERSION}-slim AS base
+FROM oven/bun:${BUN_VERSION}-slim@sha256:1846adf22496bd711036aae8be147e57bdebbaea2e5264e3e0b5af1db187d9a4 AS base
 WORKDIR /app
 ENV CI=1
 
@@ -20,8 +20,7 @@ FROM deps AS source
 COPY . .
 # Compile the Paraglide messages (gitignored output) from the local plugin so
 # every downstream target resolves $lib/paraglide without a network fetch.
-RUN bun run paraglide:compile
-RUN bun run prepare
+RUN bun run paraglide:compile && bun run prepare
 
 FROM source AS check
 RUN bun run check

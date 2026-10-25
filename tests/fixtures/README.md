@@ -2,7 +2,6 @@
 
 実データ（実在する学生の PDF 成績表）はコミットせず、環境変数経由でローカルからのみ読み込む
 オラクルテストで PDF 解析を検証する:
-
 - `crates/transcript-parse/tests/real_pdf.rs` — `TRANSCRIPT_ORACLE`
 - `crates/pdf-glyphs/tests/real_pdf.rs` — `PDF_GLYPHS_ORACLE`
 
