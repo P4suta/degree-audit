@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { base } from "$app/paths";
-	import { safeGoto } from "$lib/presentation/navigation";
-	import { DomainError } from "$lib/domain/errors/domain-error";
-	import { ErrorCode } from "$lib/domain/errors/error-code";
-	import TranscriptDropZone from "$lib/presentation/components/TranscriptDropZone.svelte";
-	import { yieldToMain } from "$lib/infrastructure/async/yield";
-	import { errorsStore } from "$lib/presentation/stores/errors.svelte";
-	import { logger } from "$lib/presentation/stores/logger.svelte";
-	import { profileStore } from "$lib/presentation/stores/profile.svelte";
-	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
-	import { warningsStore } from "$lib/presentation/stores/warnings.svelte";
-	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
-	import * as m from "$lib/paraglide/messages";
+	import { resolve } from "$app/paths";
+	import { safeGoto } from "#lib/presentation/navigation.ts";
+	import { DomainError } from "#lib/domain/errors/domain-error.ts";
+	import { ErrorCode } from "#lib/domain/errors/error-code.ts";
+	import TranscriptDropZone from "#lib/presentation/components/TranscriptDropZone.svelte";
+	import { yieldToMain } from "#lib/infrastructure/async/yield.ts";
+	import { errorsStore } from "#lib/presentation/stores/errors.svelte.ts";
+	import { logger } from "#lib/presentation/stores/logger.svelte.ts";
+	import { profileStore } from "#lib/presentation/stores/profile.svelte.ts";
+	import { transcriptStore } from "#lib/presentation/stores/transcript.svelte.ts";
+	import { warningsStore } from "#lib/presentation/stores/warnings.svelte.ts";
+	import { assessmentStore } from "#lib/presentation/stores/assessment.svelte.ts";
+	import * as m from "#lib/paraglide/messages.js";
 
 	const PDF_MAGIC = [0x25, 0x50, 0x44, 0x46]; // "%PDF"
 
@@ -36,12 +36,9 @@
 	// step.
 	const importFromPdf = async (source: Uint8Array) => {
 		await yieldToMain();
-		// NOTE: must target the facade file explicitly (`/index`), not the
-		// directory. wasm-pack drops a `package.json` (`"main":"degree_audit.js"`)
-		// into src/lib/wasm/, so a bare `$lib/wasm` import resolves to the raw WASM
-		// glue instead of this worker-backed facade — calling its `importPdf` on the
-		// main thread before init throws `__wbindgen_malloc of undefined`.
-		const { importPdf } = await import("$lib/wasm/index");
+		// Load the worker-backed facade explicitly.
+		// wasm-pack's generated package entry points to the raw WebAssembly glue.
+		const { importPdf } = await import("#lib/wasm/index.ts");
 		const bundle = await importPdf(source);
 		profileStore.set(bundle.profile);
 		transcriptStore.set(bundle.record);
@@ -59,7 +56,7 @@
 			skipped: bundle.skipped,
 			unknownCategories: bundle.unknownCategoryCount,
 		});
-		void safeGoto(`${base}/dashboard`);
+		void safeGoto(resolve("/dashboard"));
 	};
 
 	const handleFile = async (file: File) => {

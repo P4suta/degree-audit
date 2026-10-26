@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { base } from "$app/paths";
+	import { resolve } from "$app/paths";
 	import { page } from "$app/state";
-	import Disclaimer from "$lib/presentation/components/Disclaimer.svelte";
-	import ErrorBanner from "$lib/presentation/components/ErrorBanner.svelte";
-	import WarningBanner from "$lib/presentation/components/WarningBanner.svelte";
-	import Badge from "$lib/presentation/ui/Badge.svelte";
-	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
-	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
-	import { Credit } from "$lib/domain/value-objects/credit";
-	import * as m from "$lib/paraglide/messages";
+	import Disclaimer from "#lib/presentation/components/Disclaimer.svelte";
+	import ErrorBanner from "#lib/presentation/components/ErrorBanner.svelte";
+	import WarningBanner from "#lib/presentation/components/WarningBanner.svelte";
+	import Badge from "#lib/presentation/ui/Badge.svelte";
+	import { assessmentStore } from "#lib/presentation/stores/assessment.svelte.ts";
+	import { disclaimerStore } from "#lib/presentation/stores/disclaimer.svelte.ts";
+	import { Credit } from "#lib/domain/value-objects/credit.ts";
+	import * as m from "#lib/paraglide/messages.js";
 	import GraduationCap from "~icons/ic/round-school";
 	import "./layout.css";
 
@@ -110,7 +110,7 @@
 		<p>
 			{m.footer_note_lead()}
 			<a
-				href={`${base}/disclaimer`}
+				href={resolve("/disclaimer")}
 				class="text-[color:var(--color-accent-link)] underline hover:no-underline"
 				>{m.link_disclaimer()}</a
 			>{m.footer_note_trail()}

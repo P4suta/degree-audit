@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { base } from "$app/paths";
+	import { resolve } from "$app/paths";
 	import { onMount } from "svelte";
-	import { safeGoto } from "$lib/presentation/navigation";
-	import RequirementRow from "$lib/presentation/components/RequirementRow.svelte";
-	import Summary from "$lib/presentation/components/Summary.svelte";
-	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
-	import { profileStore } from "$lib/presentation/stores/profile.svelte";
-	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
-	import { requirementLabel } from "$lib/presentation/i18n/labels";
-	import * as m from "$lib/paraglide/messages";
+	import { safeGoto } from "#lib/presentation/navigation.ts";
+	import RequirementRow from "#lib/presentation/components/RequirementRow.svelte";
+	import Summary from "#lib/presentation/components/Summary.svelte";
+	import { assessmentStore } from "#lib/presentation/stores/assessment.svelte.ts";
+	import { profileStore } from "#lib/presentation/stores/profile.svelte.ts";
+	import { transcriptStore } from "#lib/presentation/stores/transcript.svelte.ts";
+	import { requirementLabel } from "#lib/presentation/i18n/labels.ts";
+	import * as m from "#lib/paraglide/messages.js";
 
 	// Both profile and transcript come from the same PDF, so if either is
 	// missing, go back to import (there is no separate /profile step).
 	onMount(() => {
 		if (profileStore.current === null || transcriptStore.current === null) {
-			void safeGoto(`${base}/import`);
+			void safeGoto(resolve("/import"));
 		}
 	});
 

@@ -11,9 +11,9 @@ const SERVER_START_TIMEOUT_MS = 120_000;
 export default defineConfig({
 	testDir: "e2e",
 	fullyParallel: true,
-	forbidOnly: !!process.env.CI,
-	retries: process.env.CI ? CI_RETRIES : 0,
-	reporter: process.env.CI ? "github" : "list",
+	forbidOnly: !!process.env["CI"],
+	retries: process.env["CI"] ? CI_RETRIES : 0,
+	reporter: process.env["CI"] ? "github" : "list",
 	use: {
 		baseURL: BASE_URL,
 		trace: "on-first-retry",
@@ -22,7 +22,7 @@ export default defineConfig({
 	webServer: {
 		command: "bun run dev",
 		port: PORT,
-		reuseExistingServer: !process.env.CI,
+		reuseExistingServer: !process.env["CI"],
 		timeout: SERVER_START_TIMEOUT_MS,
 	},
 });

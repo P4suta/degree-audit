@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { base } from "$app/paths";
+	import { resolve } from "$app/paths";
 	import { page } from "$app/state";
-	import { AcademicRecord } from "$lib/domain/entities/academic-record";
-	import type { Course } from "$lib/domain/entities/course";
-	import CourseList from "$lib/presentation/components/CourseList.svelte";
-	import Badge from "$lib/presentation/ui/Badge.svelte";
-	import Disclosure from "$lib/presentation/ui/Disclosure.svelte";
-	import StatMeter from "$lib/presentation/ui/StatMeter.svelte";
-	import { viewCourseAllocations } from "$lib/application/course-allocation-view";
-	import { requirementLabel, unitLabel } from "$lib/presentation/i18n/labels";
-	import { resolveProgressState } from "$lib/presentation/ui/progress-layout";
-	import { assessmentStore } from "$lib/presentation/stores/assessment.svelte";
-	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
-	import * as m from "$lib/paraglide/messages";
+	import { AcademicRecord } from "#lib/domain/entities/academic-record.ts";
+	import type { Course } from "#lib/domain/entities/course.ts";
+	import CourseList from "#lib/presentation/components/CourseList.svelte";
+	import Badge from "#lib/presentation/ui/Badge.svelte";
+	import Disclosure from "#lib/presentation/ui/Disclosure.svelte";
+	import StatMeter from "#lib/presentation/ui/StatMeter.svelte";
+	import { viewCourseAllocations } from "#lib/application/course-allocation-view.ts";
+	import { requirementLabel, unitLabel } from "#lib/presentation/i18n/labels.ts";
+	import { resolveProgressState } from "#lib/presentation/ui/progress-layout.ts";
+	import { assessmentStore } from "#lib/presentation/stores/assessment.svelte.ts";
+	import { transcriptStore } from "#lib/presentation/stores/transcript.svelte.ts";
+	import * as m from "#lib/paraglide/messages.js";
 	import ArrowBack from "~icons/ic/round-arrow-back";
 
 	const requirementId = $derived(page.params["id"] ?? "");
@@ -182,7 +182,7 @@
 </svelte:head>
 
 <a
-	href={`${base}/dashboard`}
+	href={resolve("/dashboard")}
 	class="inline-flex min-h-tap touch-manipulation items-center gap-1 text-small text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
 >
 	<ArrowBack class="h-4 w-4" aria-hidden="true" />

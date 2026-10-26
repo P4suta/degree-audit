@@ -13,7 +13,7 @@ default:
 wasm-build:
     wasm-pack build crates/audit-wasm --target web --out-dir ../../src/lib/wasm --out-name degree_audit
 
-# Dev server (builds WASM first so $lib/wasm types resolve).
+# Dev server (builds WASM first so #lib/wasm types resolve).
 dev: wasm-build
     bun install && bun run dev
 
@@ -35,7 +35,7 @@ test-rust:
 test-wasm:
     wasm-pack test --node crates/audit-wasm
 
-# Builds wasm first so svelte-check can resolve the generated $lib/wasm types.
+# Builds wasm first so svelte-check can resolve the generated #lib/wasm types.
 # Web svelte-check + Vitest with coverage (mirrors the CI web job).
 test-web: wasm-build
     bun install --frozen-lockfile && bun run check && bun run test:coverage
@@ -52,12 +52,12 @@ cov:
 # e.g. `just fuzz pdf-glyphs fuzz_extract` / `just fuzz transcript-parse fuzz_parse`.
 # Continuous fuzzing (nightly + cargo-fuzz).
 fuzz CRATE TARGET *ARGS:
-    cd crates/{{CRATE}} && cargo +nightly fuzz run {{TARGET}} -- -max_total_time=60 {{ARGS}}
+    cd crates/{{ CRATE }} && cargo +nightly fuzz run {{ TARGET }} -- -max_total_time=60 {{ ARGS }}
 
 # Scope lives in mutants.toml. Pass `--in-diff <file>` for a changed-lines run.
 # Local mutation analysis for a test-quality investigation.
 mutants *ARGS:
-    cargo mutants --timeout 60 {{ARGS}}
+    cargo mutants --timeout 60 {{ ARGS }}
 
 # === Format / lint ===
 

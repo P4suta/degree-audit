@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { base } from "$app/paths";
-	import { safeGoto } from "$lib/presentation/navigation";
-	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
-	import * as m from "$lib/paraglide/messages";
-	import Button from "$lib/presentation/ui/Button.svelte";
-	import Card from "$lib/presentation/ui/Card.svelte";
+	import { resolve } from "$app/paths";
+	import { safeGoto } from "#lib/presentation/navigation.ts";
+	import { disclaimerStore } from "#lib/presentation/stores/disclaimer.svelte.ts";
+	import * as m from "#lib/paraglide/messages.js";
+	import Button from "#lib/presentation/ui/Button.svelte";
+	import Card from "#lib/presentation/ui/Card.svelte";
 	import ArrowBack from "~icons/ic/round-arrow-back";
 
 	// Allow consenting from this page too, treated the same as via the modal.
 	const handleAcknowledge = () => {
 		disclaimerStore.acknowledge();
-		void safeGoto(`${base}/`);
+		void safeGoto(resolve("/"));
 	};
 </script>
 
@@ -19,7 +19,7 @@
 </svelte:head>
 
 <a
-	href={`${base}/dashboard`}
+	href={resolve("/dashboard")}
 	class="inline-flex min-h-tap touch-manipulation items-center gap-1 text-small text-[color:var(--color-accent-link)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--color-background)]"
 >
 	<ArrowBack class="h-4 w-4" aria-hidden="true" />

@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import * as m from "$lib/paraglide/messages";
+	import * as m from "#lib/paraglide/messages.js";
 	import Alert from "../ui/Alert.svelte";
 	import X from "~icons/ic/round-close";
 	import type { Warning } from "../stores/warnings.svelte.ts";
