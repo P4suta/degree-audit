@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/root/.bun/install/cache \
 FROM deps AS source
 COPY . .
 # Compile the Paraglide messages (gitignored output) from the local plugin so
-# every downstream target resolves $lib/paraglide without a network fetch.
+# every downstream target resolves #lib/paraglide without a network fetch.
 RUN bun run paraglide:compile && bun run prepare
 
 FROM source AS check

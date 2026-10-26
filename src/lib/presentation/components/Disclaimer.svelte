@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { base } from "$app/paths";
-	import { disclaimerStore } from "$lib/presentation/stores/disclaimer.svelte";
-	import * as m from "$lib/paraglide/messages";
-	import Button from "$lib/presentation/ui/Button.svelte";
+	import { resolve } from "$app/paths";
+	import { disclaimerStore } from "#lib/presentation/stores/disclaimer.svelte.ts";
+	import * as m from "#lib/paraglide/messages.js";
+	import Button from "#lib/presentation/ui/Button.svelte";
 
 	let dialogEl = $state<HTMLDialogElement>();
 
@@ -136,7 +136,7 @@
 					class="mt-2 text-center text-caption text-[color:var(--color-fg-subtle)] sm:mt-3"
 				>
 					{m.disclaimer_modal_footnote_lead()} <a
-						href={`${base}/disclaimer`}
+						href={resolve("/disclaimer")}
 						class="underline hover:text-[color:var(--color-accent-link)]"
 						>{m.disclaimer_full_link()}</a
 					> {m.disclaimer_modal_footnote_trail()}

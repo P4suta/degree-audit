@@ -4,9 +4,9 @@
  * Paraglide messages. The domain/application layers stay free of display text.
  */
 
-import type { FieldCategory } from "$lib/domain/value-objects/field-category";
-import type { SubjectCategoryKind } from "$lib/domain/value-objects/subject-category";
-import * as m from "$lib/paraglide/messages";
+import type { FieldCategory } from "#lib/domain/value-objects/field-category.ts";
+import type { SubjectCategoryKind } from "#lib/domain/value-objects/subject-category.ts";
+import * as m from "#lib/paraglide/messages.js";
 
 /** Localized label for a requirement id; unknown ids fall back to the raw id. */
 export const requirementLabel = (id: string): string => {

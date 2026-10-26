@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { base } from "$app/paths";
+	import { resolve } from "$app/paths";
 	import { onMount } from "svelte";
-	import { safeGoto } from "$lib/presentation/navigation";
-	import * as m from "$lib/paraglide/messages";
-	import { transcriptStore } from "$lib/presentation/stores/transcript.svelte";
+	import { safeGoto } from "#lib/presentation/navigation.ts";
+	import * as m from "#lib/paraglide/messages.js";
+	import { transcriptStore } from "#lib/presentation/stores/transcript.svelte.ts";
 
 	// PDF-only entry: the profile is read from the dropped PDF, so a fresh visit
 	// goes straight to import; a loaded transcript goes to the dashboard.
 	onMount(() => {
 		if (transcriptStore.current === null) {
-			void safeGoto(`${base}/import`);
+			void safeGoto(resolve("/import"));
 			return;
 		}
-		void safeGoto(`${base}/dashboard`);
+		void safeGoto(resolve("/dashboard"));
 	});
 </script>
 

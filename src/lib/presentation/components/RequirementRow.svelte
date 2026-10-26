@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { base } from "$app/paths";
-	import type { SpecResult } from "$lib/application/assessment-types";
-	import { unitLabel } from "$lib/presentation/i18n/labels";
-	import * as m from "$lib/paraglide/messages";
+	import { resolve } from "$app/paths";
+	import type { SpecResult } from "#lib/application/assessment-types.ts";
+	import { unitLabel } from "#lib/presentation/i18n/labels.ts";
+	import * as m from "#lib/paraglide/messages.js";
 	import Badge from "../ui/Badge.svelte";
 	import { resolveProgressState } from "../ui/progress-layout.ts";
 	import ChevronRight from "~icons/ic/round-chevron-right";
@@ -86,7 +86,7 @@
   (ticks + track + earned fill) so credit weight and earned/remaining are legible.
 -->
 <a
-	href={`${base}/requirements/${encodeURIComponent(id)}`}
+	href={resolve("/requirements/[id]", { id })}
 	class="group block px-4 py-3.5 motion-safe:transition-colors hover:bg-[color:var(--color-overlay-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color:var(--color-accent)] sm:px-5"
 >
 	<div class="flex items-center gap-3">

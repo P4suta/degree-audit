@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Course } from "$lib/domain/entities/course";
-	import { Credit } from "$lib/domain/value-objects/credit";
-	import * as m from "$lib/paraglide/messages";
+	import type { Course } from "#lib/domain/entities/course.ts";
+	import { Credit } from "#lib/domain/value-objects/credit.ts";
+	import * as m from "#lib/paraglide/messages.js";
 	import Badge from "../ui/Badge.svelte";
 
 	type BadgeVariant = "accent" | "warning" | "neutral" | "success" | "danger";

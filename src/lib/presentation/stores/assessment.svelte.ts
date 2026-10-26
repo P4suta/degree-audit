@@ -1,4 +1,4 @@
-import type { Assessment } from "$lib/application/assessment-types";
+import type { Assessment } from "#lib/application/assessment-types.ts";
 
 /**
  * Exposes the current graduation assessment.

@@ -7,14 +7,14 @@
  * subject strings — is passed through as the core provides it.
  */
 
-import type { FieldCategory } from "$lib/domain/value-objects/field-category";
-import type { SubjectCategoryKind } from "$lib/domain/value-objects/subject-category";
-import * as m from "$lib/paraglide/messages";
+import type { FieldCategory } from "../domain/value-objects/field-category.ts";
+import type { SubjectCategoryKind } from "../domain/value-objects/subject-category.ts";
+import * as m from "../paraglide/messages.js";
 import {
 	fieldLabel,
 	kindLabel,
 	unitLabel,
-} from "$lib/presentation/i18n/labels";
+} from "../presentation/i18n/labels.ts";
 
 /** A structured diagnostic as emitted by the Rust `Diagnostic` enum (tag = "type"). */
 export type Diagnostic =

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { base } from "$app/paths";
-	import type { Assessment } from "$lib/application/assessment-types";
-	import { Credit } from "$lib/domain/value-objects/credit";
-	import * as m from "$lib/paraglide/messages";
+	import { resolve } from "$app/paths";
+	import type { Assessment } from "#lib/application/assessment-types.ts";
+	import { Credit } from "#lib/domain/value-objects/credit.ts";
+	import * as m from "#lib/paraglide/messages.js";
 	import Badge from "../ui/Badge.svelte";
 	import StatMeter from "../ui/StatMeter.svelte";
 
@@ -59,7 +59,7 @@
 					class="font-medium text-[color:var(--color-fg-muted)]"
 					>{m.summary_note_strong()}</strong
 				>{m.summary_note_mid()}<a
-					href={`${base}/disclaimer`}
+					href={resolve("/disclaimer")}
 					class="text-[color:var(--color-accent-link)] underline hover:no-underline"
 					>{m.link_disclaimer()}</a
 				>{m.summary_note_trail()}

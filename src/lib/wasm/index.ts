@@ -10,9 +10,9 @@
  * Japanese strings the existing presentation expects. Nothing downstream changes.
  */
 
-import type { Assessment } from "$lib/application/assessment-types";
-import type { AcademicRecord } from "$lib/domain/entities/academic-record";
-import type { StudentProfile } from "$lib/domain/entities/student-profile";
+import type { Assessment } from "../application/assessment-types.ts";
+import type { AcademicRecord } from "../domain/entities/academic-record.ts";
+import type { StudentProfile } from "../domain/entities/student-profile.ts";
 
 import {
 	type Diagnostic,
