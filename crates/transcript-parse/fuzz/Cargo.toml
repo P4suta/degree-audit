@@ -5,6 +5,7 @@
 name = "transcript-parse-fuzz"
 version = "0.0.0"
 publish = false
+license = "MIT"
 edition = "2021"
 
 [package.metadata]
