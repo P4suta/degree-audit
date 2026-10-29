@@ -1,0 +1,12 @@
+name = "Degree audit"
+summary = "Unofficial degree audit tool that runs in your browser"
+install = "# Open https://p4suta.github.io/degree-audit/ in a web browser"
+usage = "Upload a transcript PDF to review graduation progress and thesis eligibility."
+usage_language = "text"
+documentation_index = true
+license = "MIT"
+
+[preserved_licenses]
+[[preserved_licenses.assets]]
+path = "LICENSE"
+sha256 = "8aea87f7a15b02030c7293833b362fad4086e85f51e0eaacc0d9e53c1090114f"
