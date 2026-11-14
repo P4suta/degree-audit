@@ -18,23 +18,23 @@ cargo.binstall = true
 
 [tools]
 bun = "1.4.4"
-node = "26.13.0"
+node = "26.13.1"
 just = "1.59.0"
 lefthook = "2.2.2"
-typos = "1.51.1"
+typos = "1.52.2"
 actionlint = "1.7.12"
 # Prebuilt-binary fetcher used by the cargo backend below.
-"aqua:cargo-bins/cargo-binstall" = "1.26.1"
+"aqua:cargo-bins/cargo-binstall" = "1.26.2"
 
 # WASM bundler. The bare `wasm-pack` registry name was dropped from mise; the
 # aqua backend is the maintained source.
-"aqua:rustwasm/wasm-pack" = "0.15.0"
+"aqua:rustwasm/wasm-pack" = "0.15.1"
 
 # Rust coverage + test runner (prebuilt). cargo-llvm-cov via aqua; cargo-nextest
 # via the cargo backend + binstall (its GitHub release tag layout trips mise's
 # attestation check, so we don't use the github backend).
 "aqua:taiki-e/cargo-llvm-cov" = "0.9.1"
-"cargo:cargo-nextest" = "0.9.150"
+"cargo:cargo-nextest" = "0.9.151"
 # Local mutation analysis.
 "cargo:cargo-mutants" = "27.1.0"
 # Local parser fuzzing (nightly only).
