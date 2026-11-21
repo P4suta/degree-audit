@@ -38,7 +38,7 @@
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
 		"@tailwindcss/vite": "^4.3.3",
 		"@typescript/native": "npm:typescript@~7.0.0",
-		"@vitest/coverage-istanbul": "4.1.12",
+		"@vitest/coverage-istanbul": "5.1.1",
 		"fast-check": "4.10.2",
 		"happy-dom": "21.0.4",
 		"lighthouse": "^13.5.0",
@@ -48,7 +48,7 @@
 		"typescript": "^6.0.3",
 		"unplugin-icons": "^23.0.1",
 		"vite": "^8.3.5",
-		"vitest": "^4.1.12"
+		"vitest": "^5.0.0"
 	},
 	"dependencies": {
 		"zod": "^4.6.7"
