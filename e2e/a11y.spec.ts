@@ -28,7 +28,12 @@ for (const colorScheme of ["light", "dark"] as const) {
 
 		test("the consent gate has no serious axe violations", async ({ page }) => {
 			await page.goto("/");
-			await expect(page.getByRole("dialog")).toBeVisible();
+			const dialog = page.getByRole("dialog");
+			await expect(dialog).toBeVisible();
+			await expect(dialog.locator(".disclaimer-overlay")).toHaveCSS(
+				"opacity",
+				"1",
+			);
 			expect(await seriousViolations(page)).toEqual([]);
 		});
 
