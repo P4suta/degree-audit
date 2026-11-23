@@ -28,8 +28,11 @@ RUN bun run check
 FROM source AS lint
 RUN bun run lint
 
-FROM source AS test
-RUN bun run test:coverage
+FROM node:26.13.0-bookworm-slim@sha256:add5c17c14752c54d2f3d519ec46a3815684d41c33f198bcb09fb998f7dcbf68 AS test
+WORKDIR /app
+ENV CI=1
+COPY --from=source /app/ ./
+RUN npm run test:coverage
 
 FROM source AS build
 ARG BASE_PATH=""
